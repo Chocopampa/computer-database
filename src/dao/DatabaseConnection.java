@@ -1,5 +1,9 @@
-package persistence;
+package dao;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -10,9 +14,6 @@ public class DatabaseConnection {
 	// init database constants
     private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/computer-database-db";
-    private static final String USERNAME = "admincdb";
-    private static final String PASSWORD = "qwerty1234";
-    private static final String MAX_POOL = "250";
 
     // init connection object
     private Connection connection;
@@ -21,12 +22,19 @@ public class DatabaseConnection {
 
     // create properties
     private Properties getProperties() {
-        if (properties == null) {
-            properties = new Properties();
-            properties.setProperty("user", USERNAME);
-            properties.setProperty("password", PASSWORD);
-            properties.setProperty("MaxPooledStatements", MAX_POOL);
-        }
+    	try {
+			InputStream input = new FileInputStream("resources/dbConfig.properties");
+			properties = new Properties();
+			properties.load(input);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println("File not found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("");
+			e.printStackTrace();
+		}
         return properties;
     }
 
