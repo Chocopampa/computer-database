@@ -68,8 +68,29 @@ public class ComputerDAO {
 			statement.setInt(4, computer.getCompanyId());
 			
 			statement.executeUpdate();
+			statement.close();
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')");
+		    e.printStackTrace();
+		} finally {
+			dbConnection.disconnect();
+		}
+	}
+	
+	/**
+	 * Delete a computer in database.
+	 * @param idComputer
+	 */
+	public void deleteComputerFromId(int idComputer) {
+		DatabaseConnection dbConnection = new DatabaseConnection();
+
+		try {
+			PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER);
+			statement.setInt(1, idComputer);
+			statement.executeUpdate();
+			statement.close();
+		} catch (SQLException e) {
+			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPUTER + "')");
 		    e.printStackTrace();
 		} finally {
 			dbConnection.disconnect();
@@ -95,24 +116,6 @@ public class ComputerDAO {
 			statement.setInt(5, idComputer);
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + UPDATE_COMPUTER + "')");
-		    e.printStackTrace();
-		} finally {
-			dbConnection.disconnect();
-		}
-	}
-	
-	/**
-	 * Delete a computer in database.
-	 * @param idComputer
-	 */
-	public void deleteComputerFromId(int idComputer) {
-		DatabaseConnection dbConnection = new DatabaseConnection();
-
-		try {
-			PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER);
-			statement.setInt(1, idComputer);
-		} catch (SQLException e) {
-			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPUTER + "')");
 		    e.printStackTrace();
 		} finally {
 			dbConnection.disconnect();
