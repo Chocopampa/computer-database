@@ -3,29 +3,44 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import mappers.CompanyMapper;
+import model.Company;
 
 public class CompanyDAO {
 	
 	private static final String REQUEST_COMPANIES = "SELECT * FROM company;";
+	private CompanyMapper companyMapper = CompanyMapper.getInstance();
+	
+	private CompanyDAO() {};
 
+	private static final CompanyDAO INSTANCE = new CompanyDAO();
+
+	public static CompanyDAO getInstance() {
+		return INSTANCE;
+	}
 	
 	/**
 	 * Get all the database companies.
 	 * @return the ResultSet
 	 */
-	public ResultSet getCompanies() {
+	public List<Company> getCompanies() {
 		DatabaseConnection dbConnection = new DatabaseConnection();
-		ResultSet rs = null;
+		List<Company> companies = new ArrayList<>();
 		try {
 			PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPANIES);
-			rs = statement.executeQuery();
+			ResultSet rs = statement.executeQuery();
+			companies = companyMapper.map(rs);
+			rs.close();
+			statement.close();
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPANIES + "')");
 		    e.printStackTrace();
 		} finally {
 			dbConnection.disconnect();
 		}
-		return rs;
+		return companies;
 	}
-	
 }

@@ -7,31 +7,46 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
 
+import mappers.ComputerMapper;
+import model.Computer;
+
 public class ComputerDAO {
+	
+	private ComputerMapper computerMapper = ComputerMapper.getInstance();
 
 	private static final String REQUEST_COMPUTERS = "SELECT * FROM computer;";
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name=?,introduced=?,discontinued=?,company_id=? WHERE id=?;";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 
+	private ComputerDAO() {};
+
+	private static final ComputerDAO INSTANCE = new ComputerDAO();
+
+	public static ComputerDAO getInstance() {
+		return INSTANCE;
+	}
 	
 	/**
 	 * Get all the database computers.
 	 * @return the ResultSet
 	 */
-	public ResultSet getComputers() {
+	public List<Computer> getComputers() {
 		DatabaseConnection dbConnection = new DatabaseConnection();
-		ResultSet rs = null;
+		List<Computer> computers = new ArrayList<>();
 		try {
 			PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS);
-			rs = statement.executeQuery();
+			ResultSet rs = statement.executeQuery();
+			computers = computerMapper.map(rs);
+			rs.close();
+			statement.close();
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS + "')");
 		    e.printStackTrace();
 		} finally {
 			dbConnection.disconnect();
 		}
-		return rs;
+		return computers;
 	}
 	
 	/**
@@ -41,15 +56,18 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	public void createComputer(String name, Date introduced, Date discontinued, int companyId) {
+	public void insertComputer(Computer computer) {
 		DatabaseConnection dbConnection = new DatabaseConnection();
 
 		try {
 			PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER);
-			statement.setString(1, name);
-			statement.setString(2, introduced.toString());
-			statement.setString(3, discontinued.toString());
-			statement.setInt(4, companyId);
+			
+			statement.setString(1, computer.getName());
+			statement.setString(2, computer.getIntroduced().toString());
+			statement.setString(3, computer.getDiscontinued().toString());
+			statement.setInt(4, computer.getCompanyId());
+			
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')");
 		    e.printStackTrace();
