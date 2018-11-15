@@ -10,6 +10,28 @@ public class Computer {
 	private LocalDateTime discontinued;
 	private int companyId;
 	
+	public Computer() {}
+	
+	public Computer (String name, String introduced, String discontinued, String companyId) {
+		this.setName(name);
+		
+		if (!"null".equals(introduced)) {
+			LocalDateTime introducedDateTime = LocalDateTime.parse(introduced);
+			this.setIntroduced(introducedDateTime);
+		} else {
+			this.setIntroduced(null);
+		}
+		
+		if (!"null".equals(discontinued)) {
+			LocalDateTime discontinuedDateTime = LocalDateTime.parse(discontinued);
+			this.setDiscontinued(discontinuedDateTime);
+		} else {
+			this.setDiscontinued(null);
+		}
+		
+		this.setCompanyId(Integer.parseInt(companyId));
+	}
+	
 	public int getId() {
 		return id;
 	}

@@ -29,11 +29,11 @@ public class ComputerServices {
 		}
 	}
 	
-	public void showComputerDetails(int computerId) {
+	public void showComputerDetails(int idComputer) {
 		List<Computer> computersList = computerDAO.getComputers();
 		Computer searchedComputer = null;
 		for (Computer computer : computersList) {
-			if (computerId == computer.getId()) {
+			if (idComputer == computer.getId()) {
 				searchedComputer = computer;
 			}
 		}
@@ -48,42 +48,50 @@ public class ComputerServices {
 		computerDAO.deleteComputerFromId(idComputer);
 	}
 	
-	public void createComputer(String name, String introduced, String discontinued, String idCompany) {
-		
-		List<Company> companies = new ArrayList<>();
-		companies = companyDAO.getCompanies();
+	public void createComputer(String name, String introduced, String discontinued, String companyId) {
+		int idCompany = Integer.parseInt(companyId);
+		if (name.isEmpty() || !companyIdExists(idCompany)) {
+			System.out.println("Empty computer name, or invalid company identifier.");
+		} else {
+			Computer computer = new Computer(name, introduced, discontinued, companyId);
+			computerDAO.insertComputer(computer);
+		}
+	}
+	
+	public void updateComputer(String computerId, String name, String introduced, String discontinued, String companyId) {
+		int idComputer = Integer.parseInt(computerId);
+		if (name.isEmpty() || !companyIdExists(Integer.parseInt(companyId)) || !computerIdExists(idComputer)) {
+			System.out.println("Empty computer name, or invalid company identifier, or invalid computer id.");
+		} else {
+			Computer computer = new Computer(name, introduced, discontinued, companyId);
+			computerDAO.updateComputer(idComputer, computer);
+		}
+	}
+
+	private boolean companyIdExists(int idCompany) {
+		List<Company> companies = companyDAO.getCompanies();
 		boolean companyIdExists = false;
 		
 		for (Company company : companies) {
-			if (Integer.getInteger(idCompany) == company.getId()) {
+			if (idCompany == company.getId()) {
 				companyIdExists = true;
 			}
 		}
 		
-		if (name.isEmpty() || !companyIdExists) {
-			System.out.println("Empty computer name, or invalid company identifier.");
-		} else {
-			Computer computer = new Computer();
-			computer.setName(name);
-			
-			if (!"null".equals(introduced)) {
-				LocalDateTime introducedDateTime = LocalDateTime.parse(introduced);
-				computer.setIntroduced(introducedDateTime);
-			} else {
-				computer.setIntroduced(null);
-			}
-			
-			if (!"null".equals(discontinued)) {
-				LocalDateTime discontinuedDateTime = LocalDateTime.parse(discontinued);
-				computer.setDiscontinued(discontinuedDateTime);
-			} else {
-				computer.setDiscontinued(null);
-			}
-			
-			computer.setCompanyId(Integer.parseInt(idCompany));
-			
-			computerDAO.insertComputer(computer);
-		}
+		return companyIdExists;
 	}
-
+	
+	private boolean computerIdExists(int idComputer) {
+		List<Computer> computers = computerDAO.getComputers();
+		boolean computerIdExists = false;
+		
+		for (Computer computer : computers) {
+			if (idComputer == computer.getId()) {
+				computerIdExists = true;
+			}
+		}
+		
+		return computerIdExists;
+	}
+	
 }
