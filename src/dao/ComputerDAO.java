@@ -16,8 +16,8 @@ public class ComputerDAO {
 
 	private static final String REQUEST_COMPUTERS = "SELECT * FROM computer;";
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
-	private static final String UPDATE_COMPUTER = "UPDATE computer SET name=?,introduced=?,discontinued=?,company_id=? WHERE id=?;";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
+	private static final String UPDATE_COMPUTER = "UPDATE computer SET name=?,introduced=?,discontinued=?,company_id=? WHERE id=?;";
 
 	private ComputerDAO() {};
 
@@ -63,8 +63,18 @@ public class ComputerDAO {
 			PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER);
 			
 			statement.setString(1, computer.getName());
-			statement.setString(2, computer.getIntroduced().toString());
-			statement.setString(3, computer.getDiscontinued().toString());
+			
+			if (computer.getIntroduced() != null) {
+				statement.setString(2, computer.getIntroduced().toString());
+			} else {
+				statement.setString(2, null);
+			}
+			
+			if (computer.getDiscontinued() != null) {
+				statement.setString(3, computer.getDiscontinued().toString());
+			} else {
+				statement.setString(3, null);
+			}
 			statement.setInt(4, computer.getCompanyId());
 			
 			statement.executeUpdate();
@@ -104,16 +114,29 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	public void updateComputer(int idComputer, String name, Date introduced, Date discontinued, int companyId) {
+	public void updateComputer(int idComputer, Computer computer) {
 		DatabaseConnection dbConnection = new DatabaseConnection();
 
 		try {
 			PreparedStatement statement = dbConnection.connect().prepareStatement(UPDATE_COMPUTER);
-			statement.setString(1, name);
-			statement.setString(2, introduced.toString());
-			statement.setString(3, discontinued.toString());
-			statement.setInt(4, companyId);
+			statement.setString(1, computer.getName());
+			
+			if (computer.getIntroduced() != null) {
+				statement.setString(2, computer.getIntroduced().toString());
+			} else {
+				statement.setString(2, null);
+			}
+			
+			if (computer.getDiscontinued() != null) {
+				statement.setString(3, computer.getDiscontinued().toString());
+			} else {
+				statement.setString(3, null);
+			}
+			
+			statement.setInt(4, computer.getCompanyId());
 			statement.setInt(5, idComputer);
+			statement.executeUpdate();
+			statement.close();
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + UPDATE_COMPUTER + "')");
 		    e.printStackTrace();

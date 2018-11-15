@@ -40,4 +40,9 @@ public class Computer {
 	public void setCompanyId(int companyId) {
 		this.companyId = companyId;
 	}
+	
+	@Override
+	public String toString() {
+		return (this.getId() + "	" + this.getName() + "		" + this.getIntroduced() + "	" + this.getDiscontinued() + "	" + this.getCompanyId());
+	}
 }

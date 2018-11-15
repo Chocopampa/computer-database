@@ -21,4 +21,8 @@ public class Company {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return (this.getId() + "		" +this.getName());
+	}
 }
