@@ -2,8 +2,8 @@ package services;
 
 import java.util.List;
 
-import dao.CompanyDAO;
 import model.Company;
+import persistence.CompanyDAO;
 
 public class CompanyServices {
 	

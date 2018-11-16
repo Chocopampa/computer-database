@@ -1,11 +1,14 @@
 package services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import dao.CompanyDAO;
-import dao.ComputerDAO;
 import model.Company;
 import model.Computer;
+import persistence.CompanyDAO;
+import persistence.ComputerDAO;
 
 public class ComputerServices {
 	
@@ -73,6 +76,14 @@ public class ComputerServices {
 			computerUpdate(computerId,name,introduced,discontinued,companyId);
 		}
 	}
+	
+	public void showComputersPaginated(int indexToShow) {
+		Map<Integer,List<Computer>> paginatedComputers = getComputersPaginated();
+		List<Computer> computerPage =  paginatedComputers.get(indexToShow);
+		for (Computer computer : computerPage) {
+			System.out.println(computer);
+		}
+	}
 
 	private boolean companyIdExists(int idCompany) {
 		List<Company> companies = companyDAO.getCompanies();
@@ -117,6 +128,25 @@ public class ComputerServices {
 		else {
 			computerDAO.updateComputer(idComputer, computer);
 		}
+	}
+	
+	private Map<Integer,List<Computer>> getComputersPaginated() {
+		Map<Integer , List<Computer>> computerMap = new HashMap<>();
+		List<Computer> computersList = computerDAO.getComputers();
+		int indexKey = 0;
+		while (computersList.size() > 0) {
+			List<Computer> computerPage = new ArrayList<>();
+			for (int i = 0; i<10; i++) {
+				if (!computersList.isEmpty()) {
+					computerPage.add(computersList.remove(0));
+				} else {
+					break;
+				}
+			}
+			computerMap.put(indexKey, computerPage);
+			indexKey++;
+		}
+		return computerMap;
 	}
 	
 }

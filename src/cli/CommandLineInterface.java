@@ -10,11 +10,12 @@ import services.ComputerServices;
 
 public class CommandLineInterface {
 	
+	private static Scanner sc = new Scanner(System.in);
+
 	private static CompanyServices companyServices = CompanyServices.getInstance();
 	private static ComputerServices computerServices = ComputerServices.getInstance();
 
 	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
 		String str = "";
 		while (!"exit".equals(str)) {
 			System.out.println("Input a command (type help for help) :");
@@ -25,7 +26,8 @@ public class CommandLineInterface {
 					if (!commands[1].isEmpty() && "companies".equalsIgnoreCase(commands[1])) {
 						companyServices.showCompanies();
 					} else if (!commands[1].isEmpty() && "computers".equalsIgnoreCase(commands[1])) {
-						computerServices.showComputers();
+						String[] commandsForListing = Arrays.copyOfRange(commands, 2, commands.length);
+						displayComputers(commandsForListing);
 					} else if (!commands[1].isEmpty() && "computer".equalsIgnoreCase(commands[1])) {
 						if (commands.length >= 3 && isParsableInt(commands[2])) {
 							computerServices.showComputerDetails(Integer.parseInt(commands[2]));
@@ -160,9 +162,13 @@ public class CommandLineInterface {
 		}
 	}
 	
+	/**
+	 * Display the help.
+	 */
 	private static void displayHelp() {
 		System.out.println("Command list :");
 		System.out.println("	get computers : return list of computers in database.");
+		System.out.println("	get computers paginated : enter list of computers paginated mode.");
 		System.out.println("	get companies : return list of companies in database.");
 		System.out.println("	get computer [id] : return the chosen computer from its id.");
 		System.out.println("	create computer [name] : create a new computer in database with only a name.");
@@ -170,5 +176,28 @@ public class CommandLineInterface {
 		System.out.println("	update computer [id] [name] [date] [date] [companyId] : update all the attributes of the chosen computer from its id.");
 		System.out.println("	delete computer [id] : delete the chosen computer from its id.");
 		System.out.println("	exit : quit the program.");
+	}
+	
+	private static void displayComputers(String[] commandsForListing) {
+		if (commandsForListing.length > 0) {
+			if (!commandsForListing[0].isEmpty() && "paginated".equalsIgnoreCase(commandsForListing[0])) {
+				String paginationCommand = "";
+				while (!"stop".equals(paginationCommand)) {			
+					System.out.println("Enter the index number of the computers you want to display (10 per page) (type stop to quit pagination):");
+					paginationCommand = sc.nextLine();
+					
+					if(!isParsableInt(paginationCommand)) {
+						System.out.println("Please, enter a number.");
+					} else {
+						int index = Integer.parseInt(paginationCommand);
+						computerServices.showComputersPaginated(index);
+					}
+				}
+			} else {
+				System.out.println("Wrong command.");
+			}
+		} else {
+			computerServices.showComputers();
+		}
 	}
 }
