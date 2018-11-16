@@ -71,15 +71,7 @@ public class CommandLineInterface {
 					System.out.println("Goodbye!");
 					break;
 				case "help" :
-					System.out.println("Command list :");
-					System.out.println("	get computers : return list of computers in database.");
-					System.out.println("	get companies : return list of companies in database.");
-					System.out.println("	get computer [id] : return the chosen computer from its id.");
-					System.out.println("	create computer [name] : create a new computer in database with only a name.");
-					System.out.println("	create computer [name] [date] [date] [companyId] : create a new computer in database with all its attributes.");
-					System.out.println("	update computer [id] [name] [date] [date] [companyId] : update all the attributes of the chosen computer from its id.");
-					System.out.println("	delete computer [id] : delete the chosen computer from its id.");
-					System.out.println("	exit : quit the program.");
+					displayHelp();
 					break;
 				default:
 					System.out.println("Invalid command.");
@@ -166,5 +158,17 @@ public class CommandLineInterface {
 		} else {
 			System.out.println("Wrong number of arguments for update.");
 		}
+	}
+	
+	private static void displayHelp() {
+		System.out.println("Command list :");
+		System.out.println("	get computers : return list of computers in database.");
+		System.out.println("	get companies : return list of companies in database.");
+		System.out.println("	get computer [id] : return the chosen computer from its id.");
+		System.out.println("	create computer [name] : create a new computer in database with only a name.");
+		System.out.println("	create computer [name] [date] [date] [companyId] : create a new computer in database with all its attributes.");
+		System.out.println("	update computer [id] [name] [date] [date] [companyId] : update all the attributes of the chosen computer from its id.");
+		System.out.println("	delete computer [id] : delete the chosen computer from its id.");
+		System.out.println("	exit : quit the program.");
 	}
 }

@@ -86,18 +86,6 @@ public class ComputerServices {
 		return companyIdExists;
 	}
 	
-	private boolean computerIdExists(int idComputer) {
-		List<Computer> computers = computerDAO.getComputers();
-		boolean computerIdExists = false;
-		
-		for (Computer computer : computers) {
-			if (idComputer == computer.getId()) {
-				computerIdExists = true;
-			}
-		}
-		return computerIdExists;
-	}
-	
 	private void computerCreation(String name, String introduced, String discontinued, String companyId) {
 		Computer computer = new Computer(name, introduced, discontinued, companyId);
 		if (computer.getIntroduced() != null && computer.getDiscontinued() != null) {
