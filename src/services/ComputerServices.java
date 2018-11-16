@@ -1,7 +1,5 @@
 package services;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import dao.CompanyDAO;
@@ -30,31 +28,32 @@ public class ComputerServices {
 	}
 	
 	public void showComputerDetails(int idComputer) {
-		List<Computer> computersList = computerDAO.getComputers();
-		Computer searchedComputer = null;
-		for (Computer computer : computersList) {
-			if (idComputer == computer.getId()) {
-				searchedComputer = computer;
-			}
-		}
-		if (searchedComputer != null) {
-			System.out.print(searchedComputer);
+		Computer computer = computerDAO.getComputer(idComputer);
+		if (computer != null) {
+			System.out.println(computer);
 		} else {
-			System.out.println("Cet ordinateur n'existe pas.");
+			System.out.println("This computer does not exist.");
 		}
 	}
 	
 	public void deleteComputer(int idComputer) {
 		computerDAO.deleteComputerFromId(idComputer);
+		System.out.println("The computer with id " + idComputer + " has been deleted.");
 	}
 	
 	public void createComputer(String name, String introduced, String discontinued, String companyId) {
-		int idCompany = Integer.parseInt(companyId);
-		if (name.isEmpty() || !companyIdExists(idCompany)) {
-			System.out.println("Empty computer name, or invalid company identifier.");
+		int idCompany = -1;
+		if (!"null".equalsIgnoreCase(companyId)) {
+			idCompany = Integer.parseInt(companyId);
+		}
+		if (name.isEmpty()) {
+			System.out.println("Empty computer name.");
+		} else if ("null".equalsIgnoreCase(companyId)){
+			computerCreation(name, introduced, discontinued, companyId);
+		} else if (!companyIdExists(idCompany)) {
+			System.out.println("Invalid company id.");
 		} else {
-			Computer computer = new Computer(name, introduced, discontinued, companyId);
-			computerDAO.insertComputer(computer);
+			computerCreation(name, introduced, discontinued, companyId);
 		}
 	}
 	
@@ -77,7 +76,6 @@ public class ComputerServices {
 				companyIdExists = true;
 			}
 		}
-		
 		return companyIdExists;
 	}
 	
@@ -90,8 +88,23 @@ public class ComputerServices {
 				computerIdExists = true;
 			}
 		}
-		
 		return computerIdExists;
+	}
+	
+	private void computerCreation(String name, String introduced, String discontinued, String companyId) {
+		Computer computer = new Computer(name, introduced, discontinued, companyId);
+		if (computer.getIntroduced() != null && computer.getDiscontinued() != null) {
+			if (computer.getIntroduced().isBefore(computer.getDiscontinued())) {
+				computerDAO.insertComputer(computer);
+			} else {
+				System.out.println("The introduced date must be before the discontinued date.");
+			}
+		} else if (computer.getIntroduced() == null && computer.getDiscontinued() != null){
+			System.out.println("You cannot input a discontinued datetime without an introduced datetime.");
+		}
+		else {
+			computerDAO.insertComputer(computer);
+		}
 	}
 	
 }

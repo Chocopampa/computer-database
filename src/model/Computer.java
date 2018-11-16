@@ -15,21 +15,25 @@ public class Computer {
 	public Computer (String name, String introduced, String discontinued, String companyId) {
 		this.setName(name);
 		
-		if (!"null".equals(introduced)) {
+		if (!"null".equalsIgnoreCase(introduced)) {
 			LocalDateTime introducedDateTime = LocalDateTime.parse(introduced);
 			this.setIntroduced(introducedDateTime);
 		} else {
 			this.setIntroduced(null);
 		}
 		
-		if (!"null".equals(discontinued)) {
+		if (!"null".equalsIgnoreCase(discontinued)) {
 			LocalDateTime discontinuedDateTime = LocalDateTime.parse(discontinued);
 			this.setDiscontinued(discontinuedDateTime);
 		} else {
 			this.setDiscontinued(null);
 		}
 		
-		this.setCompanyId(Integer.parseInt(companyId));
+		if (!"null".equalsIgnoreCase(companyId)) {
+			this.setCompanyId(Integer.parseInt(companyId));
+		} else {
+			this.setCompanyId(-1);
+		}
 	}
 	
 	public int getId() {

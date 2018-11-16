@@ -15,6 +15,7 @@ public class ComputerDAO {
 	private ComputerMapper computerMapper = ComputerMapper.getInstance();
 
 	private static final String REQUEST_COMPUTERS = "SELECT * FROM computer;";
+	private static final String REQUEST_DETAILED_COMPUTER = "SELECT * FROM computer WHERE id = ?;";
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name=?,introduced=?,discontinued=?,company_id=? WHERE id=?;";
@@ -50,6 +51,35 @@ public class ComputerDAO {
 	}
 	
 	/**
+	 * Get the database computer with specified id.
+	 * @param idComputer
+	 * @return
+	 */
+	public Computer getComputer(int idComputer) {
+		DatabaseConnection dbConnection = new DatabaseConnection();
+		Computer computer = new Computer();
+		try {
+			PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_DETAILED_COMPUTER);
+			statement.setInt(1, idComputer);
+			ResultSet rs = statement.executeQuery();
+			if (rs.next()) {
+				rs.previous();
+				computer = computerMapper.map(rs).get(0);
+			} else {
+				computer = null;
+			}
+			rs.close();
+			statement.close();
+		} catch (SQLException e) {
+			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_DETAILED_COMPUTER + "')");
+		    e.printStackTrace();
+		} finally {
+			dbConnection.disconnect();
+		}
+		return computer;
+	}
+	
+	/**
 	 * Create a computer in database.
 	 * @param name
 	 * @param introduced
@@ -75,7 +105,12 @@ public class ComputerDAO {
 			} else {
 				statement.setString(3, null);
 			}
-			statement.setInt(4, computer.getCompanyId());
+			
+			if (computer.getCompanyId() != -1) {
+				statement.setInt(4, computer.getCompanyId());
+			} else {
+				statement.setString(4, null);
+			}
 			
 			statement.executeUpdate();
 			statement.close();
