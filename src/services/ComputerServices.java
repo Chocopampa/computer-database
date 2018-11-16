@@ -58,12 +58,19 @@ public class ComputerServices {
 	}
 	
 	public void updateComputer(String computerId, String name, String introduced, String discontinued, String companyId) {
-		int idComputer = Integer.parseInt(computerId);
-		if (name.isEmpty() || !companyIdExists(Integer.parseInt(companyId)) || !computerIdExists(idComputer)) {
-			System.out.println("Empty computer name, or invalid company identifier, or invalid computer id.");
+		
+		int idCompany = -1;
+		if (!"null".equalsIgnoreCase(companyId)) {
+			idCompany = Integer.parseInt(companyId);
+		}
+		if (name.isEmpty()) {
+			System.out.println("Empty computer name.");
+		} else if ("null".equalsIgnoreCase(companyId)){
+			computerUpdate(computerId,name,introduced,discontinued,companyId);
+		} else if (!companyIdExists(idCompany)) {
+			System.out.println("Invalid company id.");
 		} else {
-			Computer computer = new Computer(name, introduced, discontinued, companyId);
-			computerDAO.updateComputer(idComputer, computer);
+			computerUpdate(computerId,name,introduced,discontinued,companyId);
 		}
 	}
 
@@ -104,6 +111,23 @@ public class ComputerServices {
 		}
 		else {
 			computerDAO.insertComputer(computer);
+		}
+	}
+	
+	private void computerUpdate(String computerId, String name, String introduced, String discontinued, String companyId) {
+		int idComputer = Integer.parseInt(computerId);
+		Computer computer = new Computer(name, introduced, discontinued, companyId);
+		if (computer.getIntroduced() != null && computer.getDiscontinued() != null) {
+			if (computer.getIntroduced().isBefore(computer.getDiscontinued())) {
+				computerDAO.updateComputer(idComputer, computer);
+			} else {
+				System.out.println("The introduced date must be before the discontinued date.");
+			}
+		} else if (computer.getIntroduced() == null && computer.getDiscontinued() != null){
+			System.out.println("You cannot input a discontinued datetime without an introduced datetime.");
+		}
+		else {
+			computerDAO.updateComputer(idComputer, computer);
 		}
 	}
 	

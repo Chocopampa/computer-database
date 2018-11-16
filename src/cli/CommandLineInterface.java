@@ -49,8 +49,8 @@ public class CommandLineInterface {
 					break;
 				case "create" :
 					if (commands.length >= 3 && "computer".equalsIgnoreCase(commands[1])) {
-						String[] commands2 = Arrays.copyOfRange(commands, 2, commands.length);
-						computerCreation(commands2);
+						String[] commandsForCreation = Arrays.copyOfRange(commands, 2, commands.length);
+						computerCreation(commandsForCreation);
 					} else {
 						System.out.println("Can not create anything but computer, and a computer needs at least a name.");
 					}
@@ -58,10 +58,10 @@ public class CommandLineInterface {
 				case "update" :
 					if (commands.length >= 4 && "computer".equalsIgnoreCase(commands[1])) {
 						if (!commands[2].isEmpty() && isParsableInt(commands[2])) {
-							String[] commands2 = Arrays.copyOfRange(commands, 3, commands.length);
-							computerServices.deleteComputer(Integer.parseInt(commands[2]));
+							String[] commandsForUpdate = Arrays.copyOfRange(commands, 2, commands.length);
+							computerUpdate(commandsForUpdate);
 						} else {
-							System.out.println("Veuillez entrer un nombre.");
+							System.out.println("Please enter the id of the computer to update.");
 						}
 					} else {
 						System.out.println("Can not update anything but computer.");
@@ -124,27 +124,47 @@ public class CommandLineInterface {
 
 	/**
 	 * Calls computer creation service based on the number of arguments given.
-	 * @param commands
+	 * @param commandsForCreation
 	 */
-	private static void computerCreation(String[] commands) {
-		switch (commands.length) {
+	private static void computerCreation(String[] commandsForCreation) {
+		switch (commandsForCreation.length) {
 		case 1 :
-			computerServices.createComputer(commands[0], "null", "null", "null");
+			computerServices.createComputer(commandsForCreation[0], "null", "null", "null");
 			break;
 		case 4 :
-			if (!isParsableInt(commands[3])) {
+			if (!isParsableInt(commandsForCreation[3])) {
 				System.out.println("The company id must be a number.");
-			} else if (!isParsableLocalDateTime(commands[1])) {
+			} else if (!isParsableLocalDateTime(commandsForCreation[1])) {
 				System.out.println("Invalid format for the introduced date time. (format : yyyy-mm-ddThh:mm:ss)");
-			} else if (!isParsableLocalDateTime(commands[2])) {
+			} else if (!isParsableLocalDateTime(commandsForCreation[2])) {
 				System.out.println("Invalid format for the discontinued date time. (format : yyyy-mm-ddThh:mm:ss)");
 			} else {
-				computerServices.createComputer(commands[0], commands[1], commands[2], commands[3]);
+				computerServices.createComputer(commandsForCreation[0], commandsForCreation[1], commandsForCreation[2], commandsForCreation[3]);
 			}
 			break;
 		default :
 			System.out.println("Invalid command.");
 			break;
+		}
+	}
+	
+	/**
+	 * Calls computer update service based on the number of arguments given.
+	 * @param commandsForUpdate
+	 */
+	private static void computerUpdate(String[] commandsForUpdate) {
+		if (commandsForUpdate.length == 5) {
+			if (!isParsableInt(commandsForUpdate[4])) {
+				System.out.println("The company id must be a number.");
+			} else if (!isParsableLocalDateTime(commandsForUpdate[2])) {
+				System.out.println("Invalid format for the introduced date time. (format : yyyy-mm-ddThh:mm:ss)");
+			} else if (!isParsableLocalDateTime(commandsForUpdate[3])) {
+				System.out.println("Invalid format for the discontinued date time. (format : yyyy-mm-ddThh:mm:ss)");
+			} else {
+				computerServices.updateComputer(commandsForUpdate[0],commandsForUpdate[1], commandsForUpdate[2], commandsForUpdate[3], commandsForUpdate[4]);
+			}
+		} else {
+			System.out.println("Wrong number of arguments for update.");
 		}
 	}
 }

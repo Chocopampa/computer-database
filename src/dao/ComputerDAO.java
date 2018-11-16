@@ -168,7 +168,11 @@ public class ComputerDAO {
 				statement.setString(3, null);
 			}
 			
-			statement.setInt(4, computer.getCompanyId());
+			if (computer.getCompanyId() != -1) {
+				statement.setInt(4, computer.getCompanyId());
+			} else {
+				statement.setString(4, null);
+			}
 			statement.setInt(5, idComputer);
 			statement.executeUpdate();
 			statement.close();
