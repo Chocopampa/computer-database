@@ -178,6 +178,10 @@ public class CommandLineInterface {
 		System.out.println("	exit : quit the program.");
 	}
 	
+	/**
+	 * Display the computers by page.
+	 * @param commandsForListing
+	 */
 	private static void displayComputers(String[] commandsForListing) {
 		if (commandsForListing.length > 0) {
 			if (!commandsForListing[0].isEmpty() && "paginated".equalsIgnoreCase(commandsForListing[0])) {
