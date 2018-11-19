@@ -1,14 +1,14 @@
-package services;
+package com.excilys.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import model.Company;
-import model.Computer;
-import persistence.CompanyDAO;
-import persistence.ComputerDAO;
+import com.excilys.model.Company;
+import com.excilys.model.Computer;
+import com.excilys.persistence.CompanyDAO;
+import com.excilys.persistence.ComputerDAO;
 
 public class ComputerServices {
 	

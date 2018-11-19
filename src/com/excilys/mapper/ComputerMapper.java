@@ -1,4 +1,4 @@
-package mappers;
+package com.excilys.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Computer;
+import com.excilys.model.Computer;
 
 public class ComputerMapper {
 	

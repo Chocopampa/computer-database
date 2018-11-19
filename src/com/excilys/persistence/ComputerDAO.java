@@ -1,4 +1,4 @@
-package persistence;
+package com.excilys.persistence;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import mappers.ComputerMapper;
-import model.Computer;
+import com.excilys.mapper.ComputerMapper;
+import com.excilys.model.Computer;
 
 public class ComputerDAO {
 	

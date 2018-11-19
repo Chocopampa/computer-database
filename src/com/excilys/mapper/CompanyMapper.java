@@ -1,11 +1,11 @@
-package mappers;
+package com.excilys.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Company;
+import com.excilys.model.Company;
 
 public class CompanyMapper {
 

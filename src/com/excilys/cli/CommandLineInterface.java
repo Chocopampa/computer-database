@@ -1,12 +1,12 @@
-package cli;
+package com.excilys.cli;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import services.CompanyServices;
-import services.ComputerServices;
+import com.excilys.service.CompanyServices;
+import com.excilys.service.ComputerServices;
 
 public class CommandLineInterface {
 	

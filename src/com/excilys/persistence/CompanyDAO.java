@@ -1,4 +1,4 @@
-package persistence;
+package com.excilys.persistence;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import mappers.CompanyMapper;
-import model.Company;
+import com.excilys.mapper.CompanyMapper;
+import com.excilys.model.Company;
 
 public class CompanyDAO {
 	
