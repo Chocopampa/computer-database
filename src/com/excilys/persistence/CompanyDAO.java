@@ -29,16 +29,21 @@ public class CompanyDAO {
 	public List<Company> getCompanies() {
 		DatabaseConnection dbConnection = new DatabaseConnection();
 		List<Company> companies = new ArrayList<>();
-		try {
-			PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPANIES);
-			ResultSet rs = statement.executeQuery();
-			companies = companyMapper.map(rs);
-			rs.close();
-			statement.close();
+		ResultSet rs = null; 
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPANIES)){
+			rs = statement.executeQuery();
+			companies = companyMapper.mapList(rs);
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPANIES + "')");
 		    e.printStackTrace();
 		} finally {
+
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				System.out.println("ResultSet did not close successfully");
+			}
+
 			dbConnection.disconnect();
 		}
 		return companies;

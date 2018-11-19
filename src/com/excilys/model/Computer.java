@@ -4,71 +4,102 @@ import java.time.LocalDateTime;
 
 public class Computer {
 	
-	private int id;
+	public static class Builder {
+		
+		private long id;
+		private String name;
+		private LocalDateTime introduced;
+		private LocalDateTime discontinued;
+		private Company company;
+		
+		public Builder(String name) {
+			this.name = name;
+		}
+		
+		public Builder withId(long id) {
+			this.id = id;
+			return this;
+		}
+		
+		public Builder withIntroduced(LocalDateTime introduced) {
+			this.introduced = introduced;
+			return this;
+		}
+		
+		public Builder withDiscontinued(LocalDateTime discontinued) {
+			this.discontinued = discontinued;
+			return this;
+		}
+		
+		public Builder withCompany(Company company) {
+			this.company = company;
+			return this;
+		}
+
+		public Computer build() {
+			Computer computer = new Computer();
+			computer.id = this.id;
+			computer.name = this.name;
+			computer.introduced = this.introduced;
+			computer.discontinued = this.discontinued;
+			computer.company = this.company;
+			
+			return computer;
+		}
+	}
+	
+	private long id;
+
 	private String name;
 	private LocalDateTime introduced;
 	private LocalDateTime discontinued;
-	private int companyId;
+	private Company company;
 	
-	public Computer() {}
-	
-	public Computer (String name, String introduced, String discontinued, String companyId) {
-		this.setName(name);
-		
-		if (!"null".equalsIgnoreCase(introduced)) {
-			LocalDateTime introducedDateTime = LocalDateTime.parse(introduced);
-			this.setIntroduced(introducedDateTime);
-		} else {
-			this.setIntroduced(null);
-		}
-		
-		if (!"null".equalsIgnoreCase(discontinued)) {
-			LocalDateTime discontinuedDateTime = LocalDateTime.parse(discontinued);
-			this.setDiscontinued(discontinuedDateTime);
-		} else {
-			this.setDiscontinued(null);
-		}
-		
-		if (!"null".equalsIgnoreCase(companyId)) {
-			this.setCompanyId(Integer.parseInt(companyId));
-		} else {
-			this.setCompanyId(-1);
-		}
-	}
-	
-	public int getId() {
+
+	public long getId() {
 		return id;
 	}
-	public void setId(int id) {
+
+	public void setId(long id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public LocalDateTime getIntroduced() {
 		return introduced;
 	}
+
 	public void setIntroduced(LocalDateTime introduced) {
 		this.introduced = introduced;
 	}
+
 	public LocalDateTime getDiscontinued() {
 		return discontinued;
 	}
+
 	public void setDiscontinued(LocalDateTime discontinued) {
 		this.discontinued = discontinued;
 	}
-	public int getCompanyId() {
-		return companyId;
+
+	public Company getCompany() {
+		return company;
 	}
-	public void setCompanyId(int companyId) {
-		this.companyId = companyId;
+
+	public void setCompany(Company company) {
+		this.company = company;
 	}
+	
+	private Computer() {}
 	
 	@Override
 	public String toString() {
-		return (this.getId() + "	" + this.getName() + "		" + this.getIntroduced() + "	" + this.getDiscontinued() + "	" + this.getCompanyId());
+		return (this.getId() + "	" + this.getName() + "		" + this.getIntroduced() + "	" + this.getDiscontinued() + "	" + this.getCompany());
 	}
 }

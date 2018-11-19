@@ -34,16 +34,19 @@ public class ComputerDAO {
 	public List<Computer> getComputers() {
 		DatabaseConnection dbConnection = new DatabaseConnection();
 		List<Computer> computers = new ArrayList<>();
-		try {
-			PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS);
-			ResultSet rs = statement.executeQuery();
-			computers = computerMapper.map(rs);
-			rs.close();
-			statement.close();
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS)){
+			rs = statement.executeQuery();
+			computers = computerMapper.mapList(rs);
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS + "')");
 		    e.printStackTrace();
 		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				System.out.println("ResultStatement did not cloe successfully.");
+			}
 			dbConnection.disconnect();
 		}
 		return computers;
@@ -54,25 +57,23 @@ public class ComputerDAO {
 	 * @param idComputer
 	 * @return
 	 */
-	public Computer getComputer(int idComputer) {
+	public Computer getComputer(long idComputer) {
 		DatabaseConnection dbConnection = new DatabaseConnection();
-		Computer computer = new Computer();
-		try {
-			PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_DETAILED_COMPUTER);
-			statement.setInt(1, idComputer);
-			ResultSet rs = statement.executeQuery();
-			if (rs.next()) {
-				rs.previous();
-				computer = computerMapper.map(rs).get(0);
-			} else {
-				computer = null;
-			}
-			rs.close();
-			statement.close();
+		Computer computer = null;
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_DETAILED_COMPUTER)) {
+			statement.setLong(1, idComputer);
+			rs = statement.executeQuery();
+			computer = computerMapper.mapUnique(rs);
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_DETAILED_COMPUTER + "')");
 		    e.printStackTrace();
 		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				System.out.println("ResultStatemnt did not close successfully.");
+			}
 			dbConnection.disconnect();
 		}
 		return computer;
@@ -85,11 +86,10 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	public void insertComputer(Computer computer) {
+	public void addComputer(Computer computer) {
 		DatabaseConnection dbConnection = new DatabaseConnection();
 
-		try {
-			PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER);
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER)){
 			
 			statement.setString(1, computer.getName());
 			
@@ -105,14 +105,13 @@ public class ComputerDAO {
 				statement.setString(3, null);
 			}
 			
-			if (computer.getCompanyId() != -1) {
-				statement.setInt(4, computer.getCompanyId());
+			if (computer.getCompany() != null && computer.getCompany().getId() != -1) {
+				statement.setLong(4, computer.getCompany().getId());
 			} else {
 				statement.setString(4, null);
 			}
 			
 			statement.executeUpdate();
-			statement.close();
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')");
 		    e.printStackTrace();
@@ -125,12 +124,12 @@ public class ComputerDAO {
 	 * Delete a computer in database.
 	 * @param idComputer
 	 */
-	public void deleteComputerFromId(int idComputer) {
+	public void deleteComputerFromId(long idComputer) {
 		DatabaseConnection dbConnection = new DatabaseConnection();
 
-		try {
-			PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER);
-			statement.setInt(1, idComputer);
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER)){
+			
+			statement.setLong(1, idComputer);
 			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {
@@ -148,11 +147,11 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	public void updateComputer(int idComputer, Computer computer) {
+	public void updateComputer(Computer computer) {
 		DatabaseConnection dbConnection = new DatabaseConnection();
 
-		try {
-			PreparedStatement statement = dbConnection.connect().prepareStatement(UPDATE_COMPUTER);
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(UPDATE_COMPUTER)) {
+			
 			statement.setString(1, computer.getName());
 			
 			if (computer.getIntroduced() != null) {
@@ -167,12 +166,12 @@ public class ComputerDAO {
 				statement.setString(3, null);
 			}
 			
-			if (computer.getCompanyId() != -1) {
-				statement.setInt(4, computer.getCompanyId());
+			if (computer.getCompany().getId() != -1) {
+				statement.setLong(4, computer.getCompany().getId());
 			} else {
 				statement.setString(4, null);
 			}
-			statement.setInt(5, idComputer);
+			statement.setLong(5, computer.getId());
 			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {

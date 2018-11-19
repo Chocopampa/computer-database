@@ -29,8 +29,8 @@ public class CommandLineInterface {
 						String[] commandsForListing = Arrays.copyOfRange(commands, 2, commands.length);
 						displayComputers(commandsForListing);
 					} else if (!commands[1].isEmpty() && "computer".equalsIgnoreCase(commands[1])) {
-						if (commands.length >= 3 && isParsableInt(commands[2])) {
-							computerServices.showComputerDetails(Integer.parseInt(commands[2]));
+						if (commands.length >= 3 && isParsableLong(commands[2])) {
+							computerServices.showComputerDetails(Long.parseLong(commands[2]));
 						} else {
 							System.out.println("Please enter the id of the computer to show.");
 						}
@@ -40,8 +40,8 @@ public class CommandLineInterface {
 					break;
 				case "delete" :
 					if (commands.length >= 3 && "computer".equalsIgnoreCase(commands[1])) {
-						if (isParsableInt(commands[2])) {
-							computerServices.deleteComputer(Integer.parseInt(commands[2]));
+						if (isParsableLong(commands[2])) {
+							computerServices.deleteComputer(Long.parseLong(commands[2]));
 						} else {
 							System.out.println("Veuillez entrer un nombre.");
 						}
@@ -59,7 +59,7 @@ public class CommandLineInterface {
 					break;
 				case "update" :
 					if (commands.length >= 4 && "computer".equalsIgnoreCase(commands[1])) {
-						if (!commands[2].isEmpty() && isParsableInt(commands[2])) {
+						if (!commands[2].isEmpty() && isParsableLong(commands[2])) {
 							String[] commandsForUpdate = Arrays.copyOfRange(commands, 2, commands.length);
 							computerUpdate(commandsForUpdate);
 						} else {
@@ -87,10 +87,10 @@ public class CommandLineInterface {
 	 * @param toParse
 	 * @return
 	 */
-	private static boolean isParsableInt(String toParse) {
+	private static boolean isParsableLong(String toParse) {
 		boolean parsable = true;
 		try {
-			Integer.parseInt(toParse);
+			Long.parseLong(toParse);
 		} catch (NumberFormatException e) {
 			if (!"null".equalsIgnoreCase(toParse)) {
 				parsable = false;
@@ -126,7 +126,7 @@ public class CommandLineInterface {
 			computerServices.createComputer(commandsForCreation[0], "null", "null", "null");
 			break;
 		case 4 :
-			if (!isParsableInt(commandsForCreation[3])) {
+			if (!isParsableLong(commandsForCreation[3])) {
 				System.out.println("The company id must be a number.");
 			} else if (!isParsableLocalDateTime(commandsForCreation[1])) {
 				System.out.println("Invalid format for the introduced date time. (format : yyyy-mm-ddThh:mm:ss)");
@@ -148,7 +148,7 @@ public class CommandLineInterface {
 	 */
 	private static void computerUpdate(String[] commandsForUpdate) {
 		if (commandsForUpdate.length == 5) {
-			if (!isParsableInt(commandsForUpdate[4])) {
+			if (!isParsableLong(commandsForUpdate[4])) {
 				System.out.println("The company id must be a number.");
 			} else if (!isParsableLocalDateTime(commandsForUpdate[2])) {
 				System.out.println("Invalid format for the introduced date time. (format : yyyy-mm-ddThh:mm:ss)");
@@ -190,7 +190,7 @@ public class CommandLineInterface {
 					System.out.println("Enter the index number of the computers you want to display (10 per page) (type stop to quit pagination):");
 					paginationCommand = sc.nextLine();
 					
-					if(!isParsableInt(paginationCommand)) {
+					if(!isParsableLong(paginationCommand)) {
 						System.out.println("Please, enter a number.");
 					} else {
 						int index = Integer.parseInt(paginationCommand);

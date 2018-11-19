@@ -1,5 +1,6 @@
 package com.excilys.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ComputerServices {
 		}
 	}
 	
-	public void showComputerDetails(int idComputer) {
+	public void showComputerDetails(long idComputer) {
 		Computer computer = computerDAO.getComputer(idComputer);
 		if (computer != null) {
 			System.out.println(computer);
@@ -39,15 +40,15 @@ public class ComputerServices {
 		}
 	}
 	
-	public void deleteComputer(int idComputer) {
+	public void deleteComputer(long idComputer) {
 		computerDAO.deleteComputerFromId(idComputer);
 		System.out.println("The computer with id " + idComputer + " has been deleted.");
 	}
 	
 	public void createComputer(String name, String introduced, String discontinued, String companyId) {
-		int idCompany = -1;
+		long idCompany = -1;
 		if (!"null".equalsIgnoreCase(companyId)) {
-			idCompany = Integer.parseInt(companyId);
+			idCompany = Long.parseLong(companyId);
 		}
 		if (name.isEmpty()) {
 			System.out.println("Empty computer name.");
@@ -62,9 +63,9 @@ public class ComputerServices {
 	
 	public void updateComputer(String computerId, String name, String introduced, String discontinued, String companyId) {
 		
-		int idCompany = -1;
+		long idCompany = -1;
 		if (!"null".equalsIgnoreCase(companyId)) {
-			idCompany = Integer.parseInt(companyId);
+			idCompany = Long.parseLong(companyId);
 		}
 		if (name.isEmpty()) {
 			System.out.println("Empty computer name.");
@@ -85,7 +86,7 @@ public class ComputerServices {
 		}
 	}
 
-	private boolean companyIdExists(int idCompany) {
+	private boolean companyIdExists(long idCompany) {
 		List<Company> companies = companyDAO.getCompanies();
 		boolean companyIdExists = false;
 		
@@ -98,10 +99,36 @@ public class ComputerServices {
 	}
 	
 	private void computerCreation(String name, String introduced, String discontinued, String companyId) {
-		Computer computer = new Computer(name, introduced, discontinued, companyId);
+		LocalDateTime introducedDateTime = null;
+		LocalDateTime discontinuedDateTime = null;
+		Company company = null;
+		
+		
+		
+		if (!"null".equalsIgnoreCase(introduced)) {
+			introducedDateTime = LocalDateTime.parse(introduced);
+		} 
+		
+		if (!"null".equalsIgnoreCase(discontinued)) {
+			discontinuedDateTime = LocalDateTime.parse(discontinued);
+		}
+		
+		if (!"null".equalsIgnoreCase(companyId)) {
+			company = new Company.Builder(Long.parseLong(companyId))
+					.build();
+		}
+
+		
+		Computer computer = new Computer.Builder(name)
+				.withIntroduced(introducedDateTime)
+				.withDiscontinued(discontinuedDateTime)
+				.withCompany(company)
+				.build();
+		
+		
 		if (computer.getIntroduced() != null && computer.getDiscontinued() != null) {
 			if (computer.getIntroduced().isBefore(computer.getDiscontinued())) {
-				computerDAO.insertComputer(computer);
+				computerDAO.addComputer(computer);
 			} else {
 				System.out.println("The introduced date must be before the discontinued date.");
 			}
@@ -109,16 +136,39 @@ public class ComputerServices {
 			System.out.println("You cannot input a discontinued datetime without an introduced datetime.");
 		}
 		else {
-			computerDAO.insertComputer(computer);
+			computerDAO.addComputer(computer);
 		}
 	}
 	
 	private void computerUpdate(String computerId, String name, String introduced, String discontinued, String companyId) {
-		int idComputer = Integer.parseInt(computerId);
-		Computer computer = new Computer(name, introduced, discontinued, companyId);
+		LocalDateTime introducedDateTime = null;
+		LocalDateTime discontinuedDateTime = null;
+		Company company = null;
+		
+		if (!"null".equalsIgnoreCase(introduced)) {
+			introducedDateTime = LocalDateTime.parse(introduced);
+		} 
+		
+		if (!"null".equalsIgnoreCase(discontinued)) {
+			discontinuedDateTime = LocalDateTime.parse(discontinued);
+		}
+		
+		if (!"null".equalsIgnoreCase(companyId)) {
+			company = new Company.Builder(Integer.parseInt(companyId))
+					.build();
+		}
+
+		
+		Computer computer = new Computer.Builder(name)
+				.withId(Long.parseLong(computerId))
+				.withIntroduced(introducedDateTime)
+				.withDiscontinued(discontinuedDateTime)
+				.withCompany(company)
+				.build();
+		
 		if (computer.getIntroduced() != null && computer.getDiscontinued() != null) {
 			if (computer.getIntroduced().isBefore(computer.getDiscontinued())) {
-				computerDAO.updateComputer(idComputer, computer);
+				computerDAO.updateComputer(computer);
 			} else {
 				System.out.println("The introduced date must be before the discontinued date.");
 			}
@@ -126,7 +176,7 @@ public class ComputerServices {
 			System.out.println("You cannot input a discontinued datetime without an introduced datetime.");
 		}
 		else {
-			computerDAO.updateComputer(idComputer, computer);
+			computerDAO.updateComputer(computer);
 		}
 	}
 	

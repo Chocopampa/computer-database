@@ -11,10 +11,6 @@ import java.util.Properties;
 import com.mysql.jdbc.Connection;
 
 public class DatabaseConnection {
-	// init database constants
-    private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/computer-database-db";
-
     // init connection object
     private Connection connection;
     // init properties object
@@ -42,8 +38,9 @@ public class DatabaseConnection {
     public Connection connect() {
         if (connection == null) {
             try {
-                Class.forName(DATABASE_DRIVER);
-                connection = (Connection) DriverManager.getConnection(DATABASE_URL, getProperties());
+            	getProperties();
+                Class.forName(properties.getProperty("dbDriver"));
+                connection = (Connection) DriverManager.getConnection(properties.getProperty("dbURL"), getProperties());
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
             }
