@@ -32,7 +32,7 @@ public class ComputerServices {
 	}
 	
 	public void showComputerDetails(long idComputer) {
-		Computer computer = computerDAO.getComputer(idComputer);
+		Computer computer = computerDAO.getComputerById(idComputer);
 		if (computer != null) {
 			System.out.println(computer);
 		} else {

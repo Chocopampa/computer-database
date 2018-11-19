@@ -16,6 +16,14 @@ public class DatabaseConnection {
     // init properties object
     private Properties properties;
 
+    private DatabaseConnection() {}
+    
+    private static final DatabaseConnection INSTANCE = new DatabaseConnection();
+    
+    public static DatabaseConnection getInstance() {
+    	return INSTANCE;
+    }
+    
     // create properties
     private Properties getProperties() {
     	try {
@@ -23,11 +31,9 @@ public class DatabaseConnection {
 			properties = new Properties();
 			properties.load(input);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			System.out.println("File not found");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			System.out.println("");
 			e.printStackTrace();
 		}
@@ -40,7 +46,7 @@ public class DatabaseConnection {
             try {
             	getProperties();
                 Class.forName(properties.getProperty("dbDriver"));
-                connection = (Connection) DriverManager.getConnection(properties.getProperty("dbURL"), getProperties());
+                connection = (Connection) DriverManager.getConnection(properties.getProperty("dbURL"), properties);
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
             }

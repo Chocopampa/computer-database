@@ -13,6 +13,7 @@ public class CompanyDAO {
 	
 	private static final String REQUEST_COMPANIES = "SELECT * FROM company;";
 	private CompanyMapper companyMapper = CompanyMapper.getInstance();
+	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
 	
 	private CompanyDAO() {};
 
@@ -27,7 +28,6 @@ public class CompanyDAO {
 	 * @return the ResultSet
 	 */
 	public List<Company> getCompanies() {
-		DatabaseConnection dbConnection = new DatabaseConnection();
 		List<Company> companies = new ArrayList<>();
 		ResultSet rs = null; 
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPANIES)){

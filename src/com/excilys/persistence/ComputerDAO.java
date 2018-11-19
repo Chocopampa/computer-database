@@ -12,6 +12,7 @@ import com.excilys.model.Computer;
 public class ComputerDAO {
 	
 	private ComputerMapper computerMapper = ComputerMapper.getInstance();
+	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
 
 	private static final String REQUEST_COMPUTERS = "SELECT * FROM computer;";
 	private static final String REQUEST_DETAILED_COMPUTER = "SELECT * FROM computer WHERE id = ?;";
@@ -32,7 +33,6 @@ public class ComputerDAO {
 	 * @return the ResultSet
 	 */
 	public List<Computer> getComputers() {
-		DatabaseConnection dbConnection = new DatabaseConnection();
 		List<Computer> computers = new ArrayList<>();
 		ResultSet rs = null;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS)){
@@ -57,8 +57,7 @@ public class ComputerDAO {
 	 * @param idComputer
 	 * @return
 	 */
-	public Computer getComputer(long idComputer) {
-		DatabaseConnection dbConnection = new DatabaseConnection();
+	public Computer getComputerById(long idComputer) {
 		Computer computer = null;
 		ResultSet rs = null;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_DETAILED_COMPUTER)) {
@@ -87,8 +86,6 @@ public class ComputerDAO {
 	 * @param company_id
 	 */
 	public void addComputer(Computer computer) {
-		DatabaseConnection dbConnection = new DatabaseConnection();
-
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER)){
 			
 			statement.setString(1, computer.getName());
@@ -105,7 +102,7 @@ public class ComputerDAO {
 				statement.setString(3, null);
 			}
 			
-			if (computer.getCompany() != null && computer.getCompany().getId() != -1) {
+			if (computer.getCompany() != null) {
 				statement.setLong(4, computer.getCompany().getId());
 			} else {
 				statement.setString(4, null);
@@ -125,8 +122,6 @@ public class ComputerDAO {
 	 * @param idComputer
 	 */
 	public void deleteComputerFromId(long idComputer) {
-		DatabaseConnection dbConnection = new DatabaseConnection();
-
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER)){
 			
 			statement.setLong(1, idComputer);
@@ -148,8 +143,6 @@ public class ComputerDAO {
 	 * @param company_id
 	 */
 	public void updateComputer(Computer computer) {
-		DatabaseConnection dbConnection = new DatabaseConnection();
-
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(UPDATE_COMPUTER)) {
 			
 			statement.setString(1, computer.getName());
