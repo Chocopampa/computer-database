@@ -1,50 +1,80 @@
 package com.excilys.ui.cli;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
+import com.excilys.model.Company;
+import com.excilys.model.Computer;
 import com.excilys.service.ComputerServices;
+import com.excilys.validator.CompanyValidator;
 import com.excilys.validator.ParseValidator;
 
 public class DisplayCreate {
-	
 
 	private static ParseValidator parseValidator = ParseValidator.getInstance();
 	private static ComputerServices computerServices = ComputerServices.getInstance();
+	private static CompanyValidator companyValidator =CompanyValidator.getInstance();
 
-	protected static void displayCreate(String[] commands) {
-		if (commands.length >= 3 && "computer".equalsIgnoreCase(commands[1])) {
-			String[] commandsForCreation = Arrays.copyOfRange(commands, 2, commands.length);
-			computerCreation(commandsForCreation);
-		} else {
-			System.out.println("Can not create anything but computer, and a computer needs at least a name.");
+	protected static void displayCreate(Scanner sc) {
+		System.out.println("Please enter the name of the computer you want to create :");
+		String name = sc.nextLine();
+		if (name.isEmpty()) {
+			System.out.println("A name is mandatory.");
 		}
+		
+		System.out.println("Please enter the introduced date of the computer you want to create (format : yyyy-mm-ddThh:mm:ss) (null if unwanted):");
+		String introducedString = sc.nextLine();
+		LocalDateTime introduced = checkDateTime(introducedString);
+		
+		LocalDateTime discontinued = null;
+		if (introduced != null) {
+			System.out.println("Please enter the discontinued date of the computer you want to create (format : yyyy-mm-ddThh:mm:ss) (null if unwanted):");
+			String discontinuedString = sc.nextLine();
+			discontinued = checkDateTime(discontinuedString);
+			if (discontinued != null && introduced.isAfter(discontinued)) {
+				System.out.println("An introduced date and time must be anterior to a discontinued date and time.");
+			}
+		}
+		
+		Company company = null; 
+		System.out.println("Please enter the company id of the computer you want to create (-1 if unwanted):");
+		try {
+			long idCompany = sc.nextLong();
+			if (companyValidator.companyExists(idCompany)) {
+				company = new Company.Builder(idCompany).build();
+			} else if (idCompany == -1) {
+				// Valid statement
+			}
+		} catch (InputMismatchException e) {
+			System.out.println("Please input a number.");
+		}
+		
+		Computer computer = new Computer.Builder(name)
+				.withIntroduced(introduced)
+				.withDiscontinued(discontinued)
+				.withCompany(company)
+				.build();
+		
+		computerServices.createComputer(computer);
 	}
 	
-
 	/**
-	 * Calls computer creation service based on the number of arguments given.
-	 * @param commandsForCreation
+	 * Return the parsed LocalDateTime
+	 * @param toCheck
+	 * @return
 	 */
-	private static void computerCreation(String[] commandsForCreation) {
-		switch (commandsForCreation.length) {
-		case 1 :
-			computerServices.createComputer(commandsForCreation[0], "null", "null", "null");
-			break;
-		case 4 :
-			if (!parseValidator.isParsableLong(commandsForCreation[3])) {
-				System.out.println("The company id must be a number.");
-			} else if (!parseValidator.isParsableLocalDateTime(commandsForCreation[1])) {
-				System.out.println("Invalid format for the introduced date time. (format : yyyy-mm-ddThh:mm:ss)");
-			} else if (!parseValidator.isParsableLocalDateTime(commandsForCreation[2])) {
-				System.out.println("Invalid format for the discontinued date time. (format : yyyy-mm-ddThh:mm:ss)");
-			} else {
-				computerServices.createComputer(commandsForCreation[0], commandsForCreation[1], commandsForCreation[2], commandsForCreation[3]);
-			}
-			break;
-		default :
-			System.out.println("Invalid command.");
-			break;
+	private static LocalDateTime checkDateTime(String toCheck) {
+		LocalDateTime dateTime = null;
+		if (parseValidator.isParsableLocalDateTime(toCheck)) {
+			dateTime = LocalDateTime.parse(toCheck);
+		} else if (toCheck.isEmpty()){
+			// Keep dateTime to null
+		} else {
+			System.out.println("Wrong date and time format (format : yyyy-mm-ddThh:mm:ss)");
 		}
+		return dateTime;
 	}
+	
 	
 }

@@ -15,7 +15,11 @@ public class CommandLineInterface {
 	}
 	
 	private static Scanner sc = new Scanner(System.in);
-
+	
+	public static void main(String[] args) {
+		run();
+	}
+	
 	public static void run() {
 		String str = "";
 		while (!"exit".equals(str)) {
@@ -28,9 +32,9 @@ public class CommandLineInterface {
 				case "delete" :
 					DisplayDelete.deleteComputer(sc);
 					break;
-//				case "create" :
-//					DisplayCreate.displayCreate();
-//					break;
+				case "create" :
+					DisplayCreate.displayCreate(sc);
+					break;
 //				case "update" :
 //					DisplayUpdate.displayUpdate();
 //					break;
