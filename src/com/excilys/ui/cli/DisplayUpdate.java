@@ -53,6 +53,8 @@ public class DisplayUpdate {
 			}
 			
 			if (introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
+				introduced = null;
+				discontinued = null;
 				System.out.println("An introduced date and time must be anterior to a discontinued date and time.");
 			}
 			
