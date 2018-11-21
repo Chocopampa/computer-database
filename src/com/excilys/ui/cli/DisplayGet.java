@@ -70,8 +70,8 @@ public class DisplayGet {
 		System.out.println("Input the id of the computer you want to see :");
 		try {
 			idParsed = sc.nextLong();
-			sc.next();
-			Computer computer = computerServices.getComputerDetails(idParsed);
+			sc.nextLine();
+			Computer computer = computerServices.getComputerById(idParsed);
 			if (computer != null) {
 				System.out.println(computer);
 			} else {

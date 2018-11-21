@@ -1,46 +1,88 @@
 package com.excilys.ui.cli;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
+import com.excilys.model.Company;
+import com.excilys.model.Computer;
 import com.excilys.service.ComputerServices;
+import com.excilys.validator.CompanyValidator;
+import com.excilys.validator.DateTimeValidator;
 import com.excilys.validator.ParseValidator;
 
 public class DisplayUpdate {
 	
+	private static DateTimeValidator dateTimeValidator = DateTimeValidator.getInstance();
 	private static ParseValidator parseValidator = ParseValidator.getInstance();
 	private static ComputerServices computerServices = ComputerServices.getInstance();
-	
-	protected static void displayUpdate(String[] commands) {
-		if (commands.length >= 4 && "computer".equalsIgnoreCase(commands[1])) {
-			if (!commands[2].isEmpty() && parseValidator.isParsableLong(commands[2])) {
-				String[] commandsForUpdate = Arrays.copyOfRange(commands, 2, commands.length);
-				computerUpdate(commandsForUpdate);
-			} else {
-				System.out.println("Please enter the id of the computer to update.");
-			}
+	private static CompanyValidator companyValidator =CompanyValidator.getInstance();
+
+	protected static void displayUpdate(Scanner sc) {
+
+		System.out.println("Please enter the id of the computer you want to update :");
+		long id = sc.nextLong();
+		sc.nextLine();
+		Computer computer = computerServices.getComputerById(id);
+		if (computer == null) {
+			System.out.println("The computer does not exist");
 		} else {
-			System.out.println("Can not update anything but computer.");
+		
+			System.out.println("Please enter the new name (nothing if no update wanted) :");
+			String name = sc.nextLine();
+			if (name.isEmpty()) {
+				name = computer.getName();
+			}
+			
+			System.out.println("Please enter the new introduced date (format : yyyy-mm-ddThh:mm:ss) (null if unwanted) (nothing if no update wanted):");
+			String introducedString = sc.nextLine();
+			LocalDateTime introduced = null;
+			if(introducedString.isEmpty() || !parseValidator.isParsableLocalDateTime(introducedString)) {
+				introduced = computer.getIntroduced();
+			} else {
+				introduced = dateTimeValidator.checkDateTime(introducedString);
+			}
+			
+			System.out.println("Please enter the discontinued date of the computer you want to update (format : yyyy-mm-ddThh:mm:ss) (null if unwanted) (nothing if no update wanted):");
+			String discontinuedString = sc.nextLine();
+			LocalDateTime discontinued = null;
+			if (discontinuedString.isEmpty() || !parseValidator.isParsableLocalDateTime(introducedString)) {
+				discontinued = computer.getDiscontinued();
+			} else {
+				discontinued = dateTimeValidator.checkDateTime(discontinuedString);
+			}
+			
+			if (introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
+				System.out.println("An introduced date and time must be anterior to a discontinued date and time.");
+			}
+			
+			Company company = null; 
+			System.out.println("Please enter the company id of the computer you want to update (-1 if unwanted)(-2 if no update wanted) :");
+			try {
+				long idCompany = sc.nextLong();
+				sc.nextLine();
+				if (idCompany == -2) {
+					idCompany = computer.getCompany().getId();
+					company = new Company.Builder(idCompany).build();
+				} else if (companyValidator.companyExists(idCompany)) {
+					company = new Company.Builder(idCompany).build();
+				} else if (idCompany == -1) {
+					// Valid statement
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("Please input a number.");
+			}
+			
+			computer = new Computer.Builder(name)
+					.withId(id)
+					.withIntroduced(introduced)
+					.withDiscontinued(discontinued)
+					.withCompany(company)
+					.build();
+			
+			computerServices.updateComputer(computer);
 		}
 	}
 	
-	/**
-	 * Calls computer update service based on the number of arguments given.
-	 * @param commandsForUpdate
-	 */
-	private static void computerUpdate(String[] commandsForUpdate) {
-		if (commandsForUpdate.length == 5) {
-			if (!parseValidator.isParsableLong(commandsForUpdate[4])) {
-				System.out.println("The company id must be a number.");
-			} else if (!parseValidator.isParsableLocalDateTime(commandsForUpdate[2])) {
-				System.out.println("Invalid format for the introduced date time. (format : yyyy-mm-ddThh:mm:ss)");
-			} else if (!parseValidator.isParsableLocalDateTime(commandsForUpdate[3])) {
-				System.out.println("Invalid format for the discontinued date time. (format : yyyy-mm-ddThh:mm:ss)");
-			} else {
-				computerServices.updateComputer(commandsForUpdate[0],commandsForUpdate[1], commandsForUpdate[2], commandsForUpdate[3], commandsForUpdate[4]);
-			}
-		} else {
-			System.out.println("Wrong number of arguments for update.");
-		}
-	}
 
 }

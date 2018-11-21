@@ -35,9 +35,9 @@ public class CommandLineInterface {
 				case "create" :
 					DisplayCreate.displayCreate(sc);
 					break;
-//				case "update" :
-//					DisplayUpdate.displayUpdate();
-//					break;
+				case "update" :
+					DisplayUpdate.displayUpdate(sc);
+					break;
 				case "exit" :
 					System.out.println("Goodbye!");
 					break;

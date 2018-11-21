@@ -166,7 +166,7 @@ public class ComputerDAO {
 				statement.setString(3, null);
 			}
 			
-			if (computer.getCompany().getId() != -1) {
+			if (computer.getCompany() != null && computer.getCompany().getId() != -1) {
 				statement.setLong(4, computer.getCompany().getId());
 			} else {
 				statement.setString(4, null);

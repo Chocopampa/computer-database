@@ -15,7 +15,7 @@ public class DisplayDelete {
 		System.out.println("Please enter the id of the computer you want to delete :");
 		try {
 			idParsed = sc.nextLong();
-			sc.next();
+			sc.nextLine();
 			int nbRowDeleted = computerServices.deleteComputer(idParsed);
 			if (nbRowDeleted > 0) {
 				System.out.println("The computer with id " + idParsed + " has been deleted. (Number of computers deleted : " + nbRowDeleted + ")");

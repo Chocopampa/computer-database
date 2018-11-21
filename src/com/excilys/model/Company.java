@@ -48,6 +48,10 @@ public static class Builder {
 
 	@Override
 	public String toString() {
-		return (this.getId() + "		" +this.getName());
+		if (this.getName() == null) {
+			return "" + this.getId();
+		} else {
+			return (this.getId() + "		" +this.getName());
+		}
 	}
 }
