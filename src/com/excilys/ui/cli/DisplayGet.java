@@ -1,63 +1,92 @@
 package com.excilys.ui.cli;
 
-import java.util.Arrays;
+import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
+import com.excilys.model.Company;
+import com.excilys.model.Computer;
 import com.excilys.service.CompanyServices;
 import com.excilys.service.ComputerServices;
-import com.excilys.validator.ParseValidator;
 
 public class DisplayGet {
-	
-	private static Scanner sc = new Scanner(System.in);
 
-	private static ParseValidator parseValidator = ParseValidator.getInstance();
 	private static CompanyServices companyServices = CompanyServices.getInstance();
 	private static ComputerServices computerServices = ComputerServices.getInstance();
 
-	
-	protected static void getResults(String[] commands) {
-		if (!commands[1].isEmpty() && "companies".equalsIgnoreCase(commands[1])) {
-			companyServices.showCompanies();
-		} else if (!commands[1].isEmpty() && "computers".equalsIgnoreCase(commands[1])) {
-			String[] commandsForListing = Arrays.copyOfRange(commands, 2, commands.length);
-			displayComputers(commandsForListing);
-		} else if (!commands[1].isEmpty() && "computer".equalsIgnoreCase(commands[1])) {
-			if (commands.length >= 3 && parseValidator.isParsableLong(commands[2])) {
-				computerServices.showComputerDetails(Long.parseLong(commands[2]));
-			} else {
-				System.out.println("Please enter the id of the computer to show.");
+	protected static void getResults(Scanner sc) {
+		String str = "";
+		while (!"return".equals(str)) {
+			System.out.println("Get : Input a command (type help for help) :");
+			str = sc.nextLine();
+			switch(str) {
+				case "computers" :
+					displayComputers();
+					break;
+				case "companies" :
+					displayCompanies();
+					break;
+				case "computer" :
+					displayComputerDetails(sc);
+					break;
+				case "help" :
+					displayHelp();
+					break;
+				case "return" :
+					break;
+				default:
+					System.out.println("Invalid command.");
 			}
-		} else {
-			System.out.println("Invalid command. Please chose between : computers, companies, computer [id]");
 		}
 	}
-
 
 	/**
-	 * Display the computers by page.
-	 * @param commandsForListing
+	 * Display all the computers in database.
 	 */
-	private static void displayComputers(String[] commandsForListing) {
-		if (commandsForListing.length > 0) {
-			if (!commandsForListing[0].isEmpty() && "paginated".equalsIgnoreCase(commandsForListing[0])) {
-				String paginationCommand = "";
-				while (!"stop".equals(paginationCommand)) {			
-					System.out.println("Enter the index number of the computers you want to display (10 per page) (type stop to quit pagination):");
-					paginationCommand = sc.nextLine();
-					
-					if(!parseValidator.isParsableLong(paginationCommand)) {
-						System.out.println("Please, enter a number.");
-					} else {
-						int index = Integer.parseInt(paginationCommand);
-						computerServices.showComputersPaginated(index);
-					}
-				}
-			} else {
-				System.out.println("Wrong command.");
-			}
-		} else {
-			computerServices.showComputers();
+	private static void displayComputers() {
+		List<Computer> computersList = computerServices.getComputers();
+		for (Computer computer : computersList) {
+			System.out.println(computer);
 		}
 	}
+	
+	/**
+	 * Display all the companies in database.
+	 */
+	private static void displayCompanies() {
+		List<Company> companiesList = companyServices.getCompanies();
+		for (Company company : companiesList) {
+			System.out.println(company);
+		}
+	}
+	
+	/**
+	 * Display the details of a computer.
+	 * @param sc
+	 */
+	private static void displayComputerDetails(Scanner sc) {
+		//TODO : régler bug double confirmation
+		long idParsed = -1;
+		System.out.println("Input the id of the computer you want to see :");
+		try {
+			idParsed = sc.nextLong();
+			Computer computer = computerServices.getComputerDetails(idParsed);
+			if (computer != null) {
+				System.out.println(computer);
+			} else {
+				System.out.println("This computer does not exist.");
+			}
+		} catch (InputMismatchException e) {
+			System.out.println("Please input a number.");
+		}
+	}
+	
+	private static void displayHelp() {
+		System.out.println("Command list :");
+		System.out.println("	computers : return the complete list of computers in database");
+		System.out.println("	companies : return the complete list of companies in database");
+		System.out.println("	computer : return the details of a specific computer by its id");
+		System.out.println("	return : return to the previous command list");
+	}
+	
 }

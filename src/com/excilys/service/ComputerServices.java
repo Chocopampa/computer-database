@@ -24,25 +24,16 @@ public class ComputerServices {
 		return INSTANCE;
 	}
 	
-	public void showComputers() {
-		List<Computer> computersList = computerDAO.getComputers();
-		for (Computer computer : computersList) {
-			System.out.println(computer);
-		}
+	public List<Computer> getComputers() {
+		return computerDAO.getComputers();
 	}
 	
-	public void showComputerDetails(long idComputer) {
-		Computer computer = computerDAO.getComputerById(idComputer);
-		if (computer != null) {
-			System.out.println(computer);
-		} else {
-			System.out.println("This computer does not exist.");
-		}
+	public Computer getComputerDetails(long idComputer) {
+		return computerDAO.getComputerById(idComputer);
 	}
 	
-	public void deleteComputer(long idComputer) {
-		computerDAO.deleteComputerFromId(idComputer);
-		System.out.println("The computer with id " + idComputer + " has been deleted.");
+	public int deleteComputer(long idComputer) {
+		return computerDAO.deleteComputerFromId(idComputer);
 	}
 	
 	public void createComputer(String name, String introduced, String discontinued, String companyId) {

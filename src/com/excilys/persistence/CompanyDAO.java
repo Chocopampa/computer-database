@@ -34,6 +34,7 @@ public class CompanyDAO {
 			rs = statement.executeQuery();
 			companies = companyMapper.mapList(rs);
 		} catch (SQLException e) {
+			//TODO : logger
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPANIES + "')");
 		    e.printStackTrace();
 		} finally {
@@ -41,6 +42,7 @@ public class CompanyDAO {
 			try {
 				rs.close();
 			} catch (SQLException e) {
+				//TODO : logger
 				System.out.println("ResultSet did not close successfully");
 			}
 

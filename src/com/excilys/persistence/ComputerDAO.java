@@ -39,12 +39,14 @@ public class ComputerDAO {
 			rs = statement.executeQuery();
 			computers = computerMapper.mapList(rs);
 		} catch (SQLException e) {
+			//TODO : logger
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS + "')");
 		    e.printStackTrace();
 		} finally {
 			try {
 				rs.close();
 			} catch (SQLException e) {
+				//TODO : logger
 				System.out.println("ResultStatement did not cloe successfully.");
 			}
 			dbConnection.disconnect();
@@ -65,12 +67,14 @@ public class ComputerDAO {
 			rs = statement.executeQuery();
 			computer = computerMapper.mapUnique(rs);
 		} catch (SQLException e) {
+			//TODO : logger
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_DETAILED_COMPUTER + "')");
 		    e.printStackTrace();
 		} finally {
 			try {
 				rs.close();
 			} catch (SQLException e) {
+				//TODO : loggger
 				System.out.println("ResultStatemnt did not close successfully.");
 			}
 			dbConnection.disconnect();
@@ -110,6 +114,7 @@ public class ComputerDAO {
 			
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			//TODO : loggggger
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')");
 		    e.printStackTrace();
 		} finally {
@@ -121,18 +126,20 @@ public class ComputerDAO {
 	 * Delete a computer in database.
 	 * @param idComputer
 	 */
-	public void deleteComputerFromId(long idComputer) {
+	public int deleteComputerFromId(long idComputer) {
+		int nbRowAffected = 0;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER)){
-			
 			statement.setLong(1, idComputer);
-			statement.executeUpdate();
+			nbRowAffected = statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {
+			//TODO : loggggggggggggger
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPUTER + "')");
 		    e.printStackTrace();
 		} finally {
 			dbConnection.disconnect();
 		}
+		return nbRowAffected;
 	}
 	
 	/**
@@ -168,6 +175,7 @@ public class ComputerDAO {
 			statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {
+			//TODO : logger
 			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + UPDATE_COMPUTER + "')");
 		    e.printStackTrace();
 		} finally {

@@ -4,6 +4,16 @@ import java.util.Scanner;
 
 public class CommandLineInterface {
 	
+	private CommandLineInterface() {
+		
+	}
+	
+	private static final CommandLineInterface INSTANCE = new CommandLineInterface();
+	
+	public static CommandLineInterface getInstance() {
+		return INSTANCE;
+	}
+	
 	private static Scanner sc = new Scanner(System.in);
 
 	public static void run() {
@@ -11,20 +21,19 @@ public class CommandLineInterface {
 		while (!"exit".equals(str)) {
 			System.out.println("Input a command (type help for help) :");
 			str = sc.nextLine();
-			String[] commands = str.split(" ");
-			switch(commands[0]) {
+			switch(str) {
 				case "get" :
-					DisplayGet.getResults(commands);
+					DisplayGet.getResults(sc);
 					break;
 				case "delete" :
-					DisplayDelete.displayDelete(commands);
+					DisplayDelete.deleteComputer(sc);
 					break;
-				case "create" :
-					DisplayCreate.displayCreate(commands);
-					break;
-				case "update" :
-					DisplayUpdate.displayUpdate(commands);
-					break;
+//				case "create" :
+//					DisplayCreate.displayCreate();
+//					break;
+//				case "update" :
+//					DisplayUpdate.displayUpdate();
+//					break;
 				case "exit" :
 					System.out.println("Goodbye!");
 					break;
@@ -45,6 +54,11 @@ public class CommandLineInterface {
 	 */
 	private static void displayHelp() {
 		System.out.println("Command list :");
+		System.out.println("	get : To see computers and companies in the database.");
+		System.out.println("	delete : To erase a computer in the database.");
+		System.out.println("	add : To add a computer in the database.");
+		System.out.println("	update : To update a computer in the database.");
+		System.out.println("	exit : quit the program.");
 		System.out.println("	get computers : return list of computers in database.");
 		System.out.println("	get computers paginated : enter list of computers paginated mode.");
 		System.out.println("	get companies : return list of companies in database.");
@@ -53,7 +67,6 @@ public class CommandLineInterface {
 		System.out.println("	create computer [name] [date] [date] [companyId] : create a new computer in database with all its attributes.");
 		System.out.println("	update computer [id] [name] [date] [date] [companyId] : update all the attributes of the chosen computer from its id.");
 		System.out.println("	delete computer [id] : delete the chosen computer from its id.");
-		System.out.println("	exit : quit the program.");
 	}
 	
 }

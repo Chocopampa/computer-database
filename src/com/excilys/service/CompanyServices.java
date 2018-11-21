@@ -17,11 +17,8 @@ public class CompanyServices {
 		return INSTANCE;
 	}
 	
-	public void showCompanies() {
-		List<Company> companiesList = companyDAO.getCompanies();
-		for (Company company : companiesList) {
-			System.out.println(company);
-		}
+	public List<Company> getCompanies() {
+		return companyDAO.getCompanies();
 	}
 
 }
