@@ -1,4 +1,4 @@
-package dao;
+package com.excilys.persistence;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,18 +8,27 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mysql.jdbc.Connection;
 
 public class DatabaseConnection {
-	// init database constants
-    private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/computer-database-db";
-
     // init connection object
     private Connection connection;
     // init properties object
     private Properties properties;
 
+	private static final Logger log4j = LogManager.getLogger(DatabaseConnection.class.getName());
+    
+    private DatabaseConnection() {}
+    
+    private static final DatabaseConnection INSTANCE = new DatabaseConnection();
+    
+    public static DatabaseConnection getInstance() {
+    	return INSTANCE;
+    }
+    
     // create properties
     private Properties getProperties() {
     	try {
@@ -27,13 +36,9 @@ public class DatabaseConnection {
 			properties = new Properties();
 			properties.load(input);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println("File not found");
-			e.printStackTrace();
+			log4j.error("File not found",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("");
-			e.printStackTrace();
+			log4j.error(e);
 		}
         return properties;
     }
@@ -42,10 +47,11 @@ public class DatabaseConnection {
     public Connection connect() {
         if (connection == null) {
             try {
-                Class.forName(DATABASE_DRIVER);
-                connection = (Connection) DriverManager.getConnection(DATABASE_URL, getProperties());
+            	getProperties();
+                Class.forName(properties.getProperty("dbDriver"));
+                connection = (Connection) DriverManager.getConnection(properties.getProperty("dbURL"), properties);
             } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
+                log4j.error(e);
             }
         }
         return connection;
@@ -58,7 +64,7 @@ public class DatabaseConnection {
                 connection.close();
                 connection = null;
             } catch (SQLException e) {
-                e.printStackTrace();
+                log4j.error(e);
             }
         }
     }
