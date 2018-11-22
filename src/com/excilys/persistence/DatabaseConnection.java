@@ -8,6 +8,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mysql.jdbc.Connection;
 
 public class DatabaseConnection {
@@ -16,6 +19,8 @@ public class DatabaseConnection {
     // init properties object
     private Properties properties;
 
+	private static final Logger log4j = LogManager.getLogger(DatabaseConnection.class.getName());
+    
     private DatabaseConnection() {}
     
     private static final DatabaseConnection INSTANCE = new DatabaseConnection();
@@ -31,11 +36,9 @@ public class DatabaseConnection {
 			properties = new Properties();
 			properties.load(input);
 		} catch (FileNotFoundException e) {
-			System.out.println("File not found");
-			e.printStackTrace();
+			log4j.error("File not found",e);
 		} catch (IOException e) {
-			System.out.println("");
-			e.printStackTrace();
+			log4j.error(e);
 		}
         return properties;
     }
@@ -48,7 +51,7 @@ public class DatabaseConnection {
                 Class.forName(properties.getProperty("dbDriver"));
                 connection = (Connection) DriverManager.getConnection(properties.getProperty("dbURL"), properties);
             } catch (ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
+                log4j.error(e);
             }
         }
         return connection;
@@ -61,7 +64,7 @@ public class DatabaseConnection {
                 connection.close();
                 connection = null;
             } catch (SQLException e) {
-                e.printStackTrace();
+                log4j.error(e);
             }
         }
     }

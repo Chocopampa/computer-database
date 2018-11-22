@@ -4,11 +4,11 @@ package com.excilys.ui.cli;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.excilys.service.ComputerServices;
+import com.excilys.service.ComputerService;
 
 public class DisplayDelete {
 
-	private static ComputerServices computerServices = ComputerServices.getInstance();
+	private static ComputerService computerServices = ComputerService.getInstance();
 	
 	protected static void deleteComputer(Scanner sc) {
 		long idParsed = -1;

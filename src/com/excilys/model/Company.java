@@ -2,7 +2,7 @@ package com.excilys.model;
 
 public class Company {
 	
-public static class Builder {
+	public static class Builder {
 		
 		private long id;
 		private String name;

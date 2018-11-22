@@ -6,8 +6,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.excilys.mapper.ComputerMapper;
 import com.excilys.model.Computer;
+import com.excilys.model.Page;
 
 public class ComputerDAO {
 	
@@ -15,11 +19,14 @@ public class ComputerDAO {
 	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
 
 	private static final String REQUEST_COMPUTERS = "SELECT * FROM computer;";
+	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT * FROM computer LIMIT ?, ?;";
 	private static final String REQUEST_DETAILED_COMPUTER = "SELECT * FROM computer WHERE id = ?;";
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name=?,introduced=?,discontinued=?,company_id=? WHERE id=?;";
 
+	private static final Logger log4j = LogManager.getLogger(ComputerDAO.class.getName());
+	
 	private ComputerDAO() {};
 
 	private static final ComputerDAO INSTANCE = new ComputerDAO();
@@ -36,18 +43,16 @@ public class ComputerDAO {
 		List<Computer> computers = new ArrayList<>();
 		ResultSet rs = null;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS)){
+			log4j.info("Acquiring all the computers in database...");
 			rs = statement.executeQuery();
 			computers = computerMapper.mapList(rs);
 		} catch (SQLException e) {
-			//TODO : logger
-			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS + "')");
-		    e.printStackTrace();
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS + "')", e);
 		} finally {
 			try {
 				rs.close();
 			} catch (SQLException e) {
-				//TODO : logger
-				System.out.println("ResultStatement did not cloe successfully.");
+				log4j.error("ResultStatement did not close successfully.", e);
 			}
 			dbConnection.disconnect();
 		}
@@ -67,19 +72,44 @@ public class ComputerDAO {
 			rs = statement.executeQuery();
 			computer = computerMapper.mapUnique(rs);
 		} catch (SQLException e) {
-			//TODO : logger
-			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_DETAILED_COMPUTER + "')");
-		    e.printStackTrace();
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_DETAILED_COMPUTER + "')", e);
 		} finally {
 			try {
 				rs.close();
 			} catch (SQLException e) {
-				//TODO : loggger
-				System.out.println("ResultStatemnt did not close successfully.");
+				log4j.error("ResultStatement did not close successfully.",e);
 			}
 			dbConnection.disconnect();
 		}
 		return computer;
+	}
+	
+	/**
+	 * Return database computers from first id to last id.
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputers(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_LIMIT)){
+			log4j.info("Acquiring computers in database...");
+			statement.setLong(1, page.getFirstId());
+			statement.setInt(2, page.getOffset());
+			rs = statement.executeQuery();
+			computers = computerMapper.mapList(rs);
+		} catch (SQLException e) {
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_LIMIT + "')", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				log4j.error("ResultStatement did not close successfully.", e);
+			}
+			dbConnection.disconnect();
+		}
+		return computers;
 	}
 	
 	/**
@@ -89,7 +119,8 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	public void addComputer(Computer computer) {
+	public int addComputer(Computer computer) {
+		int nbRowAffected = 0;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER)){
 			
 			statement.setString(1, computer.getName());
@@ -112,14 +143,13 @@ public class ComputerDAO {
 				statement.setString(4, null);
 			}
 			
-			statement.executeUpdate();
+			nbRowAffected = statement.executeUpdate();
 		} catch (SQLException e) {
-			//TODO : loggggger
-			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')");
-		    e.printStackTrace();
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')",e);
 		} finally {
 			dbConnection.disconnect();
 		}
+		return nbRowAffected;
 	}
 	
 	/**
@@ -133,9 +163,7 @@ public class ComputerDAO {
 			nbRowAffected = statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {
-			//TODO : loggggggggggggger
-			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPUTER + "')");
-		    e.printStackTrace();
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPUTER + "')",e);
 		} finally {
 			dbConnection.disconnect();
 		}
@@ -149,7 +177,8 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	public void updateComputer(Computer computer) {
+	public int updateComputer(Computer computer) {
+		int nbRowAffected = 0;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(UPDATE_COMPUTER)) {
 			
 			statement.setString(1, computer.getName());
@@ -172,15 +201,14 @@ public class ComputerDAO {
 				statement.setString(4, null);
 			}
 			statement.setLong(5, computer.getId());
-			statement.executeUpdate();
+			nbRowAffected = statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {
-			//TODO : logger
-			System.out.println("Erreur lors de l'execution de la requête. (Requête : '" + UPDATE_COMPUTER + "')");
-		    e.printStackTrace();
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + UPDATE_COMPUTER + "')",e);
 		} finally {
 			dbConnection.disconnect();
 		}
+		return nbRowAffected;
 	}
 
 }

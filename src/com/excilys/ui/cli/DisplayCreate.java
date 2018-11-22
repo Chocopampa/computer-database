@@ -6,15 +6,15 @@ import java.util.Scanner;
 
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.service.ComputerServices;
+import com.excilys.service.ComputerService;
 import com.excilys.validator.CompanyValidator;
-import com.excilys.validator.DateTimeValidator;
+import com.excilys.validator.ParseValidator;
 
 public class DisplayCreate {
 
-	private static DateTimeValidator dateTimeValidator = DateTimeValidator.getInstance();
-	private static ComputerServices computerServices = ComputerServices.getInstance();
+	private static ComputerService computerServices = ComputerService.getInstance();
 	private static CompanyValidator companyValidator =CompanyValidator.getInstance();
+	private static ParseValidator parseValidator =ParseValidator.getInstance();
 
 	//TODO : to improve
 	protected static void displayCreate(Scanner sc) {
@@ -26,13 +26,13 @@ public class DisplayCreate {
 		
 		System.out.println("Please enter the introduced date of the computer you want to create (format : yyyy-mm-ddThh:mm:ss) (null if unwanted):");
 		String introducedString = sc.nextLine();
-		LocalDateTime introduced = dateTimeValidator.checkDateTime(introducedString);
+		LocalDateTime introduced = checkDateTimeForCreation(introducedString);
 		
 		LocalDateTime discontinued = null;
 		if (introduced != null) {
 			System.out.println("Please enter the discontinued date of the computer you want to create (format : yyyy-mm-ddThh:mm:ss) (null if unwanted):");
 			String discontinuedString = sc.nextLine();
-			discontinued = dateTimeValidator.checkDateTime(discontinuedString);
+			discontinued = checkDateTimeForCreation(discontinuedString);
 			if (discontinued != null && introduced.isAfter(discontinued)) {
 				discontinued = null;
 				System.out.println("An introduced date and time must be anterior to a discontinued date and time.");
@@ -58,10 +58,26 @@ public class DisplayCreate {
 				.withCompany(company)
 				.build();
 		
-		computerServices.createComputer(computer);
+		int nbRowAffected = computerServices.createComputer(computer);
+		System.out.println("Number of row affected : " + nbRowAffected);
 	}
 	
 	
-	
+	/**
+	 * Return the parsed LocalDateTime
+	 * @param toCheck
+	 * @return
+	 */
+	private static LocalDateTime checkDateTimeForCreation(String toCheck) {
+		LocalDateTime dateTime = null;
+		if (parseValidator.isParsableLocalDateTime(toCheck)) {
+			dateTime = LocalDateTime.parse(toCheck);
+		} else if (toCheck.isEmpty()){
+			// Keep dateTime to null
+		} else {
+			System.out.println("Wrong date and time format (format : yyyy-mm-ddThh:mm:ss)");
+		}
+		return dateTime;
+	}
 	
 }

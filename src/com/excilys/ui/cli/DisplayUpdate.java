@@ -6,16 +6,14 @@ import java.util.Scanner;
 
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.service.ComputerServices;
+import com.excilys.service.ComputerService;
 import com.excilys.validator.CompanyValidator;
-import com.excilys.validator.DateTimeValidator;
 import com.excilys.validator.ParseValidator;
 
 public class DisplayUpdate {
 	
-	private static DateTimeValidator dateTimeValidator = DateTimeValidator.getInstance();
 	private static ParseValidator parseValidator = ParseValidator.getInstance();
-	private static ComputerServices computerServices = ComputerServices.getInstance();
+	private static ComputerService computerServices = ComputerService.getInstance();
 	private static CompanyValidator companyValidator =CompanyValidator.getInstance();
 
 	protected static void displayUpdate(Scanner sc) {
@@ -36,21 +34,11 @@ public class DisplayUpdate {
 			
 			System.out.println("Please enter the new introduced date (format : yyyy-mm-ddThh:mm:ss) (null if unwanted) (nothing if no update wanted):");
 			String introducedString = sc.nextLine();
-			LocalDateTime introduced = null;
-			if(introducedString.isEmpty() || !parseValidator.isParsableLocalDateTime(introducedString)) {
-				introduced = computer.getIntroduced();
-			} else {
-				introduced = dateTimeValidator.checkDateTime(introducedString);
-			}
+			LocalDateTime introduced = checkDateTimeForUpdate(introducedString,computer);
 			
 			System.out.println("Please enter the discontinued date of the computer you want to update (format : yyyy-mm-ddThh:mm:ss) (null if unwanted) (nothing if no update wanted):");
 			String discontinuedString = sc.nextLine();
-			LocalDateTime discontinued = null;
-			if (discontinuedString.isEmpty() || !parseValidator.isParsableLocalDateTime(introducedString)) {
-				discontinued = computer.getDiscontinued();
-			} else {
-				discontinued = dateTimeValidator.checkDateTime(discontinuedString);
-			}
+			LocalDateTime discontinued = checkDateTimeForUpdate(discontinuedString, computer);
 			
 			if (introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
 				introduced = null;
@@ -82,9 +70,19 @@ public class DisplayUpdate {
 					.withCompany(company)
 					.build();
 			
-			computerServices.updateComputer(computer);
+			int nbRowAffected = computerServices.updateComputer(computer);
+			System.out.print("Number of row affected : " + nbRowAffected);		
 		}
 	}
 	
+	private static LocalDateTime checkDateTimeForUpdate(String toCheck, Computer computer) {
+		LocalDateTime result = null;
+		if(toCheck.isEmpty() || !parseValidator.isParsableLocalDateTime(toCheck)) {
+			result = computer.getIntroduced();
+		} else {
+			result = LocalDateTime.parse(toCheck);
+		}
+		return result;
+	}
 
 }

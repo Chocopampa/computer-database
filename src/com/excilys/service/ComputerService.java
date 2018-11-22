@@ -1,31 +1,29 @@
 package com.excilys.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.persistence.CompanyDAO;
+import com.excilys.model.Page;
 import com.excilys.persistence.ComputerDAO;
 
-public class ComputerServices {
+public class ComputerService {
 	
 	private ComputerDAO computerDAO = ComputerDAO.getInstance();
-	private CompanyDAO companyDAO = CompanyDAO.getInstance();
 
-	private ComputerServices(){}
+	private ComputerService(){}
 	
-	private static final ComputerServices INSTANCE = new ComputerServices();
+	private static final ComputerService INSTANCE = new ComputerService();
 
-	public static ComputerServices getInstance() {
+	public static ComputerService getInstance() {
 		return INSTANCE;
 	}
 	
 	public List<Computer> getComputers() {
 		return computerDAO.getComputers();
+	}
+	
+	public List<Computer> getPagedComputers(Page page) {
+		return computerDAO.getListComputers(page);
 	}
 	
 	public Computer getComputerById(long idComputer) {
@@ -36,39 +34,13 @@ public class ComputerServices {
 		return computerDAO.deleteComputerFromId(idComputer);
 	}
 	
-	public void createComputer(Computer computer) {
-		computerDAO.addComputer(computer);
+	public int createComputer(Computer computer) {
+		return computerDAO.addComputer(computer);
 	}
 	
-	public void updateComputer(Computer computer) {
-		computerDAO.updateComputer(computer);
+	public int updateComputer(Computer computer) {
+		return computerDAO.updateComputer(computer);
 	}
 	
-	public void showComputersPaginated(int indexToShow) {
-		Map<Integer,List<Computer>> paginatedComputers = getComputersPaginated();
-		List<Computer> computerPage =  paginatedComputers.get(indexToShow);
-		for (Computer computer : computerPage) {
-			System.out.println(computer);
-		}
-	}
-	
-	private Map<Integer,List<Computer>> getComputersPaginated() {
-		Map<Integer , List<Computer>> computerMap = new HashMap<>();
-		List<Computer> computersList = computerDAO.getComputers();
-		int indexKey = 0;
-		while (computersList.size() > 0) {
-			List<Computer> computerPage = new ArrayList<>();
-			for (int i = 0; i<10; i++) {
-				if (!computersList.isEmpty()) {
-					computerPage.add(computersList.remove(0));
-				} else {
-					break;
-				}
-			}
-			computerMap.put(indexKey, computerPage);
-			indexKey++;
-		}
-		return computerMap;
-	}
 	
 }

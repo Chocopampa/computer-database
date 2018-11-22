@@ -6,13 +6,13 @@ import java.util.Scanner;
 
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.service.CompanyServices;
-import com.excilys.service.ComputerServices;
+import com.excilys.service.CompanyService;
+import com.excilys.service.ComputerService;
 
 public class DisplayGet {
 
-	private static CompanyServices companyServices = CompanyServices.getInstance();
-	private static ComputerServices computerServices = ComputerServices.getInstance();
+	private static CompanyService companyServices = CompanyService.getInstance();
+	private static ComputerService computerServices = ComputerService.getInstance();
 
 	protected static void getResults(Scanner sc) {
 		String str = "";
@@ -26,13 +26,16 @@ public class DisplayGet {
 				case "companies" :
 					displayCompanies();
 					break;
+				case "paged" :
+					DisplayGetPaged.getPagedItems(sc);
+					break;
 				case "computer" :
 					displayComputerDetails(sc);
 					break;
 				case "help" :
 					displayHelp();
 					break;
-				case "return" :
+				case "exit" :
 					break;
 				default:
 					System.out.println("Invalid command.");
@@ -65,7 +68,6 @@ public class DisplayGet {
 	 * @param sc
 	 */
 	private static void displayComputerDetails(Scanner sc) {
-		//TODO : régler bug double confirmation
 		long idParsed = -1;
 		System.out.println("Input the id of the computer you want to see :");
 		try {
@@ -82,12 +84,15 @@ public class DisplayGet {
 		}
 	}
 	
+	
+	
 	private static void displayHelp() {
 		System.out.println("Command list :");
 		System.out.println("	computers : return the complete list of computers in database");
 		System.out.println("	companies : return the complete list of companies in database");
+		System.out.println("	paged : return a list of items wanted");
 		System.out.println("	computer : return the details of a specific computer by its id");
-		System.out.println("	return : return to the previous command list");
+		System.out.println("	exit : return to the previous command list");
 	}
 	
 }
