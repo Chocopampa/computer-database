@@ -1,12 +1,11 @@
-package mappers;
+package com.excilys.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import model.Company;
+import com.excilys.model.Company;
 
 public class CompanyMapper {
 
@@ -18,13 +17,13 @@ public class CompanyMapper {
 		return INSTANCE;
 	}
 	
-	public List<Company> map(ResultSet listCompaniesDb) throws SQLException {
+	public List<Company> mapList(ResultSet listCompaniesDb) throws SQLException {
 		List<Company> companies = new ArrayList<>();
 		
 		while(listCompaniesDb.next()) {
-			Company company = new Company();
-			company.setId(listCompaniesDb.getInt(1));
-			company.setName(listCompaniesDb.getString(2));
+			Company company = new Company.Builder(listCompaniesDb.getLong("id"))
+					.withName(listCompaniesDb.getString("name"))
+					.build();
 			companies.add(company);
 		}
 		
