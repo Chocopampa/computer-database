@@ -1,17 +1,17 @@
 package com.excilys.model;
 
 public class Company {
-	
+
 	public static class Builder {
-		
+
 		private long id;
 		private String name;
-		
-		public Builder withName (String name) {
+
+		public Builder withName(String name) {
 			this.name = name;
 			return this;
 		}
-		
+
 		public Builder(long id) {
 			this.id = id;
 		}
@@ -24,7 +24,7 @@ public class Company {
 			return company;
 		}
 	}
-	
+
 	private long id;
 	private String name;
 
@@ -43,15 +43,16 @@ public class Company {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	private Company() {}
+
+	private Company() {
+	}
 
 	@Override
 	public String toString() {
 		if (this.getName() == null) {
 			return "" + this.getId();
 		} else {
-			return (this.getId() + "		" +this.getName());
+			return (this.getId() + "		" + this.getName());
 		}
 	}
 }

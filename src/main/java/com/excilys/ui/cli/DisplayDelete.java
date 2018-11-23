@@ -1,6 +1,5 @@
 package com.excilys.ui.cli;
 
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -9,7 +8,7 @@ import com.excilys.service.ComputerService;
 public class DisplayDelete {
 
 	private static ComputerService computerServices = ComputerService.getInstance();
-	
+
 	protected static void deleteComputer(Scanner sc) {
 		long idParsed = -1;
 		System.out.println("Please enter the id of the computer you want to delete :");
@@ -18,7 +17,8 @@ public class DisplayDelete {
 			sc.nextLine();
 			int nbRowDeleted = computerServices.deleteComputer(idParsed);
 			if (nbRowDeleted > 0) {
-				System.out.println("The computer with id " + idParsed + " has been deleted. (Number of computers deleted : " + nbRowDeleted + ")");
+				System.out.println("The computer with id " + idParsed
+						+ " has been deleted. (Number of computers deleted : " + nbRowDeleted + ")");
 			} else {
 				System.out.println("The computer with id " + idParsed + " has not been deleted.");
 			}

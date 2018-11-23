@@ -9,24 +9,24 @@ import com.excilys.model.Company;
 
 public class CompanyMapper {
 
-	private CompanyMapper(){}
-	
+	private CompanyMapper() {
+	}
+
 	private static final CompanyMapper INSTANCE = new CompanyMapper();
 
 	public static CompanyMapper getInstance() {
 		return INSTANCE;
 	}
-	
+
 	public List<Company> mapList(ResultSet listCompaniesDb) throws SQLException {
 		List<Company> companies = new ArrayList<>();
-		
-		while(listCompaniesDb.next()) {
+
+		while (listCompaniesDb.next()) {
 			Company company = new Company.Builder(listCompaniesDb.getLong("id"))
-					.withName(listCompaniesDb.getString("name"))
-					.build();
+					.withName(listCompaniesDb.getString("name")).build();
 			companies.add(company);
 		}
-		
+
 		return companies;
 	}
 }

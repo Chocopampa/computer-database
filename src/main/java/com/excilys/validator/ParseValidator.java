@@ -8,18 +8,19 @@ import org.apache.logging.log4j.Logger;
 
 public class ParseValidator {
 
-	private ParseValidator() {}
-	
+	private ParseValidator() {
+	}
+
 	private static final ParseValidator INSTANCE = new ParseValidator();
 	private static final Logger log4j = LogManager.getLogger(ParseValidator.class.getName());
 
 	public static ParseValidator getInstance() {
 		return INSTANCE;
 	}
-	
-	
+
 	/**
 	 * Check if the String is a long.
+	 * 
 	 * @param toParse
 	 * @return
 	 */
@@ -35,9 +36,10 @@ public class ParseValidator {
 		}
 		return parsable;
 	}
-	
+
 	/**
 	 * Check if the String is a LocalDateTime
+	 * 
 	 * @param toParse
 	 * @return
 	 */
@@ -54,5 +56,4 @@ public class ParseValidator {
 		return parsable;
 	}
 
-	
 }

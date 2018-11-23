@@ -9,19 +9,19 @@ import com.excilys.model.Company;
 import com.excilys.service.CompanyService;
 
 public class CompanyValidator {
-	
+
 	private static final Logger log4j = LogManager.getLogger(CompanyValidator.class.getName());
 	private static CompanyService companyServices = CompanyService.getInstance();
 
-	private CompanyValidator() {}
-	
+	private CompanyValidator() {
+	}
+
 	private static final CompanyValidator INSTANCE = new CompanyValidator();
-	
+
 	public static CompanyValidator getInstance() {
 		return INSTANCE;
 	}
-	
-	
+
 	public boolean companyExists(long idCompany) {
 		List<Company> companies = companyServices.getCompanies();
 		boolean found = false;

@@ -14,7 +14,7 @@ import com.excilys.model.Computer;
 import com.excilys.model.Page;
 
 public class ComputerDAO {
-	
+
 	private ComputerMapper computerMapper = ComputerMapper.getInstance();
 	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
 
@@ -26,23 +26,25 @@ public class ComputerDAO {
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name=?,introduced=?,discontinued=?,company_id=? WHERE id=?;";
 
 	private static final Logger log4j = LogManager.getLogger(ComputerDAO.class.getName());
-	
-	private ComputerDAO() {};
+
+	private ComputerDAO() {
+	};
 
 	private static final ComputerDAO INSTANCE = new ComputerDAO();
 
 	public static ComputerDAO getInstance() {
 		return INSTANCE;
 	}
-	
+
 	/**
 	 * Get all the database computers.
+	 * 
 	 * @return the ResultSet
 	 */
 	public List<Computer> getComputers() {
 		List<Computer> computers = new ArrayList<>();
 		ResultSet rs = null;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS)){
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS)) {
 			log4j.info("Acquiring all the computers in database...");
 			rs = statement.executeQuery();
 			computers = computerMapper.mapList(rs);
@@ -58,9 +60,10 @@ public class ComputerDAO {
 		}
 		return computers;
 	}
-	
+
 	/**
 	 * Get the database computer with specified id.
+	 * 
 	 * @param idComputer
 	 * @return
 	 */
@@ -77,15 +80,16 @@ public class ComputerDAO {
 			try {
 				rs.close();
 			} catch (SQLException e) {
-				log4j.error("ResultStatement did not close successfully.",e);
+				log4j.error("ResultStatement did not close successfully.", e);
 			}
 			dbConnection.disconnect();
 		}
 		return computer;
 	}
-	
+
 	/**
 	 * Return database computers from first id to last id.
+	 * 
 	 * @param idFirstComputer
 	 * @param idLastComputer
 	 * @return
@@ -93,7 +97,7 @@ public class ComputerDAO {
 	public List<Computer> getListComputers(Page page) {
 		List<Computer> computers = new ArrayList<>();
 		ResultSet rs = null;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_LIMIT)){
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_LIMIT)) {
 			log4j.info("Acquiring computers in database...");
 			statement.setLong(1, page.getFirstId());
 			statement.setInt(2, page.getOffset());
@@ -111,9 +115,10 @@ public class ComputerDAO {
 		}
 		return computers;
 	}
-	
+
 	/**
 	 * Create a computer in database.
+	 * 
 	 * @param name
 	 * @param introduced
 	 * @param discontinued
@@ -121,57 +126,59 @@ public class ComputerDAO {
 	 */
 	public int addComputer(Computer computer) {
 		int nbRowAffected = 0;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER)){
-			
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER)) {
+
 			statement.setString(1, computer.getName());
-			
+
 			if (computer.getIntroduced() != null) {
 				statement.setString(2, computer.getIntroduced().toString());
 			} else {
 				statement.setString(2, null);
 			}
-			
+
 			if (computer.getDiscontinued() != null) {
 				statement.setString(3, computer.getDiscontinued().toString());
 			} else {
 				statement.setString(3, null);
 			}
-			
+
 			if (computer.getCompany() != null) {
 				statement.setLong(4, computer.getCompany().getId());
 			} else {
 				statement.setString(4, null);
 			}
-			
+
 			nbRowAffected = statement.executeUpdate();
 		} catch (SQLException e) {
-			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')",e);
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')", e);
 		} finally {
 			dbConnection.disconnect();
 		}
 		return nbRowAffected;
 	}
-	
+
 	/**
 	 * Delete a computer in database.
+	 * 
 	 * @param idComputer
 	 */
 	public int deleteComputerFromId(long idComputer) {
 		int nbRowAffected = 0;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER)){
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER)) {
 			statement.setLong(1, idComputer);
 			nbRowAffected = statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {
-			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPUTER + "')",e);
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPUTER + "')", e);
 		} finally {
 			dbConnection.disconnect();
 		}
 		return nbRowAffected;
 	}
-	
+
 	/**
 	 * Update a computer in database.
+	 * 
 	 * @param name
 	 * @param introduced
 	 * @param discontinued
@@ -180,21 +187,21 @@ public class ComputerDAO {
 	public int updateComputer(Computer computer) {
 		int nbRowAffected = 0;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(UPDATE_COMPUTER)) {
-			
+
 			statement.setString(1, computer.getName());
-			
+
 			if (computer.getIntroduced() != null) {
 				statement.setString(2, computer.getIntroduced().toString());
 			} else {
 				statement.setString(2, null);
 			}
-			
+
 			if (computer.getDiscontinued() != null) {
 				statement.setString(3, computer.getDiscontinued().toString());
 			} else {
 				statement.setString(3, null);
 			}
-			
+
 			if (computer.getCompany() != null && computer.getCompany().getId() != -1) {
 				statement.setLong(4, computer.getCompany().getId());
 			} else {
@@ -204,7 +211,7 @@ public class ComputerDAO {
 			nbRowAffected = statement.executeUpdate();
 			statement.close();
 		} catch (SQLException e) {
-			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + UPDATE_COMPUTER + "')",e);
+			log4j.error("Erreur lors de l'execution de la requête. (Requête : '" + UPDATE_COMPUTER + "')", e);
 		} finally {
 			dbConnection.disconnect();
 		}
