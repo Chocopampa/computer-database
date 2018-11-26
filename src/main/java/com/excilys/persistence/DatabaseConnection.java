@@ -51,7 +51,7 @@ public class DatabaseConnection {
 				Class.forName(properties.getProperty("dbDriver"));
 				connection = (Connection) DriverManager.getConnection(properties.getProperty("dbURL"), properties);
 			} catch (ClassNotFoundException | SQLException e) {
-				log4j.error(e);
+				log4j.error("Connection failed", e);
 			}
 		}
 		return connection;
@@ -64,7 +64,7 @@ public class DatabaseConnection {
 				connection.close();
 				connection = null;
 			} catch (SQLException e) {
-				log4j.error(e);
+				log4j.error("Disconnection failed", e);
 			}
 		}
 	}
