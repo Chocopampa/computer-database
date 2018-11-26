@@ -39,6 +39,7 @@ public class CompanyDAO {
 		List<Company> companies = new ArrayList<>();
 		ResultSet rs = null;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPANIES)) {
+			log4j.info("Acquiring companies in database...");
 			rs = statement.executeQuery();
 			companies = companyMapper.mapList(rs);
 		} catch (SQLException e) {
