@@ -4,6 +4,9 @@
 <title>Index</title>
 </head>
 <body>
-Index
+Index :
+
+<a href="/computer-database/getComputers"> Computers list </a>
+
 </body>
 </html>

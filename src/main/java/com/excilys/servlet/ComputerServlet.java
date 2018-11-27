@@ -1,8 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -21,16 +19,7 @@ public class ComputerServlet extends HttpServlet{
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		List<Computer> computers = computerService.getComputers();
-		
-//		request.setAttribute("computers", computers);
-//		Computer computer1 = new Computer.Builder("Billy1").build();
-//		Computer computer2 = new Computer.Builder("Billy2").build();
-//		Computer computer3 = new Computer.Builder("Billy3").build();
-//		List<Computer> computers = new ArrayList<>();
-//		computers.add(computer1);
-//		computers.add(computer2);
-//		computers.add(computer3);
 		request.setAttribute("computers", computers);
-		this.getServletContext().getRequestDispatcher("/getComputers.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/views/getComputers.jsp").forward(request, response);
     }
 }
