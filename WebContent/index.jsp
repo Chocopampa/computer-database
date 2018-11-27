@@ -5,9 +5,5 @@
 </head>
 <body>
 Index
-
-<form action="/computer-database/getComputers" method="GET">
-	<input type="submit" value="getComputers"/>
-</form>
 </body>
 </html>

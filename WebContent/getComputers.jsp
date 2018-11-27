@@ -5,18 +5,15 @@
 <title>Computers</title>
 </head>
 <body>
+<%-- 
+<p>${computer.name}</p> --%>
 
-<p><% out.println(request.getAttribute("computer")); %><p>
-
-
-<c:out value="${computer.getName()}"/>
-
-<%-- <table>
+ <table>
   <c:forEach items="${computers}" var="item">
     <tr>
       <td><c:out value="${item.name}" /></td>
     </tr>
   </c:forEach>
-</table> --%>
+</table>
 </body>
 </html>
