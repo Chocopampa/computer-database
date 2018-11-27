@@ -127,7 +127,7 @@ public class ComputerDAO {
 	public int addComputer(Computer computer) {
 		int nbRowAffected = 0;
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER)) {
-
+			log4j.info("Adding a computer to database...");
 			statement.setString(1, computer.getName());
 
 			if (computer.getIntroduced() != null) {
