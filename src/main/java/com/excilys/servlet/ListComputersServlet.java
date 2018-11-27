@@ -19,10 +19,17 @@ public class ListComputersServlet extends HttpServlet {
 	private ComputerService computerService = ComputerService.getInstance();
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String nbComputer = request.getParameter("nbItem");
+		String offsetString = request.getParameter("nbItem");
+		String numPage = request.getParameter("numPage");
+		long firstId = 0;
+		
 		List<Computer> computers = new ArrayList<>();
-		if (nbComputer != null) {
-			Page page = new Page(0, Integer.parseInt(nbComputer));
+		if (offsetString != null) {
+			int offset = Integer.parseInt(offsetString);
+			if (numPage != null) {
+				firstId = (offset-1) * Long.parseLong(numPage);
+			}
+			Page page = new Page(firstId, offset);
 			computers = computerService.getPagedComputers(page);
 		} else {
 			computers = computerService.getComputers();

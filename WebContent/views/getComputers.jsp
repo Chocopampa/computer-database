@@ -92,22 +92,22 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
+				<li><a href='?nbItem=${param["nbItem"]}&numPage=${param["numPage"]-1}' aria-label="Previous"> <span
 						aria-hidden="true">&laquo;</span>
 				</a></li>
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li><a href="#">5</a></li>
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				<li><a href='?nbItem=${param["nbItem"]}&numPage=1'>1</a></li>
+				<li><a href='?nbItem=${param["nbItem"]}&numPage=2'>2</a></li>
+				<li><a href='?nbItem=${param["nbItem"]}&numPage=3'>3</a></li>
+				<li><a href='?nbItem=${param["nbItem"]}&numPage=4'>4</a></li>
+				<li><a href='?nbItem=${param["nbItem"]}&numPage=5'>5</a></li>
+				<li><a href='?nbItem=${param["nbItem"]}&numPage=${param["numPage"]+1}' aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
 				<div class="btn-group btn-group-sm pull-right" role="group">
-					<button type="button" onclick="location.href='/computer-database/getComputers?nbItem=10';" class="btn btn-default">10</button>
-					<button type="button" onclick="location.href='/computer-database/getComputers?nbItem=50';" class="btn btn-default">50</button>
-					<button type="button" onclick="location.href='/computer-database/getComputers?nbItem=100';" class="btn btn-default">100</button>
+					<button type="button" onclick="location.href='?nbItem=10';" class="btn btn-default">10</button>
+					<button type="button" onclick="location.href='?nbItem=50';" class="btn btn-default">50</button>
+					<button type="button" onclick="location.href='?nbItem=100';" class="btn btn-default">100</button>
 				</div>
 		</div>
 	</footer>
