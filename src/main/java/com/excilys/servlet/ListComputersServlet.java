@@ -12,7 +12,7 @@ import com.excilys.model.Computer;
 import com.excilys.service.ComputerService;
 
 
-public class ComputerServlet extends HttpServlet{
+public class ListComputersServlet extends HttpServlet{
 
 	private static final long serialVersionUID = -3938443724704425725L;
 	private ComputerService computerService = ComputerService.getInstance();

@@ -4,9 +4,10 @@
 <title>Index</title>
 </head>
 <body>
-Index :
+Index :<br>
 
-<a href="/computer-database/getComputers"> Computers list </a>
+<a href="/computer-database/getComputers"> Computers list </a><br>
+<a href="/computer-database/getCompanies"> Companies list </a><br>
 
 </body>
 </html>

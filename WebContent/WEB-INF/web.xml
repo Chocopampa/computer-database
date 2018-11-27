@@ -8,12 +8,21 @@
 	</welcome-file-list>
 	
 	<servlet>
-		<servlet-name>ComputerServlet</servlet-name>
-		<servlet-class>com.excilys.servlet.ComputerServlet</servlet-class>
+		<servlet-name>ListComputersServlet</servlet-name>
+		<servlet-class>com.excilys.servlet.ListComputersServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>ComputerServlet</servlet-name>
+		<servlet-name>ListComputersServlet</servlet-name>
 		<url-pattern>/getComputers</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ListCompaniesServlet</servlet-name>
+		<servlet-class>com.excilys.servlet.ListCompaniesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ListCompaniesServlet</servlet-name>
+		<url-pattern>/getCompanies</url-pattern>
 	</servlet-mapping>
 	
 </web-app>
