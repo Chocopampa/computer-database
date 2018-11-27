@@ -19,6 +19,7 @@ public class ListComputersServlet extends HttpServlet{
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		List<Computer> computers = computerService.getComputers();
+		request.setAttribute("result_size", computers.size());
 		request.setAttribute("computers", computers);
 		this.getServletContext().getRequestDispatcher("/views/getComputers.jsp").forward(request, response);
     }
