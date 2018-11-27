@@ -35,8 +35,9 @@
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="/computer-database/addComputer">Add
-						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
+					<a class="btn btn-success" id="addComputer"
+						href="/computer-database/addComputer">Add Computer</a> <a
+						class="btn btn-default" id="editComputer" href="#"
 						onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
 			</div>
@@ -103,11 +104,11 @@
 				</a></li>
 			</ul>
 
-			<div class="btn-group btn-group-sm pull-right" role="group">
-				<button type="button" class="btn btn-default">10</button>
-				<button type="button" class="btn btn-default">50</button>
-				<button type="button" class="btn btn-default">100</button>
-			</div>
+				<div class="btn-group btn-group-sm pull-right" role="group">
+					<button type="button" onclick="location.href='/computer-database/getComputers?nbItem=10';" class="btn btn-default">10</button>
+					<button type="button" onclick="location.href='/computer-database/getComputers?nbItem=50';" class="btn btn-default">50</button>
+					<button type="button" onclick="location.href='/computer-database/getComputers?nbItem=100';" class="btn btn-default">100</button>
+				</div>
 		</div>
 	</footer>
 	<script src="<c:url value="js/jquery.min.js" />"></script>

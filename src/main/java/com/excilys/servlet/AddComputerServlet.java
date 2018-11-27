@@ -35,7 +35,6 @@ public class AddComputerServlet extends HttpServlet {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println(computer);
 		computerService.createComputer(computer);
 		this.getServletContext().getRequestDispatcher("/views/addComputer.jsp").forward(request, response);
 	}
