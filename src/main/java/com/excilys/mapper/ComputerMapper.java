@@ -77,4 +77,33 @@ public class ComputerMapper {
 		}
 		return computer;
 	}
+
+	public Computer mapUnique(String name, String introduced, String discontinued, String companyNumber)
+			throws SQLException {
+		Computer computer = null;
+		LocalDateTime timeIntroduced = null;
+		LocalDateTime timeDiscontinued = null;
+
+		if (introduced != null) {
+			introduced = introduced + "T00:00:00";
+			timeIntroduced = LocalDateTime.parse(introduced, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+		}
+
+		if (discontinued != null) {
+			discontinued = discontinued + "T00:00:00";
+			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+		}
+		
+
+		Company company = new Company.Builder(0).build();
+
+		if (companyNumber != null) {
+			company.setId(Long.parseLong(companyNumber));
+		} 
+
+		computer = new Computer.Builder(name)
+				.withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued).withCompany(company).build();
+		return computer;
+	}
+
 }

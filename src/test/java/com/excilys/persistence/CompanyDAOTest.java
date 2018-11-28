@@ -1,7 +1,5 @@
 package com.excilys.persistence;
 
-import static org.junit.Assert.*;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,6 +50,7 @@ public class CompanyDAOTest {
 		for (int i = 0; i < 10; i++) {
 			companies.add(new Company.Builder(i).withName("company"+i).build());
 		}
+		
 		Mockito.when(companyMapper.mapList(rs)).thenReturn(companies);
 		
 		List<Company> result = companyDAO.getCompanies();
@@ -60,19 +59,20 @@ public class CompanyDAOTest {
 	}
 
 	@Test
-	public void testGetListCompanies() {
+	public void testGetListCompanies() throws SQLException {
 		List<Company> companies = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			companies.add(new Company.Builder(i).withName("company"+i).build());
 		}
-		Page page = new Page(0,2);
-		List<Company> result = companyDAO.getListCompanies(page);
-		if(companies.get(0) == companies.get(4))
-			System.out.println("");
-		else
-			System.out.println(0);
+		
+		Page page = new Page(5,2);
+		List<Company> subListCompanies = companies.subList((int) page.getFirstId(), (int) (page.getFirstId() + page.getOffset()));
+		
+		Mockito.when(companyMapper.mapList(rs)).thenReturn(subListCompanies);
 
-		//TODO
+		List<Company> result = companyDAO.getListCompanies(page);
+		
+		Assert.assertEquals("The returned list is different",subListCompanies, result);
 	}
 
 }
