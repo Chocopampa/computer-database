@@ -75,6 +75,7 @@ public class ComputerDAO {
 		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_DETAILED_COMPUTER)) {
 			statement.setLong(1, idComputer);
 			rs = statement.executeQuery();
+			rs.next();
 			computer = computerMapper.mapUnique(rs);
 		} catch (SQLException e) {
 			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_DETAILED_COMPUTER + "')", e);

@@ -8,14 +8,14 @@ import java.util.Scanner;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.service.ComputerService;
-import com.excilys.validator.CompanyValidator;
+import com.excilys.validator.ComputerValidator;
 import com.excilys.validator.ParseValidator;
 
 public class DisplayUpdate {
 
 	private static ParseValidator parseValidator = ParseValidator.getInstance();
 	private static ComputerService computerServices = ComputerService.getInstance();
-	private static CompanyValidator companyValidator = CompanyValidator.getInstance();
+	private static ComputerValidator computerValidator = ComputerValidator.getInstance();
 
 	protected static void displayUpdate(Scanner sc) {
 
@@ -58,10 +58,10 @@ public class DisplayUpdate {
 				if (idCompany == -2) {
 					idCompany = computer.getCompany().getId();
 					company = new Company.Builder(idCompany).build();
-				} else if (companyValidator.companyExists(idCompany)) {
-					company = new Company.Builder(idCompany).build();
 				} else if (idCompany == -1) {
 					// Valid statement
+				} else {
+					company = new Company.Builder(idCompany).build();
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("Please input a number.");
@@ -69,7 +69,7 @@ public class DisplayUpdate {
 
 			computer = new Computer.Builder(name).withId(id).withIntroduced(introduced).withDiscontinued(discontinued)
 					.withCompany(company).build();
-
+			computerValidator.correctComputer(computer);
 			int nbRowAffected = computerServices.updateComputer(computer);
 			System.out.print("Number of row affected : " + nbRowAffected);
 		}

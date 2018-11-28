@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ import com.excilys.model.Page;
 public class CompanyDAO {
 
 	private static final String REQUEST_COMPANIES = "SELECT id, name FROM company;";
+	private static final String REQUEST_COMPANY_BY_ID = "SELECT id, name FROM company WHERE id=?;";
 	private static final String REQUEST_COMPANIES_LIMIT = "SELECT id, name FROM company LIMIT ?, ?;";
 	private CompanyMapper companyMapper = CompanyMapper.getInstance();
 	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
@@ -53,6 +55,27 @@ public class CompanyDAO {
 			dbConnection.disconnect();
 		}
 		return companies;
+	}
+	
+	public Optional<Company> getCompanyById(long idCompany) {
+		Company company = null;
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPANY_BY_ID)) {
+			statement.setLong(1, idCompany);
+			rs = statement.executeQuery();
+			rs.next();
+			company = companyMapper.mapUnique(rs);
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPANY_BY_ID + "')", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				LOG4J.error("ResultStatement did not close successfully.", e);
+			}
+			dbConnection.disconnect();
+		}
+		return Optional.ofNullable(company);
 	}
 
 	/**
