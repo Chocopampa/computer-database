@@ -1,12 +1,12 @@
 package com.excilys.validator;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.excilys.model.Company;
+import com.excilys.exception.CompanyException;
+import com.excilys.exception.DatesException;
 import com.excilys.model.Computer;
 import com.excilys.service.CompanyService;
 
@@ -24,12 +24,12 @@ public class ComputerValidator {
 		return INSTANCE;
 	}
 
-	public boolean correctComputer(Computer computer) {
+	public boolean correctComputer(Computer computer) throws DatesException, CompanyException {
 		LOG4J.info("Checking dates and associated company...");
 		return (correctDates(computer.getIntroduced(),computer.getDiscontinued()) && companyExists(computer.getCompany().getId()));
 	}
 	
-	private boolean correctDates(LocalDateTime introduced, LocalDateTime discontinued) {
+	private boolean correctDates(LocalDateTime introduced, LocalDateTime discontinued) throws DatesException{
 		boolean isCorrect = true;
 		if (introduced == null && discontinued != null) {
 			isCorrect = false;
@@ -39,7 +39,7 @@ public class ComputerValidator {
 		return isCorrect;
 	}
 	
-	private boolean companyExists(long idCompany) {
+	private boolean companyExists(long idCompany) throws CompanyException{
 		return companyServices.getCompanyById(idCompany).isPresent();
 	}
 }

@@ -5,6 +5,8 @@ import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Scanner;
 
+import com.excilys.exception.CompanyException;
+import com.excilys.exception.DatesException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.service.ComputerService;
@@ -69,7 +71,11 @@ public class DisplayUpdate {
 
 			computer = new Computer.Builder(name).withId(id).withIntroduced(introduced).withDiscontinued(discontinued)
 					.withCompany(company).build();
-			computerValidator.correctComputer(computer);
+			try {
+				computerValidator.correctComputer(computer);
+			} catch (DatesException | CompanyException e) {
+				System.out.println("Erreur dans les dates fournies ou l'id de compagnie");
+			}
 			int nbRowAffected = computerServices.updateComputer(computer);
 			System.out.print("Number of row affected : " + nbRowAffected);
 		}
