@@ -2,6 +2,7 @@ package com.excilys.ui.cli;
 
 import java.time.LocalDateTime;
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 
 import com.excilys.model.Company;
@@ -21,11 +22,11 @@ public class DisplayUpdate {
 		System.out.println("Please enter the id of the computer you want to update :");
 		long id = sc.nextLong();
 		sc.nextLine();
-		Computer computer = computerServices.getComputerById(id);
-		if (computer == null) {
+		Optional<Computer> opComputer = computerServices.getComputerById(id);
+		if (!opComputer.isPresent()) {
 			System.out.println("The computer does not exist");
 		} else {
-
+			Computer computer = opComputer.get();
 			System.out.println("Please enter the new name (nothing if no update wanted) :");
 			String name = sc.nextLine();
 			if (name.isEmpty()) {

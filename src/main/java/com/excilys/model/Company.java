@@ -52,7 +52,7 @@ public class Company {
 		if (this.getName() == null) {
 			return "" + this.getId();
 		} else {
-			return (this.getId() + "		" + this.getName());
+			return (this.id + "		" + this.name);
 		}
 	}
 }
