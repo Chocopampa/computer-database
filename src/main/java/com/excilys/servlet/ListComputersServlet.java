@@ -36,6 +36,6 @@ public class ListComputersServlet extends HttpServlet {
 		}
 		request.setAttribute("result_size", computers.size());
 		request.setAttribute("computers", computers);
-		this.getServletContext().getRequestDispatcher("/views/getComputers.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/getComputers.jsp").forward(request, response);
 	}
 }

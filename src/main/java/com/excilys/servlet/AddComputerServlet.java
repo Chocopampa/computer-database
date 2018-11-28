@@ -20,7 +20,7 @@ public class AddComputerServlet extends HttpServlet {
 	private ComputerMapper computerMapper = ComputerMapper.getInstance();
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		this.getServletContext().getRequestDispatcher("/views/addComputer.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward(request, response);
 	}
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -36,6 +36,6 @@ public class AddComputerServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		computerService.createComputer(computer);
-		this.getServletContext().getRequestDispatcher("/views/addComputer.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward(request, response);
 	}
 }
