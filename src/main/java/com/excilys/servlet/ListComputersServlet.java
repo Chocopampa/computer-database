@@ -9,14 +9,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.dto.ComputerDTO;
+import com.excilys.mapper.ComputerDTOMapper;
+import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
+import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 
 public class ListComputersServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -3938443724704425725L;
 	private ComputerService computerService = ComputerService.getInstance();
+	private CompanyService companyService = CompanyService.getInstance();
+	private ComputerDTOMapper computerDTOMapper = ComputerDTOMapper.getInstance();
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String offsetString = request.getParameter("nbItem");
@@ -34,8 +40,17 @@ public class ListComputersServlet extends HttpServlet {
 		} else {
 			computers = computerService.getComputers();
 		}
+		List<ComputerDTO> computersDTO = new ArrayList<>();
+		computers.stream().forEach(o -> {
+			Company company = o.getCompany();
+			if (company.getId() != 0) {
+				o.getCompany().setName(companyService.getCompanyById(company.getId()).get().getName());
+			}
+			computersDTO.add(computerDTOMapper.map(o));
+			});
+		
 		request.setAttribute("result_size", computers.size());
-		request.setAttribute("computers", computers);
+		request.setAttribute("computers", computersDTO);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/getComputers.jsp").forward(request, response);
 	}
 }

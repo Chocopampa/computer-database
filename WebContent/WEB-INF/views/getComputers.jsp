@@ -80,7 +80,7 @@
 										value="${item.name}" /></a></td>
 							<td><c:out value="${item.introduced}" /></td>
 							<td><c:out value="${item.discontinued}" /></td>
-							<td><c:out value="${item.company}" /></td>
+							<td><c:out value="${item.companyName}" /></td>
 						</tr>
 					</c:forEach>
 
