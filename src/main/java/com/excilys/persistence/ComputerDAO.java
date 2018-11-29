@@ -50,6 +50,7 @@ public class ComputerDAO {
 			LOG4J.debug(statement.toString());
 			rs = statement.executeQuery();
 			computers = computerMapper.mapList(rs);
+			computers.stream().forEach(o -> LOG4J.debug(o));
 		} catch (SQLException e) {
 			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS + "')", e);
 		} finally {

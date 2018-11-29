@@ -69,7 +69,9 @@ public class CompanyDAO {
 			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPANY_BY_ID + "')", e);
 		} finally {
 			try {
-				rs.close();
+				if (rs != null) {
+					rs.close();
+				}
 			} catch (SQLException e) {
 				LOG4J.error("ResultStatement did not close successfully.", e);
 			}

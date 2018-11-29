@@ -3,6 +3,7 @@ package com.excilys.servlet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,14 +41,16 @@ public class ListComputersServlet extends HttpServlet {
 		} else {
 			computers = computerService.getComputers();
 		}
+		
 		List<ComputerDTO> computersDTO = new ArrayList<>();
-		computers.stream().forEach(o -> {
-			Company company = o.getCompany();
+		
+		computers.stream().forEach(currentComputer -> {
+			Company company = currentComputer.getCompany();
 			if (company.getId() != 0) {
-				o.getCompany().setName(companyService.getCompanyById(company.getId()).get().getName());
+				currentComputer.getCompany().setName(companyService.getCompanyById(company.getId()).get().getName());
 			}
-			computersDTO.add(computerDTOMapper.map(o));
-			});
+			computersDTO.add(computerDTOMapper.map(currentComputer));	
+		});
 		
 		request.setAttribute("result_size", computers.size());
 		request.setAttribute("computers", computersDTO);
