@@ -2,6 +2,7 @@ package com.excilys.ui.cli;
 
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import com.excilys.model.Company;
@@ -74,9 +75,9 @@ public class DisplayGet {
 		try {
 			idParsed = sc.nextLong();
 			sc.nextLine();
-			Computer computer = computerServices.getComputerById(idParsed);
-			if (computer != null) {
-				System.out.println(computer);
+			Optional<Computer> computer = computerServices.getComputerById(idParsed);
+			if (computer.isPresent()) {
+				System.out.println(computer.get());
 			} else {
 				System.out.println("This computer does not exist.");
 			}

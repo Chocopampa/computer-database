@@ -80,7 +80,7 @@
 										value="${item.name}" /></a></td>
 							<td><c:out value="${item.introduced}" /></td>
 							<td><c:out value="${item.discontinued}" /></td>
-							<td><c:out value="${item.company}" /></td>
+							<td><c:out value="${item.companyName}" /></td>
 						</tr>
 					</c:forEach>
 
@@ -92,23 +92,34 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href='?nbItem=${param["nbItem"]}&numPage=${param["numPage"]-1}' aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
+				<li><a
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=${(param["numPage"]-1) < 0 ? 0 : param["numPage"]-1}'
+					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
-				<li><a href='?nbItem=${param["nbItem"]}&numPage=1'>1</a></li>
-				<li><a href='?nbItem=${param["nbItem"]}&numPage=2'>2</a></li>
-				<li><a href='?nbItem=${param["nbItem"]}&numPage=3'>3</a></li>
-				<li><a href='?nbItem=${param["nbItem"]}&numPage=4'>4</a></li>
-				<li><a href='?nbItem=${param["nbItem"]}&numPage=5'>5</a></li>
-				<li><a href='?nbItem=${param["nbItem"]}&numPage=${param["numPage"]+1}' aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				<li><a
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=0'>1</a></li>
+				<li><a
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=1'>2</a></li>
+				<li><a
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=2'>3</a></li>
+				<li><a
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=3'>4</a></li>
+				<li><a
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=4'>5</a></li>
+				<li><a
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=${result_size != param["nbItem"] ? param["numPage"] : param["numPage"]+1}'
+					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
-				<div class="btn-group btn-group-sm pull-right" role="group">
-					<button type="button" onclick="location.href='?nbItem=10';" class="btn btn-default">10</button>
-					<button type="button" onclick="location.href='?nbItem=50';" class="btn btn-default">50</button>
-					<button type="button" onclick="location.href='?nbItem=100';" class="btn btn-default">100</button>
-				</div>
+			<div class="btn-group btn-group-sm pull-right" role="group">
+				<button type="button" onclick="location.href='?nbItem=10';"
+					class="btn btn-default">10</button>
+				<button type="button" onclick="location.href='?nbItem=50';"
+					class="btn btn-default">50</button>
+				<button type="button" onclick="location.href='?nbItem=100';"
+					class="btn btn-default">100</button>
+			</div>
 		</div>
 	</footer>
 	<script src="<c:url value="js/jquery.min.js" />"></script>

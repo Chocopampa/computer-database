@@ -1,6 +1,7 @@
 package com.excilys.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
@@ -27,7 +28,7 @@ public class ComputerService {
 		return computerDAO.getListComputers(page);
 	}
 
-	public Computer getComputerById(long idComputer) {
+	public Optional<Computer> getComputerById(long idComputer) {
 		return computerDAO.getComputerById(idComputer);
 	}
 

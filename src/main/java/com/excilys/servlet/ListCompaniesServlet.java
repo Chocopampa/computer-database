@@ -19,7 +19,7 @@ public class ListCompaniesServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		List<Company> companies = companyService.getCompanies();
 		request.setAttribute("companies", companies);
-		this.getServletContext().getRequestDispatcher("/views/getCompanies.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/getCompanies.jsp").forward(request, response);
     }
 
 }

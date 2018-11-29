@@ -2,30 +2,33 @@ package com.excilys.ui.cli;
 
 import java.time.LocalDateTime;
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 
+import com.excilys.exception.CompanyException;
+import com.excilys.exception.DatesException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.service.ComputerService;
-import com.excilys.validator.CompanyValidator;
+import com.excilys.validator.ComputerValidator;
 import com.excilys.validator.ParseValidator;
 
 public class DisplayUpdate {
 
 	private static ParseValidator parseValidator = ParseValidator.getInstance();
 	private static ComputerService computerServices = ComputerService.getInstance();
-	private static CompanyValidator companyValidator = CompanyValidator.getInstance();
+	private static ComputerValidator computerValidator = ComputerValidator.getInstance();
 
 	protected static void displayUpdate(Scanner sc) {
 
 		System.out.println("Please enter the id of the computer you want to update :");
 		long id = sc.nextLong();
 		sc.nextLine();
-		Computer computer = computerServices.getComputerById(id);
-		if (computer == null) {
+		Optional<Computer> opComputer = computerServices.getComputerById(id);
+		if (!opComputer.isPresent()) {
 			System.out.println("The computer does not exist");
 		} else {
-
+			Computer computer = opComputer.get();
 			System.out.println("Please enter the new name (nothing if no update wanted) :");
 			String name = sc.nextLine();
 			if (name.isEmpty()) {
@@ -57,10 +60,10 @@ public class DisplayUpdate {
 				if (idCompany == -2) {
 					idCompany = computer.getCompany().getId();
 					company = new Company.Builder(idCompany).build();
-				} else if (companyValidator.companyExists(idCompany)) {
-					company = new Company.Builder(idCompany).build();
 				} else if (idCompany == -1) {
 					// Valid statement
+				} else {
+					company = new Company.Builder(idCompany).build();
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("Please input a number.");
@@ -68,7 +71,11 @@ public class DisplayUpdate {
 
 			computer = new Computer.Builder(name).withId(id).withIntroduced(introduced).withDiscontinued(discontinued)
 					.withCompany(company).build();
-
+			try {
+				computerValidator.correctComputer(computer);
+			} catch (DatesException | CompanyException e) {
+				System.out.println("Erreur dans les dates fournies ou l'id de compagnie");
+			}
 			int nbRowAffected = computerServices.updateComputer(computer);
 			System.out.print("Number of row affected : " + nbRowAffected);
 		}
