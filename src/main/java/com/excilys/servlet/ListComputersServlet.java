@@ -2,10 +2,12 @@ package com.excilys.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +20,7 @@ import com.excilys.model.Page;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 
+@WebServlet("/getComputers")
 public class ListComputersServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -3938443724704425725L;
@@ -56,4 +59,11 @@ public class ListComputersServlet extends HttpServlet {
 		request.setAttribute("computers", computersDTO);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/getComputers.jsp").forward(request, response);
 	}
+	
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<String> idComputersToDelete = Arrays.asList(request.getParameterValues("computerChecked"));
+		idComputersToDelete.stream().forEach(idComputer -> computerService.deleteComputer(Long.parseLong(idComputer)));
+		this.doGet(request,response);
+	}
+
 }
