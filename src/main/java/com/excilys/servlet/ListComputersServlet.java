@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,6 +33,8 @@ public class ListComputersServlet extends HttpServlet {
 		String offsetString = request.getParameter("nbItem");
 		String numPage = request.getParameter("numPage");
 		long firstId = 0;
+		String name = request.getParameter("search");
+		
 		
 		List<Computer> computers = new ArrayList<>();
 		if (offsetString != null) {
@@ -44,6 +48,7 @@ public class ListComputersServlet extends HttpServlet {
 			computers = computerService.getComputers();
 		}
 		
+		
 		List<ComputerDTO> computersDTO = new ArrayList<>();
 		
 		computers.stream().forEach(currentComputer -> {
@@ -53,6 +58,14 @@ public class ListComputersServlet extends HttpServlet {
 			}
 			computersDTO.add(computerDTOMapper.map(currentComputer));	
 		});
+
+		if (name != null) {
+			computersDTO = computersDTO.stream().filter(computerDTO -> computerDTO.getCompanyName() != null ? 
+					computerDTO.getName().contains(name) ||  computerDTO.getCompanyName().contains(name) : 
+						computerDTO.getName().contains(name)).collect(Collectors.toList());
+		}
+		
+		
 		
 		request.setAttribute("result_size", computers.size());
 		request.setAttribute("computers", computersDTO);
