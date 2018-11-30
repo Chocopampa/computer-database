@@ -30,7 +30,7 @@ public class CommandLineInterface {
 				DisplayGet.getResults(sc);
 				break;
 			case "delete":
-				DisplayDelete.deleteComputer(sc);
+				DisplayDelete.deleteItem(sc);
 				break;
 			case "create":
 				DisplayCreate.displayCreate(sc);

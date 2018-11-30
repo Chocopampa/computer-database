@@ -25,6 +25,7 @@ public class ComputerDAO {
 				+ "WHERE name LIKE ?);";
 	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?, ?;";
 	private static final String REQUEST_DETAILED_COMPUTER = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id = ?;";
+	private static final String REQUEST_COMPUTER_FROM_COMPANY_ID = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE company_id = ?;";
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name=?,introduced=?,discontinued=?,company_id=? WHERE id=?;";
@@ -111,6 +112,27 @@ public class ComputerDAO {
 			computers = computerMapper.mapList(rs);
 		} catch (SQLException e) {
 			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY + "')", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				LOG4J.error("ResultStatement did not close successfully.", e);
+			}
+			dbConnection.disconnect();
+		}
+		return computers;
+	}
+	
+	public List<Computer> getComputersFromCompanyId(long idCompany) {
+		List<Computer> computers = new ArrayList<>();
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTER_FROM_COMPANY_ID)) {
+			statement.setLong(1, idCompany);
+			LOG4J.info(statement.toString());
+			rs = statement.executeQuery();
+			computers = computerMapper.mapList(rs);
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTER_FROM_COMPANY_ID + "')", e);
 		} finally {
 			try {
 				rs.close();

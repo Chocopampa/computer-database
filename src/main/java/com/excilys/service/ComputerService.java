@@ -35,6 +35,10 @@ public class ComputerService {
 	public List<Computer> getComputersWithSearch(String search) {
 		return computerDAO.getComputersWithSearch(search);
 	}
+	
+	public List<Computer> getComputersFromCompanyId(long idCompany) {
+		return computerDAO.getComputersFromCompanyId(idCompany);
+	}
 
 	public int deleteComputer(long idComputer) {
 		return computerDAO.deleteComputerFromId(idComputer);
