@@ -20,6 +20,9 @@ public class ComputerDAO {
 	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
 
 	private static final String REQUEST_COMPUTERS = "SELECT id,name,introduced,discontinued,company_id FROM computer;";
+	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT id,name,introduced,discontinued,company_id FROM computer "
+			+ "WHERE name LIKE ? OR company_id=(SELECT id FROM company "
+				+ "WHERE name LIKE ?);";
 	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?, ?;";
 	private static final String REQUEST_DETAILED_COMPUTER = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id = ?;";
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
@@ -89,6 +92,34 @@ public class ComputerDAO {
 			dbConnection.disconnect();
 		}
 		return Optional.ofNullable(computer);
+	}
+	
+	/**
+	 * Get computers by searching for a chain of characters in their name or in the name of their associated company.
+	 * 
+	 * @param search
+	 * @return
+	 */
+	public List<Computer> getComputersWithSearch(String search) {
+		List<Computer> computers = new ArrayList<>();
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY)) {
+			statement.setString(1, "%" + search + "%");
+			statement.setString(2, "%" + search + "%");
+			LOG4J.info(statement.toString());
+			rs = statement.executeQuery();
+			computers = computerMapper.mapList(rs);
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY + "')", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				LOG4J.error("ResultStatement did not close successfully.", e);
+			}
+			dbConnection.disconnect();
+		}
+		return computers;
 	}
 
 	/**
