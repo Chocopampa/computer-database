@@ -45,7 +45,11 @@ public class ComputerService {
 	}
 
 	public int createComputer(Computer computer) {
-		return computerDAO.addComputer(computer);
+		if (computer.getCompany() != null) {
+			return computerDAO.addComputer(computer);
+		} else {
+			return computerDAO.addComputerWithoutCompany(computer);
+		}
 	}
 
 	public int updateComputer(Computer computer) {

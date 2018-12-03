@@ -21,12 +21,13 @@ public class ComputerDAO {
 
 	private static final String REQUEST_COMPUTERS = "SELECT id,name,introduced,discontinued,company_id FROM computer;";
 	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT id,name,introduced,discontinued,company_id FROM computer "
-			+ "WHERE name LIKE ? OR company_id=(SELECT id FROM company "
+			+ "WHERE name LIKE ? OR company_id IN (SELECT id FROM company "
 				+ "WHERE name LIKE ?);";
 	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?, ?;";
 	private static final String REQUEST_DETAILED_COMPUTER = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id = ?;";
 	private static final String REQUEST_COMPUTER_FROM_COMPANY_ID = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE company_id = ?;";
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
+	private static final String INSERT_COMPUTER_WITHOUT_COMPANY = "INSERT INTO computer(name,introduced,discontinued) VALUES (?,?,?);";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name=?,introduced=?,discontinued=?,company_id=? WHERE id=?;";
 
@@ -204,10 +205,44 @@ public class ComputerDAO {
 			} else {
 				statement.setString(4, null);
 			}
-
 			nbRowAffected = statement.executeUpdate();
 		} catch (SQLException e) {
 			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')", e);
+		} finally {
+			dbConnection.disconnect();
+		}
+		return nbRowAffected;
+	}
+	
+	/**
+	 * Create a computer in database.
+	 * 
+	 * @param name
+	 * @param introduced
+	 * @param discontinued
+	 * @param company_id
+	 */
+	public int addComputerWithoutCompany(Computer computer) {
+		int nbRowAffected = 0;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER_WITHOUT_COMPANY)) {
+			LOG4J.info("Adding a computer to database...");
+			statement.setString(1, computer.getName());
+
+			if (computer.getIntroduced() != null) {
+				statement.setString(2, computer.getIntroduced().toString());
+			} else {
+				statement.setString(2, null);
+			}
+
+			if (computer.getDiscontinued() != null) {
+				statement.setString(3, computer.getDiscontinued().toString());
+			} else {
+				statement.setString(3, null);
+			}
+			
+			nbRowAffected = statement.executeUpdate();
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER_WITHOUT_COMPANY + "')", e);
 		} finally {
 			dbConnection.disconnect();
 		}

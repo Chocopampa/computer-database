@@ -24,7 +24,7 @@
                     </div>
                     <h1>Edit Computer</h1>
 
-                    <form action="/computer-database/editComputer?id=${param["id"]}" method="POST">
+                    <form id="updateFormular" action="/computer-database/editComputer?id=${param["id"]}" method="POST">
                         <input type="hidden" value="0" id="id"/> <!-- TODO: Change this value with the computer id -->
                         <fieldset>
                             <div class="form-group">
@@ -59,5 +59,9 @@
             </div>
         </div>
     </section>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery.validate.min.js"></script>
+	<script src="js/validation.js"></script>
 </body>
 </html>
