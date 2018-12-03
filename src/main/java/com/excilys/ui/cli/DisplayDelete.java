@@ -47,10 +47,11 @@ public class DisplayDelete {
 			for (Computer computer : computersLinked) {
 				nbRowDeleted += computerServices.deleteComputer(computer.getId());
 			}
-			nbRowDeleted = companyServices.deleteCompany(idParsed);
+			companyServices.deleteCompany(idParsed);
+			System.out.println("Number of rows deleted : " + nbRowDeleted);
 			if (nbRowDeleted > 0) {
 				System.out.println("The company with id " + idParsed
-						+ " has been deleted. (Number of companies deleted : " + nbRowDeleted + ")");
+						+ " has been deleted. (Number of computers deleted : " + nbRowDeleted + ")");
 			} else {
 				System.out.println("The company with id " + idParsed + " has not been deleted.");
 			}
