@@ -28,6 +28,13 @@ public class EditComputerServlet extends HttpServlet {
 		List<Company> companies = companyService.getCompanies();
 		List<Long> companiesIds = new ArrayList<>();
 		companies.stream().forEach(company -> companiesIds.add(company.getId()));
+		Computer computer = computerService.getComputerById(Long.parseLong(request.getParameter("id"))).get();
+		String introduced = (computer.getIntroduced() != null ? computer.getIntroduced().toString().subSequence(0, 10).toString() : null);
+		String discontinued = (computer.getDiscontinued() != null ? computer.getDiscontinued().toString().subSequence(0, 10).toString() : null);
+		request.setAttribute("computerName", computer.getName());
+		request.setAttribute("introduced", introduced);
+		request.setAttribute("discontinued", discontinued);
+		request.setAttribute("company", computer.getCompany());
 		request.setAttribute("companiesIds", companiesIds);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward(request, response);
 	}
