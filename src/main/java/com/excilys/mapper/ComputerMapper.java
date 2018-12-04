@@ -25,27 +25,7 @@ public class ComputerMapper {
 		List<Computer> computers = new ArrayList<>();
 
 		while (listComputerDb.next()) {
-			LocalDateTime timeIntroduced = null;
-			LocalDateTime timeDiscontinued = null;
-
-			String introduced = listComputerDb.getString("introduced");
-			if (introduced != null) {
-				introduced = introduced.replace(' ', 'T');
-				timeIntroduced = LocalDateTime.parse(introduced);
-			}
-
-			String discontinued = listComputerDb.getString("discontinued");
-			if (discontinued != null) {
-				discontinued = discontinued.replace(' ', 'T');
-				timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-			}
-
-			Company company = new Company.Builder(listComputerDb.getLong("company_id")).build();
-
-			Computer computer = new Computer.Builder(listComputerDb.getString("name"))
-					.withId(listComputerDb.getInt("id")).withIntroduced(timeIntroduced)
-					.withDiscontinued(timeDiscontinued).withCompany(company).build();
-
+			Computer computer = mapUnique(listComputerDb);
 			computers.add(computer);
 		}
 
@@ -53,56 +33,50 @@ public class ComputerMapper {
 	}
 
 	public Computer mapUnique(ResultSet computerDb) throws SQLException {
-		Computer computer = null;
-		while (computerDb.next()) {
-			LocalDateTime timeIntroduced = null;
-			LocalDateTime timeDiscontinued = null;
+		LocalDateTime timeIntroduced = null;
+		LocalDateTime timeDiscontinued = null;
 
-			String introduced = computerDb.getString("introduced");
-			if (introduced != null) {
-				introduced = introduced.replace(' ', 'T');
-				timeIntroduced = LocalDateTime.parse(introduced, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-			}
-
-			String discontinued = computerDb.getString("discontinued");
-			if (discontinued != null) {
-				discontinued = discontinued.replace(' ', 'T');
-				timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-			}
-
-			Company company = new Company.Builder(computerDb.getLong("company_id")).build();
-
-			computer = new Computer.Builder(computerDb.getString("name")).withId(computerDb.getInt("id"))
-					.withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued).withCompany(company).build();
+		String introduced = computerDb.getString("introduced");
+		if (introduced != null) {
+			introduced = introduced.replace(' ', 'T');
+			timeIntroduced = LocalDateTime.parse(introduced, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
-		return computer;
+
+		String discontinued = computerDb.getString("discontinued");
+		if (discontinued != null) {
+			discontinued = discontinued.replace(' ', 'T');
+			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+		}
+
+		Company company = new Company.Builder(computerDb.getLong("company_id")).build();
+
+		return new Computer.Builder(computerDb.getString("name")).withId(computerDb.getInt("id"))
+				.withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued).withCompany(company).build();
 	}
 
-	public Computer mapUnique(String name, String introduced, String discontinued, String companyNumber)
-			throws SQLException {
+	public Computer mapUnique(String name, String introduced, String discontinued, String companyNumber) {
 		Computer computer = null;
 		LocalDateTime timeIntroduced = null;
 		LocalDateTime timeDiscontinued = null;
 
-		if (introduced != null) {
+		if (!introduced.isEmpty()) {
 			introduced = introduced + "T00:00:00";
 			timeIntroduced = LocalDateTime.parse(introduced, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
 
-		if (discontinued != null) {
+		if (!discontinued.isEmpty()) {
 			discontinued = discontinued + "T00:00:00";
 			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
-		
 
-		Company company = new Company.Builder(0).build();
+		Company company = null;
 
-		if (companyNumber != null) {
-			company.setId(Long.parseLong(companyNumber));
-		} 
+		if (!companyNumber.isEmpty()) {
+			company =  new Company.Builder(Long.parseLong(companyNumber)).build();
+		}
 
-		computer = new Computer.Builder(name)
-				.withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued).withCompany(company).build();
+		computer = new Computer.Builder(name).withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued)
+				.withCompany(company).build();
 		return computer;
 	}
 

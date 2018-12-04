@@ -100,7 +100,7 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		return (this.getId() + "	" + this.getName() + "		" + this.getIntroduced() + "	"
-				+ this.getDiscontinued() + "	" + this.getCompany());
+		return (this.id + "	" + this.name + "		" + this.introduced + "	"
+				+ this.discontinued + "	" + this.company);
 	}
 }

@@ -4,38 +4,8 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_3_0.xsd"
 	version="3.0">
 	<welcome-file-list>
-		<welcome-file>views/index.jsp</welcome-file>
+		<welcome-file>getComputers</welcome-file>
 	</welcome-file-list>
-
-	<servlet>
-		<servlet-name>ListComputersServlet</servlet-name>
-		<servlet-class>com.excilys.servlet.ListComputersServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ListComputersServlet</servlet-name>
-		<url-pattern>/getComputers</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>ListCompaniesServlet</servlet-name>
-		<servlet-class>com.excilys.servlet.ListCompaniesServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ListCompaniesServlet</servlet-name>
-		<url-pattern>/getCompanies</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>AddComputerServlet</servlet-name>
-		<servlet-class>com.excilys.servlet.AddComputerServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>AddComputerServlet</servlet-name>
-		<url-pattern>/addComputer</url-pattern>
-	</servlet-mapping>
 
 	<error-page>
 		<error-code>404</error-code>

@@ -22,11 +22,15 @@ public class CompanyMapper {
 		List<Company> companies = new ArrayList<>();
 
 		while (listCompaniesDb.next()) {
-			Company company = new Company.Builder(listCompaniesDb.getLong("id"))
-					.withName(listCompaniesDb.getString("name")).build();
+			Company company = mapUnique(listCompaniesDb);
 			companies.add(company);
 		}
 
 		return companies;
+	}
+	
+	public Company mapUnique(ResultSet companyDb) throws SQLException {
+		return new Company.Builder(companyDb.getLong("id"))
+				.withName(companyDb.getString("name")).build();
 	}
 }

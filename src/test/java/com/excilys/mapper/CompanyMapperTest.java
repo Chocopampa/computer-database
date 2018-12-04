@@ -1,5 +1,7 @@
 package com.excilys.mapper;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 
 import com.excilys.model.Company;
 
-import junit.framework.Assert;
 
 public class CompanyMapperTest {
 
@@ -48,8 +49,8 @@ public class CompanyMapperTest {
 		List<Company> result = companyMapper.mapList(rs);
 
 		for (int i = 0; i < numberOfCompanies; i++) {
-			Assert.assertEquals(companiesExpected.get(i).getId(), result.get(i).getId());
-			Assert.assertEquals(companiesExpected.get(i).getName(), result.get(i).getName());
+			assertEquals(companiesExpected.get(i).getId(), result.get(i).getId());
+			assertEquals(companiesExpected.get(i).getName(), result.get(i).getName());
 		}
 	}
 

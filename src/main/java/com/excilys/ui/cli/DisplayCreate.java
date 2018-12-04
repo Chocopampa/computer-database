@@ -4,16 +4,18 @@ import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import com.excilys.exception.CompanyException;
+import com.excilys.exception.DatesException;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.service.ComputerService;
-import com.excilys.validator.CompanyValidator;
+import com.excilys.validator.ComputerValidator;
 import com.excilys.validator.ParseValidator;
 
 public class DisplayCreate {
 
 	private static ComputerService computerServices = ComputerService.getInstance();
-	private static CompanyValidator companyValidator = CompanyValidator.getInstance();
+	private static ComputerValidator computerValidator = ComputerValidator.getInstance();
 	private static ParseValidator parseValidator = ParseValidator.getInstance();
 
 	protected static void displayCreate(Scanner sc) {
@@ -44,10 +46,10 @@ public class DisplayCreate {
 		System.out.println("Please enter the company id of the computer you want to create (-1 if unwanted):");
 		try {
 			long idCompany = sc.nextLong();
-			if (companyValidator.companyExists(idCompany)) {
-				company = new Company.Builder(idCompany).build();
-			} else if (idCompany == -1) {
+			if (idCompany == -1) {
 				// Valid statement
+			} else {
+				company = new Company.Builder(idCompany).build();
 			}
 		} catch (InputMismatchException e) {
 			System.out.println("Please input a number.");
@@ -55,6 +57,11 @@ public class DisplayCreate {
 
 		Computer computer = new Computer.Builder(name).withIntroduced(introduced).withDiscontinued(discontinued)
 				.withCompany(company).build();
+		try {
+			computerValidator.correctComputer(computer);
+		} catch (DatesException | CompanyException e) {
+			System.out.println("Erreur dans les dates fournies ou l'id de compagnie");
+		}
 
 		int nbRowAffected = computerServices.createComputer(computer);
 		System.out.println("Number of row affected : " + nbRowAffected);
