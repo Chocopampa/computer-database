@@ -62,8 +62,6 @@ public class ListComputersServlet extends HttpServlet {
 			}
 			computersDTO.add(computerDTOMapper.map(currentComputer));
 		});
-
-		
 		request.setAttribute("result_size", computersDTO.size());
 		request.setAttribute("computers", computersDTO);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/getComputers.jsp").forward(request, response);

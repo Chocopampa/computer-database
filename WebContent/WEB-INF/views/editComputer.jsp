@@ -27,7 +27,6 @@
 					<form id="updateFormular"
 						action="/computer-database/editComputer?id=${param["id"]}" method="POST">
 						<input type="hidden" value="${param["id"]}" id="id" />
-						<!-- TODO: Change this value with the computer id -->
 						<fieldset>
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
