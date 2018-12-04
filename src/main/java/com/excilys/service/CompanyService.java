@@ -28,6 +28,10 @@ public class CompanyService {
 		return companyDAO.getListCompanies(page);
 	}
 	
+	public int deleteCompany(long idCompany) {
+		return companyDAO.deleteCompany(idCompany);
+	}
+	
 	public Optional<Company> getCompanyById(long idCompany) {
 		return companyDAO.getCompanyById(idCompany);
 	}

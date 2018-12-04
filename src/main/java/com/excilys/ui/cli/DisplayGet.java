@@ -17,7 +17,7 @@ public class DisplayGet {
 
 	protected static void getResults(Scanner sc) {
 		String str = "";
-		while (!"return".equals(str)) {
+		while (!"exit".equals(str)) {
 			System.out.println("Get : Input a command (type help for help) :");
 			str = sc.nextLine();
 			switch (str) {

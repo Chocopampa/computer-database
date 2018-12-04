@@ -16,10 +16,10 @@ import com.excilys.model.Computer;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 
-@WebServlet("/addComputer")
-public class AddComputerServlet extends HttpServlet {
-
-	private static final long serialVersionUID = 4450306511039154175L;
+@WebServlet("/editComputer")
+public class EditComputerServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 1250893512382988704L;
 	private ComputerService computerService = ComputerService.getInstance();
 	private CompanyService companyService = CompanyService.getInstance();
 	private ComputerMapper computerMapper = ComputerMapper.getInstance();
@@ -28,18 +28,30 @@ public class AddComputerServlet extends HttpServlet {
 		List<Company> companies = companyService.getCompanies();
 		List<Long> companiesIds = new ArrayList<>();
 		companies.stream().forEach(company -> companiesIds.add(company.getId()));
+		Computer computer = computerService.getComputerById(Long.parseLong(request.getParameter("id"))).get();
+		String introduced = (computer.getIntroduced() != null ? computer.getIntroduced().toString().subSequence(0, 10).toString() : null);
+		String discontinued = (computer.getDiscontinued() != null ? computer.getDiscontinued().toString().subSequence(0, 10).toString() : null);
+		request.setAttribute("computerName", computer.getName());
+		request.setAttribute("introduced", introduced);
+		request.setAttribute("discontinued", discontinued);
+		request.setAttribute("company", computer.getCompany());
 		request.setAttribute("companiesIds", companiesIds);
-		this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward(request, response);
 	}
-
+	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		long id = Long.parseLong(request.getParameter("id"));
 		String name = request.getParameter("computerName");
 		String introduced = request.getParameter("introduced");
 		String discontinued = request.getParameter("discontinued");
 		String companyNumber = request.getParameter("companyId");
+		
 
 		Computer computer = computerMapper.mapUnique(name, introduced, discontinued, companyNumber);
-		computerService.createComputer(computer);
-		this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward(request, response);
+		computer.setId(id);
+		computerService.updateComputer(computer);
+		
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward(request, response);
 	}
+	
 }

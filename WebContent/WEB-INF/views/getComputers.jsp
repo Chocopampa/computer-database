@@ -45,48 +45,51 @@
 
 		<form id="deleteForm" action="#" method="POST">
 			<input type="hidden" name="selection" value="">
-		</form>
-
-		<div class="container" style="margin-top: 10px;">
-			<table class="table table-striped table-bordered">
-				<thead>
-					<tr>
-						<!-- Variable declarations for passing labels as parameters -->
-						<!-- Table header for Computer Name -->
-
-						<th class="editMode" style="width: 60px; height: 22px;"><input
-							type="checkbox" id="selectall" /> <span
-							style="vertical-align: top;"> - <a href="#"
-								id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
-									class="fa fa-trash-o fa-lg"></i>
-							</a>
-						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
-						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
-						<!-- Table header for Company -->
-						<th>Company</th>
-
-					</tr>
-				</thead>
-				<!-- Browse attribute computers -->
-				<tbody id="results">
-					<c:forEach items="${computers}" var="item">
+			<div class="container" style="margin-top: 10px;">
+				<table id="computerTable" class="table table-striped table-bordered">
+					<thead>
 						<tr>
-							<td class="editMode"><input type="checkbox" name="cb"
-								class="cb" value="0"></td>
-							<td><a href="editComputer.html" onclick=""><c:out
-										value="${item.name}" /></a></td>
-							<td><c:out value="${item.introduced}" /></td>
-							<td><c:out value="${item.discontinued}" /></td>
-							<td><c:out value="${item.companyName}" /></td>
-						</tr>
-					</c:forEach>
+							<!-- Variable declarations for passing labels as parameters -->
+							<!-- Table header for Computer Name -->
 
-				</tbody>
-			</table>
-		</div>
+							<th class="editMode" style="width: 60px; height: 22px;"><input
+								type="checkbox" id="selectall" /> <span
+								style="vertical-align: top;"> - <a href="#"
+									id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
+										class="fa fa-trash-o fa-lg"></i>
+								</a>
+							</span></th>
+							<th onclick="sortTable(0);">Computer name</th>
+							<th onclick="sortTable(1);">Introduced date</th>
+							<!-- Table header for Discontinued Date -->
+							<th onclick="sortTable(2);">Discontinued date</th>
+							<!-- Table header for Company -->
+							<th onclick="sortTable(3);">Company</th>
+
+						</tr>
+					</thead>
+					<!-- Browse attribute computers -->
+					<tbody id="results">
+						<c:forEach items="${computers}" var="item">
+							<tr>
+								<td class="editMode"><input type="checkbox"
+									name="computerChecked" class="cb" value="${item.id}"></td>
+								<td id="computerName"><a
+									href="/computer-database/editComputer?id=${item.id}" onclick=""><c:out
+											value="${item.name}" /></a></td>
+								<td id="computerIntroduced"><c:out
+										value="${item.introduced}" /></td>
+								<td id="computerDiscontinued"><c:out
+										value="${item.discontinued}" /></td>
+								<td id="computerCompany"><c:out value="${item.companyName}" /></td>
+							</tr>
+						</c:forEach>
+
+					</tbody>
+				</table>
+			</div>
+
+		</form>
 	</section>
 
 	<footer class="navbar-fixed-bottom">
@@ -122,9 +125,11 @@
 			</div>
 		</div>
 	</footer>
-	<script src="<c:url value="js/jquery.min.js" />"></script>
-	<script src="<c:url value="js/bootstrap.min.js" />"></script>
-	<script src="<c:url value="js/dashboard.js" />"></script>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/dashboard.js"></script>
+	<script src="js/jquery.tablesorter.js"></script>
+	<script src="js/orderBy.js"></script>
 
 </body>
 </html>

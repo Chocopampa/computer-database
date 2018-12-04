@@ -31,13 +31,25 @@ public class ComputerService {
 	public Optional<Computer> getComputerById(long idComputer) {
 		return computerDAO.getComputerById(idComputer);
 	}
+	
+	public List<Computer> getComputersWithSearch(String search) {
+		return computerDAO.getComputersWithSearch(search);
+	}
+	
+	public List<Computer> getComputersFromCompanyId(long idCompany) {
+		return computerDAO.getComputersFromCompanyId(idCompany);
+	}
 
 	public int deleteComputer(long idComputer) {
 		return computerDAO.deleteComputerFromId(idComputer);
 	}
 
 	public int createComputer(Computer computer) {
-		return computerDAO.addComputer(computer);
+		if (computer.getCompany() != null) {
+			return computerDAO.addComputer(computer);
+		} else {
+			return computerDAO.addComputerWithoutCompany(computer);
+		}
 	}
 
 	public int updateComputer(Computer computer) {

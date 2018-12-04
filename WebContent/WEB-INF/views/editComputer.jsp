@@ -12,46 +12,59 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="/computer-database/getComputers">
-				Application - Computer Database </a>
+			<a class="navbar-brand" href="getComputers"> Application -
+				Computer Database </a>
 		</div>
 	</header>
-
 	<section id="main">
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-8 col-xs-offset-2 box">
-					<h1>Add Computer</h1>
-					<form id="addFormular" name="addFormular"
-						action="/computer-database/addComputer" method="POST">
+					<div class="label label-default pull-right">id:
+						${param["id"]}</div>
+					<h1>Edit Computer</h1>
+
+					<form id="updateFormular"
+						action="/computer-database/editComputer?id=${param["id"]}" method="POST">
+						<input type="hidden" value="${param["id"]}" id="id" />
 						<fieldset>
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
 									type="text" class="form-control" id="computerName"
-									name="computerName" placeholder="Computer name" />
+									name="computerName" placeholder="Computer name"
+									value="${computerName}">
 							</div>
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input
 									type="date" class="form-control" id="introduced"
-									name="introduced" placeholder="Introduced date" />
+									name="introduced" placeholder="Introduced date"
+									value="${introduced}">
 							</div>
 							<div class="form-group">
 								<label for="discontinued">Discontinued date</label> <input
 									type="date" class="form-control" id="discontinued"
-									name="discontinued" placeholder="Discontinued date" />
+									name="discontinued" placeholder="Discontinued date"
+									value="${discontinued}">
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
 									class="form-control" id="companyId" name="companyId">
 									<option value="">--</option>
 									<c:forEach items="${companiesIds}" var="id">
-										<option value="${id}">${id}</option>
+										<c:choose>
+											<c:when test="${company.id == id}">
+												<option value="${id}" selected="selected">${id}</option>
+											</c:when>
+											<c:otherwise>
+												<option value="${id}">${id}</option>
+											</c:otherwise>
+										</c:choose>
 									</c:forEach>
 								</select>
 							</div>
 						</fieldset>
 						<div class="actions pull-right">
-							<input type="submit" value="Add" class="btn btn-primary">
+							<input type="submit" value="Edit" class="btn btn-primary">
 							or <a href="/computer-database/getComputers"
 								class="btn btn-default">Cancel</a>
 						</div>

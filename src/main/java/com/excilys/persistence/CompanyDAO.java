@@ -19,6 +19,7 @@ public class CompanyDAO {
 	private static final String REQUEST_COMPANIES = "SELECT id, name FROM company;";
 	private static final String REQUEST_COMPANY_BY_ID = "SELECT id, name FROM company WHERE id=?;";
 	private static final String REQUEST_COMPANIES_LIMIT = "SELECT id, name FROM company LIMIT ?, ?;";
+	private static final String DELETE_COMPANY = "DELETE FROM company WHERE id=?;";
 	private CompanyMapper companyMapper = CompanyMapper.getInstance();
 	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
 	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
@@ -57,6 +58,11 @@ public class CompanyDAO {
 		return companies;
 	}
 	
+	/**
+	 * Get a company from database with its id.
+	 * @param idCompany
+	 * @return
+	 */
 	public Optional<Company> getCompanyById(long idCompany) {
 		Company company = null;
 		ResultSet rs = null;
@@ -78,6 +84,25 @@ public class CompanyDAO {
 			dbConnection.disconnect();
 		}
 		return Optional.ofNullable(company);
+	}
+	
+	/**
+	 * Delete a company from its id.
+	 * @param idCompany
+	 * @return
+	 */
+	public int deleteCompany(long idCompany) {
+		int nbRowAffected = 0;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPANY)) {
+			statement.setLong(1, idCompany);
+			nbRowAffected = statement.executeUpdate();
+			statement.close();
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPANY + "')", e);
+		} finally {
+			dbConnection.disconnect();
+		}
+		return nbRowAffected;
 	}
 
 	/**

@@ -20,8 +20,10 @@
 		<log4j.core.version>2.11.1</log4j.core.version>
 		<mockito.version>2.23.4</mockito.version>
 		<junit.version>4.11</junit.version>
-		<javax.servlet.version>2.5</javax.servlet.version>
+		<javax.servlet.version>3.1.0</javax.servlet.version>
 		<jquery.version>3.3.1</jquery.version>
+		<hikari.version>2.6.1</hikari.version>
+		<dbunit.version>2.6.0</dbunit.version>
 	</properties>
 
 	<build>
@@ -69,7 +71,7 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+			<artifactId>javax.servlet-api</artifactId>
 			<version>${javax.servlet.version}</version>
 		</dependency>
 		<dependency>
@@ -80,7 +82,13 @@
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
-			<version>2.6.1</version>
+			<version>${hikari.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>${dbunit.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

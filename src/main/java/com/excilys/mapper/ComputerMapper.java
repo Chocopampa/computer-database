@@ -59,20 +59,20 @@ public class ComputerMapper {
 		LocalDateTime timeIntroduced = null;
 		LocalDateTime timeDiscontinued = null;
 
-		if (introduced != null) {
+		if (!introduced.isEmpty()) {
 			introduced = introduced + "T00:00:00";
 			timeIntroduced = LocalDateTime.parse(introduced, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
 
-		if (discontinued != null) {
+		if (!discontinued.isEmpty()) {
 			discontinued = discontinued + "T00:00:00";
 			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
 
-		Company company = new Company.Builder(0).build();
+		Company company = null;
 
-		if (companyNumber != null) {
-			company.setId(Long.parseLong(companyNumber));
+		if (!companyNumber.isEmpty()) {
+			company =  new Company.Builder(Long.parseLong(companyNumber)).build();
 		}
 
 		computer = new Computer.Builder(name).withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued)
