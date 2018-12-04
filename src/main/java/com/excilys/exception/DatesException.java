@@ -7,4 +7,8 @@ public class DatesException extends Exception {
 	public DatesException() {
 		super();
 	}
+	
+	public DatesException(String message) {
+		super(message);
+	}
 }

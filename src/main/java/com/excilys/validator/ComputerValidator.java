@@ -33,13 +33,19 @@ public class ComputerValidator {
 		boolean isCorrect = true;
 		if (introduced == null && discontinued != null) {
 			isCorrect = false;
+			throw new DatesException("The introduced date is null while there is a discontinued date.");
 		} else if (discontinued != null && introduced.isAfter(discontinued)){
 			isCorrect = false;
+			throw new DatesException("The introduced date is after the discontinued date.");
 		}
 		return isCorrect;
 	}
 	
 	private boolean companyExists(long idCompany) throws CompanyException{
-		return companyServices.getCompanyById(idCompany).isPresent();
+		boolean isPresent = companyServices.getCompanyById(idCompany).isPresent();
+		if (!isPresent) {
+			throw new CompanyException("Company does not exist.");
+		}
+		return isPresent;
 	}
 }

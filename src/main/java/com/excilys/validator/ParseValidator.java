@@ -12,7 +12,7 @@ public class ParseValidator {
 	}
 
 	private static final ParseValidator INSTANCE = new ParseValidator();
-	private static final Logger log4j = LogManager.getLogger(ParseValidator.class.getName());
+	private static final Logger LOG4J = LogManager.getLogger(ParseValidator.class.getName());
 
 	public static ParseValidator getInstance() {
 		return INSTANCE;
@@ -31,7 +31,7 @@ public class ParseValidator {
 		} catch (NumberFormatException e) {
 			if (!"null".equalsIgnoreCase(toParse)) {
 				parsable = false;
-				log4j.warn("The input provided is neither a long, nor 'null'.");
+				LOG4J.warn("The input provided is neither a long, nor 'null'.");
 			}
 		}
 		return parsable;
@@ -47,10 +47,10 @@ public class ParseValidator {
 		boolean parsable = true;
 		try {
 			LocalDateTime.parse(toParse);
-		} catch (DateTimeException e) {
+		} catch (DateTimeException | NullPointerException e) {
 			if (!"null".equalsIgnoreCase(toParse)) {
 				parsable = false;
-				log4j.warn("The input provided is neither a LocalDateTime, nor 'null'.");
+				LOG4J.warn("The input provided is neither a LocalDateTime, nor 'null'.");
 			}
 		}
 		return parsable;
