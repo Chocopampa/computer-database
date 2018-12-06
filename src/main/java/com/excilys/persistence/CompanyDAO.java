@@ -9,11 +9,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.mapper.CompanyMapper;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
 
+@Repository
 public class CompanyDAO {
 
 	private static final String REQUEST_COMPANIES = "SELECT id, name FROM company;";

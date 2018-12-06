@@ -9,11 +9,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.mapper.ComputerMapper;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 
+@Repository
 public class ComputerDAO {
 
 	private ComputerMapper computerMapper = ComputerMapper.getInstance();

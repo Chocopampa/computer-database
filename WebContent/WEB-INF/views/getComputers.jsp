@@ -59,12 +59,12 @@
 										class="fa fa-trash-o fa-lg"></i>
 								</a>
 							</span></th>
-							<th onclick="sortTable(0);">Computer name</th>
-							<th onclick="sortTable(1);">Introduced date</th>
+							<th>Computer name</th>
+							<th>Introduced date</th>
 							<!-- Table header for Discontinued Date -->
-							<th onclick="sortTable(2);">Discontinued date</th>
+							<th>Discontinued date</th>
 							<!-- Table header for Company -->
-							<th onclick="sortTable(3);">Company</th>
+							<th>Company</th>
 
 						</tr>
 					</thead>
