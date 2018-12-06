@@ -1,8 +1,11 @@
 package com.excilys.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.dto.ComputerDTO;
 import com.excilys.model.Computer;
 
+@Component
 public class ComputerDTOMapper {
 
 	private ComputerDTOMapper() {

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.mapper.ComputerMapper;
@@ -18,8 +19,10 @@ import com.excilys.model.Page;
 @Repository
 public class ComputerDAO {
 
-	private ComputerMapper computerMapper = ComputerMapper.getInstance();
-	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
+	@Autowired
+	private ComputerMapper computerMapper;
+	@Autowired
+	private DatabaseConnection dbConnection;
 
 	private static final String REQUEST_COMPUTERS = "SELECT id,name,introduced,discontinued,company_id FROM computer;";
 	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT id,name,introduced,discontinued,company_id FROM computer "

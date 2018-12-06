@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.mapper.CompanyMapper;
@@ -22,8 +23,11 @@ public class CompanyDAO {
 	private static final String REQUEST_COMPANY_BY_ID = "SELECT id, name FROM company WHERE id=?;";
 	private static final String REQUEST_COMPANIES_LIMIT = "SELECT id, name FROM company LIMIT ?, ?;";
 	private static final String DELETE_COMPANY = "DELETE FROM company WHERE id=?;";
-	private CompanyMapper companyMapper = CompanyMapper.getInstance();
-	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
+	
+	@Autowired
+	private CompanyMapper companyMapper;
+	@Autowired
+	private DatabaseConnection dbConnection;
 	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
 
 	private CompanyDAO() {

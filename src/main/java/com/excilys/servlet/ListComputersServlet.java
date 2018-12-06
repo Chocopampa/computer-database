@@ -15,14 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.dto.ComputerDTO;
-import com.excilys.main.SpringConfiguration;
 import com.excilys.mapper.ComputerDTOMapper;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
@@ -31,19 +26,20 @@ import com.excilys.persistence.CompanyDAO;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 
-@Controller
-@RequestMapping("/getComputers")
+@WebServlet("/getComputers")
 public class ListComputersServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -3938443724704425725L;
 
+	@Autowired
 	private CompanyService companyService;
+	@Autowired
 	private ComputerService computerService;
-
-	private ComputerDTOMapper computerDTOMapper = ComputerDTOMapper.getInstance();
+	@Autowired
+	private ComputerDTOMapper computerDTOMapper;
+	
 	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
 
-	@RequestMapping(method = RequestMethod.GET)
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String offsetString = request.getParameter("nbItem");
 		String numPage = request.getParameter("numPage");
@@ -79,7 +75,6 @@ public class ListComputersServlet extends HttpServlet {
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/getComputers.jsp").forward(request, response);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<String> idComputersToDelete = Arrays.asList(request.getParameterValues("computerChecked"));
 		idComputersToDelete.stream().forEach(idComputer -> computerService.deleteComputer(Long.parseLong(idComputer)));
@@ -87,11 +82,8 @@ public class ListComputersServlet extends HttpServlet {
 	}
 
 	@Override
-	public void init() throws ServletException {
-
-		ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
-
-		this.companyService = (CompanyService) context.getBean(CompanyService.class);
-		this.computerService = (ComputerService) context.getBean(ComputerService.class);
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 	}
 }

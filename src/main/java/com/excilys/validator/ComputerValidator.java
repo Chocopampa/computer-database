@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.exception.CompanyException;
 import com.excilys.exception.DatesException;
@@ -13,7 +14,8 @@ import com.excilys.service.CompanyService;
 public class ComputerValidator {
 
 	private static final Logger LOG4J = LogManager.getLogger(ComputerValidator.class.getName());
-	private static CompanyService companyServices = CompanyService.getInstance();
+	@Autowired
+	private static CompanyService companyServices;
 
 	private ComputerValidator() {
 	}
