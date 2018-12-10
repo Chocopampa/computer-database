@@ -59,12 +59,12 @@
 										class="fa fa-trash-o fa-lg"></i>
 								</a>
 							</span></th>
-							<th>Computer name</th>
-							<th>Introduced date</th>
+							<th id="tableHeadComputerName">Computer name</th>
+							<th id="tableHeadComputerIntroduced">Introduced date</th>
 							<!-- Table header for Discontinued Date -->
-							<th>Discontinued date</th>
+							<th id="tableHeadComputerDiscontinued">Discontinued date</th>
 							<!-- Table header for Company -->
-							<th>Company</th>
+							<th id="tableHeadComputerCompany">Company</th>
 
 						</tr>
 					</thead>

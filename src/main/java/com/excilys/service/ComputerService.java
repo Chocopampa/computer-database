@@ -33,14 +33,30 @@ public class ComputerService {
 		return computerDAO.getListComputers(page);
 	}
 
+	public List<Computer> getPagedComputersOrdered(Page page, String orderType) {
+		switch (orderType) {
+		case "name":
+			return computerDAO.getListComputersOrderByName(page);
+		case "introduced":
+			return computerDAO.getListComputersOrderByIntroduced(page);
+		case "discontinued":
+			return computerDAO.getListComputersOrderByDiscontinued(page);
+		case "company":
+			return computerDAO.getListComputersOrderByCompany(page);
+		default:
+			return computerDAO.getListComputers(page);
+		}
+
+	}
+
 	public Optional<Computer> getComputerById(long idComputer) {
 		return computerDAO.getComputerById(idComputer);
 	}
-	
+
 	public List<Computer> getComputersWithSearch(String search) {
 		return computerDAO.getComputersWithSearch(search);
 	}
-	
+
 	public List<Computer> getComputersFromCompanyId(long idCompany) {
 		return computerDAO.getComputersFromCompanyId(idCompany);
 	}

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.dto.ComputerDTO;
-import com.excilys.mapper.ComputerDTOMapper;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
@@ -35,8 +34,6 @@ public class ListComputersServlet extends HttpServlet {
 	private CompanyService companyService;
 	@Autowired
 	private ComputerService computerService;
-	@Autowired
-	private ComputerDTOMapper computerDTOMapper;
 	
 	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
 
@@ -45,20 +42,24 @@ public class ListComputersServlet extends HttpServlet {
 		String numPage = request.getParameter("numPage");
 		long firstId = 0;
 		String search = request.getParameter("search");
-
+		String order = request.getParameter("order");
+		if (order == null) {
+			order = "";
+		}
+		Page page = new Page(0, 10);
 		List<Computer> computers = new ArrayList<>();
 		if (offsetString != null) {
 			int offset = Integer.parseInt(offsetString);
 			if (numPage != null) {
 				firstId = (offset - 1) * Long.parseLong(numPage);
 			}
-			Page page = new Page(firstId, offset);
-			computers = computerService.getPagedComputers(page);
+			page = new Page(firstId, offset);
+			computers = computerService.getPagedComputersOrdered(page,order);
 		} else if (search != null) {
 			LOG4J.info("Searching for '" + search + "' in computers and companies names...");
 			computers = computerService.getComputersWithSearch(search);
 		} else {
-			computers = computerService.getComputers();
+			computers = computerService.getPagedComputersOrdered(page,order);
 		}
 
 		List<ComputerDTO> computersDTO = new ArrayList<>();
@@ -68,7 +69,7 @@ public class ListComputersServlet extends HttpServlet {
 			if (company.getId() != 0) {
 				currentComputer.getCompany().setName(companyService.getCompanyById(company.getId()).get().getName());
 			}
-			computersDTO.add(computerDTOMapper.map(currentComputer));
+			computersDTO.add(new ComputerDTO(currentComputer));
 		});
 		request.setAttribute("result_size", computersDTO.size());
 		request.setAttribute("computers", computersDTO);

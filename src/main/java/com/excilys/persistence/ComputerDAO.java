@@ -31,6 +31,12 @@ public class ComputerDAO {
 	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?, ?;";
 	private static final String REQUEST_DETAILED_COMPUTER = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id = ?;";
 	private static final String REQUEST_COMPUTER_FROM_COMPANY_ID = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE company_id = ?;";
+
+	private static final String REQUEST_COMPUTERS_ORDER_BY_NAME = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY name ASC;";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_INTRODUCED = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY introduced ASC;";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY discontinued ASC;";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_COMPANY = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY company_id ASC;";
+
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
 	private static final String INSERT_COMPUTER_WITHOUT_COMPANY = "INSERT INTO computer(name,introduced,discontinued) VALUES (?,?,?);";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
@@ -168,6 +174,122 @@ public class ComputerDAO {
 			computers = computerMapper.mapList(rs);
 		} catch (SQLException e) {
 			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_LIMIT + "')", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				LOG4J.error("ResultStatement did not close successfully.", e);
+			}
+			dbConnection.disconnect();
+		}
+		return computers;
+	}
+	
+	/**
+	 * Return database computers from first id to last id order by name.
+	 * 
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputersOrderByName(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_ORDER_BY_NAME)) {
+			LOG4J.info("Acquiring computers in database...");
+			statement.setLong(1, page.getFirstId());
+			statement.setInt(2, page.getOffset());
+			rs = statement.executeQuery();
+			computers = computerMapper.mapList(rs);
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_ORDER_BY_NAME + "')", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				LOG4J.error("ResultStatement did not close successfully.", e);
+			}
+			dbConnection.disconnect();
+		}
+		return computers;
+	}
+	
+	/**
+	 * Return database computers from first id to last id order by name.
+	 * 
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputersOrderByIntroduced(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_ORDER_BY_INTRODUCED)) {
+			LOG4J.info("Acquiring computers in database...");
+			statement.setLong(1, page.getFirstId());
+			statement.setInt(2, page.getOffset());
+			rs = statement.executeQuery();
+			computers = computerMapper.mapList(rs);
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_ORDER_BY_INTRODUCED + "')", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				LOG4J.error("ResultStatement did not close successfully.", e);
+			}
+			dbConnection.disconnect();
+		}
+		return computers;
+	}
+	
+	/**
+	 * Return database computers from first id to last id order by name.
+	 * 
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputersOrderByDiscontinued(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED)) {
+			LOG4J.info("Acquiring computers in database...");
+			statement.setLong(1, page.getFirstId());
+			statement.setInt(2, page.getOffset());
+			rs = statement.executeQuery();
+			computers = computerMapper.mapList(rs);
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED + "')", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				LOG4J.error("ResultStatement did not close successfully.", e);
+			}
+			dbConnection.disconnect();
+		}
+		return computers;
+	}
+	
+	/**
+	 * Return database computers from first id to last id order by name.
+	 * 
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputersOrderByCompany(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		ResultSet rs = null;
+		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_ORDER_BY_COMPANY)) {
+			LOG4J.info("Acquiring computers in database...");
+			statement.setLong(1, page.getFirstId());
+			statement.setInt(2, page.getOffset());
+			rs = statement.executeQuery();
+			computers = computerMapper.mapList(rs);
+		} catch (SQLException e) {
+			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_ORDER_BY_COMPANY + "')", e);
 		} finally {
 			try {
 				rs.close();
