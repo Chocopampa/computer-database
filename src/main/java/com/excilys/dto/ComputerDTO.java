@@ -2,6 +2,8 @@ package com.excilys.dto;
 
 import java.time.LocalDateTime;
 
+import com.excilys.model.Computer;
+
 public class ComputerDTO {
 	
 	private long id;
@@ -10,6 +12,16 @@ public class ComputerDTO {
 	private LocalDateTime discontinued;
 	private String companyName;
 
+	public ComputerDTO(Computer computer) {
+		this.id = computer.getId();
+		this.introduced = computer.getIntroduced();
+		this.discontinued = computer.getDiscontinued();
+		this.name = computer.getName();
+		if (computer.getCompany() != null) {
+			this.companyName = computer.getCompany().getName();
+		}
+	}
+	
 	public long getId() {
 		return id;
 	}

@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.excilys.model.Company;
 import com.excilys.service.CompanyService;
 
@@ -16,7 +18,9 @@ import com.excilys.service.CompanyService;
 public class ListCompaniesServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 3092660329888954541L;
-	private CompanyService companyService = CompanyService.getInstance();
+	
+	@Autowired
+	private CompanyService companyService;
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		List<Company> companies = companyService.getCompanies();

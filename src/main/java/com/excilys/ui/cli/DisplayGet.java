@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.excilys.config.SpringConfiguration;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.service.CompanyService;
@@ -12,8 +16,11 @@ import com.excilys.service.ComputerService;
 
 public class DisplayGet {
 
-	private static CompanyService companyServices = CompanyService.getInstance();
-	private static ComputerService computerServices = ComputerService.getInstance();
+	
+	static ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+	
+	private static CompanyService companyService = (CompanyService) context.getBean(CompanyService.class);
+	private static ComputerService computerServices = (ComputerService) context.getBean(ComputerService.class);
 
 	protected static void getResults(Scanner sc) {
 		String str = "";
@@ -58,7 +65,7 @@ public class DisplayGet {
 	 * Display all the companies in database.
 	 */
 	private static void displayCompanies() {
-		List<Company> companiesList = companyServices.getCompanies();
+		List<Company> companiesList = companyService.getCompanies();
 		for (Company company : companiesList) {
 			System.out.println(company);
 		}

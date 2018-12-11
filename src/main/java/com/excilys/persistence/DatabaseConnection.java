@@ -10,12 +10,15 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 
+@Component
 public class DatabaseConnection {
 
 	private Connection connection;
+	
 	private static HikariDataSource ds;
 
 	private static final Logger LOG4J = LogManager.getLogger(DatabaseConnection.class.getName());
@@ -76,4 +79,10 @@ public class DatabaseConnection {
 		}
 	}
 
+
+
+	public static HikariDataSource getDs() {
+		return ds;
+	}
+	
 }

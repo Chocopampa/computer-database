@@ -1,31 +1,51 @@
 package com.excilys.persistence;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SqlParameterValue;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.mapper.ComputerMapper;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 
+@Repository
 public class ComputerDAO {
 
-	private ComputerMapper computerMapper = ComputerMapper.getInstance();
-	private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
+	@Autowired
+	private ComputerMapper computerMapper;
+
+	private RowMapper<Computer> rowMapper = new RowMapper<Computer>() {
+		public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
+			return computerMapper.mapUnique(rs);
+		}
+	};
+
+	private JdbcTemplate jdbcTemplate = new JdbcTemplate(DatabaseConnection.getDs());
 
 	private static final String REQUEST_COMPUTERS = "SELECT id,name,introduced,discontinued,company_id FROM computer;";
 	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT id,name,introduced,discontinued,company_id FROM computer "
-			+ "WHERE name LIKE ? OR company_id IN (SELECT id FROM company "
-				+ "WHERE name LIKE ?);";
+			+ "WHERE name LIKE ? OR company_id IN (SELECT id FROM company " + "WHERE name LIKE ?);";
 	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?, ?;";
 	private static final String REQUEST_DETAILED_COMPUTER = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id = ?;";
 	private static final String REQUEST_COMPUTER_FROM_COMPANY_ID = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE company_id = ?;";
+
+	private static final String REQUEST_COMPUTERS_ORDER_BY_NAME = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY name ASC;";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_INTRODUCED = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY introduced ASC;";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY discontinued ASC;";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_COMPANY = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY company_id ASC;";
+
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
 	private static final String INSERT_COMPUTER_WITHOUT_COMPANY = "INSERT INTO computer(name,introduced,discontinued) VALUES (?,?,?);";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
@@ -48,23 +68,12 @@ public class ComputerDAO {
 	 * @return the ResultSet
 	 */
 	public List<Computer> getComputers() {
+		LOG4J.info("Acquiring computers...");
 		List<Computer> computers = new ArrayList<>();
-		ResultSet rs = null;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS)) {
-			LOG4J.info("Acquiring all the computers in database...");
-			LOG4J.debug(statement.toString());
-			rs = statement.executeQuery();
-			computers = computerMapper.mapList(rs);
-			computers.stream().forEach(o -> LOG4J.debug(o));
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS + "')", e);
-		} finally {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				LOG4J.error("ResultStatement did not close successfully.", e);
-			}
-			dbConnection.disconnect();
+		try {
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS, new Object[] {}, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS, e);
 		}
 		return computers;
 	}
@@ -76,71 +85,40 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public Optional<Computer> getComputerById(long idComputer) {
+		LOG4J.info("Acquiring computer by id : " + idComputer);
 		Computer computer = null;
-		ResultSet rs = null;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_DETAILED_COMPUTER)) {
-			statement.setLong(1, idComputer);
-			rs = statement.executeQuery();
-			rs.next();
-			computer = computerMapper.mapUnique(rs);
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_DETAILED_COMPUTER + "')", e);
-		} finally {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				LOG4J.error("ResultStatement did not close successfully.", e);
-			}
-			dbConnection.disconnect();
+		try {
+			computer = jdbcTemplate.queryForObject(REQUEST_DETAILED_COMPUTER, new Object[] { idComputer }, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_DETAILED_COMPUTER, e);
 		}
 		return Optional.ofNullable(computer);
 	}
-	
+
 	/**
-	 * Get computers by searching for a chain of characters in their name or in the name of their associated company.
+	 * Get computers by searching for a chain of characters in their name or in the
+	 * name of their associated company.
 	 * 
 	 * @param search
 	 * @return
 	 */
 	public List<Computer> getComputersWithSearch(String search) {
 		List<Computer> computers = new ArrayList<>();
-		ResultSet rs = null;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY)) {
-			statement.setString(1, "%" + search + "%");
-			statement.setString(2, "%" + search + "%");
-			LOG4J.info(statement.toString());
-			rs = statement.executeQuery();
-			computers = computerMapper.mapList(rs);
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY + "')", e);
-		} finally {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				LOG4J.error("ResultStatement did not close successfully.", e);
-			}
-			dbConnection.disconnect();
+		try {
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY,
+					new Object[] { "%" + search + "%", "%" + search + "%" }, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY, e);
 		}
 		return computers;
 	}
-	
+
 	public List<Computer> getComputersFromCompanyId(long idCompany) {
 		List<Computer> computers = new ArrayList<>();
-		ResultSet rs = null;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTER_FROM_COMPANY_ID)) {
-			statement.setLong(1, idCompany);
-			LOG4J.info(statement.toString());
-			rs = statement.executeQuery();
-			computers = computerMapper.mapList(rs);
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTER_FROM_COMPANY_ID + "')", e);
-		} finally {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				LOG4J.error("ResultStatement did not close successfully.", e);
-			}
-			dbConnection.disconnect();
+		try {
+			computers = jdbcTemplate.query(REQUEST_COMPUTER_FROM_COMPANY_ID, new Object[] { idCompany }, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTER_FROM_COMPANY_ID, e);
 		}
 		return computers;
 	}
@@ -154,22 +132,83 @@ public class ComputerDAO {
 	 */
 	public List<Computer> getListComputers(Page page) {
 		List<Computer> computers = new ArrayList<>();
-		ResultSet rs = null;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(REQUEST_COMPUTERS_LIMIT)) {
-			LOG4J.info("Acquiring computers in database...");
-			statement.setLong(1, page.getFirstId());
-			statement.setInt(2, page.getOffset());
-			rs = statement.executeQuery();
-			computers = computerMapper.mapList(rs);
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + REQUEST_COMPUTERS_LIMIT + "')", e);
-		} finally {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				LOG4J.error("ResultStatement did not close successfully.", e);
-			}
-			dbConnection.disconnect();
+		try {
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_LIMIT,
+					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_LIMIT, e);
+		}
+		return computers;
+	}
+
+	/**
+	 * Return database computers from first id to last id order by name.
+	 * 
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputersOrderByName(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		try {
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_NAME,
+					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_NAME, e);
+		}
+		return computers;
+	}
+
+	/**
+	 * Return database computers from first id to last id order by name.
+	 * 
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputersOrderByIntroduced(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		try {
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_INTRODUCED,
+					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_INTRODUCED, e);
+		}
+		return computers;
+	}
+
+	/**
+	 * Return database computers from first id to last id order by name.
+	 * 
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputersOrderByDiscontinued(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		try {
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED,
+					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED, e);
+		}
+		return computers;
+	}
+
+	/**
+	 * Return database computers from first id to last id order by name.
+	 * 
+	 * @param idFirstComputer
+	 * @param idLastComputer
+	 * @return
+	 */
+	public List<Computer> getListComputersOrderByCompany(Page page) {
+		List<Computer> computers = new ArrayList<>();
+		try {
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_COMPANY,
+					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_COMPANY, e);
 		}
 		return computers;
 	}
@@ -183,37 +222,40 @@ public class ComputerDAO {
 	 * @param company_id
 	 */
 	public int addComputer(Computer computer) {
-		int nbRowAffected = 0;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER)) {
-			LOG4J.info("Adding a computer to database...");
-			statement.setString(1, computer.getName());
+		List<Object> params = new ArrayList<>();
 
-			if (computer.getIntroduced() != null) {
-				statement.setString(2, computer.getIntroduced().toString());
-			} else {
-				statement.setString(2, null);
-			}
+		params.add(new SqlParameterValue(Types.VARCHAR, computer.getName()));
 
-			if (computer.getDiscontinued() != null) {
-				statement.setString(3, computer.getDiscontinued().toString());
-			} else {
-				statement.setString(3, null);
-			}
-
-			if (computer.getCompany() != null) {
-				statement.setLong(4, computer.getCompany().getId());
-			} else {
-				statement.setString(4, null);
-			}
-			nbRowAffected = statement.executeUpdate();
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER + "')", e);
-		} finally {
-			dbConnection.disconnect();
+		if (computer.getIntroduced() != null) {
+			params.add(new SqlParameterValue(Types.VARCHAR, computer.getIntroduced().toString()));
+		} else {
+			params.add(new SqlParameterValue(Types.VARCHAR, null));
 		}
+
+		if (computer.getDiscontinued() != null) {
+			params.add(new SqlParameterValue(Types.VARCHAR, computer.getDiscontinued().toString()));
+		} else {
+			params.add(new SqlParameterValue(Types.VARCHAR, null));
+		}
+
+		if (computer.getCompany() != null) {
+			params.add(new SqlParameterValue(Types.BIGINT, computer.getCompany().getId()));
+		} else {
+			params.add(new SqlParameterValue(Types.BIGINT, null));
+		}
+
+		Object[] vParams = params.toArray();
+
+		int nbRowAffected = 0;
+		try {
+			nbRowAffected = jdbcTemplate.update(INSERT_COMPUTER, vParams);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + INSERT_COMPUTER, e);
+		}
+
 		return nbRowAffected;
 	}
-	
+
 	/**
 	 * Create a computer in database.
 	 * 
@@ -223,29 +265,31 @@ public class ComputerDAO {
 	 * @param company_id
 	 */
 	public int addComputerWithoutCompany(Computer computer) {
-		int nbRowAffected = 0;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(INSERT_COMPUTER_WITHOUT_COMPANY)) {
-			LOG4J.info("Adding a computer to database...");
-			statement.setString(1, computer.getName());
+		List<Object> params = new ArrayList<>();
 
-			if (computer.getIntroduced() != null) {
-				statement.setString(2, computer.getIntroduced().toString());
-			} else {
-				statement.setString(2, null);
-			}
+		params.add(new SqlParameterValue(Types.VARCHAR, computer.getName()));
 
-			if (computer.getDiscontinued() != null) {
-				statement.setString(3, computer.getDiscontinued().toString());
-			} else {
-				statement.setString(3, null);
-			}
-			
-			nbRowAffected = statement.executeUpdate();
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + INSERT_COMPUTER_WITHOUT_COMPANY + "')", e);
-		} finally {
-			dbConnection.disconnect();
+		if (computer.getIntroduced() != null) {
+			params.add(new SqlParameterValue(Types.VARCHAR, computer.getIntroduced().toString()));
+		} else {
+			params.add(new SqlParameterValue(Types.VARCHAR, null));
 		}
+
+		if (computer.getDiscontinued() != null) {
+			params.add(new SqlParameterValue(Types.VARCHAR, computer.getDiscontinued().toString()));
+		} else {
+			params.add(new SqlParameterValue(Types.VARCHAR, null));
+		}
+
+		Object[] vParams = params.toArray();
+
+		int nbRowAffected = 0;
+		try {
+			nbRowAffected = jdbcTemplate.update(INSERT_COMPUTER_WITHOUT_COMPANY, vParams);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + INSERT_COMPUTER_WITHOUT_COMPANY, e);
+		}
+
 		return nbRowAffected;
 	}
 
@@ -256,15 +300,12 @@ public class ComputerDAO {
 	 */
 	public int deleteComputerFromId(long idComputer) {
 		int nbRowAffected = 0;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(DELETE_COMPUTER)) {
-			statement.setLong(1, idComputer);
-			nbRowAffected = statement.executeUpdate();
-			statement.close();
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + DELETE_COMPUTER + "')", e);
-		} finally {
-			dbConnection.disconnect();
+		try {
+			nbRowAffected = jdbcTemplate.update(DELETE_COMPUTER, new Object[] { idComputer });
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + DELETE_COMPUTER, e);
 		}
+
 		return nbRowAffected;
 	}
 
@@ -277,36 +318,39 @@ public class ComputerDAO {
 	 * @param company_id
 	 */
 	public int updateComputer(Computer computer) {
-		int nbRowAffected = 0;
-		try (PreparedStatement statement = dbConnection.connect().prepareStatement(UPDATE_COMPUTER)) {
+		List<Object> params = new ArrayList<>();
 
-			statement.setString(1, computer.getName());
+		params.add(new SqlParameterValue(Types.VARCHAR, computer.getName()));
 
-			if (computer.getIntroduced() != null) {
-				statement.setString(2, computer.getIntroduced().toString());
-			} else {
-				statement.setString(2, null);
-			}
-
-			if (computer.getDiscontinued() != null) {
-				statement.setString(3, computer.getDiscontinued().toString());
-			} else {
-				statement.setString(3, null);
-			}
-
-			if (computer.getCompany() != null && computer.getCompany().getId() != -1) {
-				statement.setLong(4, computer.getCompany().getId());
-			} else {
-				statement.setString(4, null);
-			}
-			statement.setLong(5, computer.getId());
-			nbRowAffected = statement.executeUpdate();
-			statement.close();
-		} catch (SQLException e) {
-			LOG4J.error("Erreur lors de l'execution de la requête. (Requête : '" + UPDATE_COMPUTER + "')", e);
-		} finally {
-			dbConnection.disconnect();
+		if (computer.getIntroduced() != null) {
+			params.add(new SqlParameterValue(Types.VARCHAR, computer.getIntroduced().toString()));
+		} else {
+			params.add(new SqlParameterValue(Types.VARCHAR, null));
 		}
+
+		if (computer.getDiscontinued() != null) {
+			params.add(new SqlParameterValue(Types.VARCHAR, computer.getDiscontinued().toString()));
+		} else {
+			params.add(new SqlParameterValue(Types.VARCHAR, null));
+		}
+
+		if (computer.getCompany() != null) {
+			params.add(new SqlParameterValue(Types.BIGINT, computer.getCompany().getId()));
+		} else {
+			params.add(new SqlParameterValue(Types.BIGINT, null));
+		}
+
+		params.add(new SqlParameterValue(Types.BIGINT, computer.getId()));
+
+		Object[] vParams = params.toArray();
+
+		int nbRowAffected = 0;
+		try {
+			nbRowAffected = jdbcTemplate.update(UPDATE_COMPUTER, vParams);
+		} catch (DataAccessException e) {
+			LOG4J.error("Error accessing the database for request : " + UPDATE_COMPUTER, e);
+		}
+
 		return nbRowAffected;
 	}
 

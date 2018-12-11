@@ -3,13 +3,18 @@ package com.excilys.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.persistence.ComputerDAO;
 
+@Service
 public class ComputerService {
 
-	private ComputerDAO computerDAO = ComputerDAO.getInstance();
+	@Autowired
+	private ComputerDAO computerDAO;
 
 	private ComputerService() {
 	}
@@ -28,14 +33,30 @@ public class ComputerService {
 		return computerDAO.getListComputers(page);
 	}
 
+	public List<Computer> getPagedComputersOrdered(Page page, String orderType) {
+		switch (orderType) {
+		case "name":
+			return computerDAO.getListComputersOrderByName(page);
+		case "introduced":
+			return computerDAO.getListComputersOrderByIntroduced(page);
+		case "discontinued":
+			return computerDAO.getListComputersOrderByDiscontinued(page);
+		case "company":
+			return computerDAO.getListComputersOrderByCompany(page);
+		default:
+			return computerDAO.getListComputers(page);
+		}
+
+	}
+
 	public Optional<Computer> getComputerById(long idComputer) {
 		return computerDAO.getComputerById(idComputer);
 	}
-	
+
 	public List<Computer> getComputersWithSearch(String search) {
 		return computerDAO.getComputersWithSearch(search);
 	}
-	
+
 	public List<Computer> getComputersFromCompanyId(long idCompany) {
 		return computerDAO.getComputersFromCompanyId(idCompany);
 	}
