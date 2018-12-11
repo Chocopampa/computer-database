@@ -68,6 +68,7 @@ public class ComputerDAO {
 	 * @return the ResultSet
 	 */
 	public List<Computer> getComputers() {
+		LOG4J.info("Acquiring computers...");
 		List<Computer> computers = new ArrayList<>();
 		try {
 			computers = jdbcTemplate.query(REQUEST_COMPUTERS, new Object[] {}, rowMapper);
@@ -84,6 +85,7 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public Optional<Computer> getComputerById(long idComputer) {
+		LOG4J.info("Acquiring computer by id : " + idComputer);
 		Computer computer = null;
 		try {
 			computer = jdbcTemplate.queryForObject(REQUEST_DETAILED_COMPUTER, new Object[] { idComputer }, rowMapper);

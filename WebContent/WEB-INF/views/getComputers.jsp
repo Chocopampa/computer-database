@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="css/main.css" rel="stylesheet" media="screen">
+<link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="resources/css/font-awesome.css" rel="stylesheet" media="screen">
+<link href="resources/css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="getComputers"> Application -
+			<a class="navbar-brand" href="/computer-database/"> Application -
 				Computer Database </a>
 		</div>
 	</header>
@@ -43,7 +43,7 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="#" method="POST">
+		<form id="deleteForm" action="/computer-database/" method="POST">
 			<input type="hidden" name="selection" value="">
 			<div class="container" style="margin-top: 10px;">
 				<table id="computerTable" class="table table-striped table-bordered">
@@ -75,7 +75,7 @@
 								<td class="editMode"><input type="checkbox"
 									name="computerChecked" class="cb" value="${item.id}"></td>
 								<td id="computerName"><a
-									href="/computer-database/editComputer?id=${item.id}" onclick=""><c:out
+									href="/computer-database/editComputer/${item.id}" onclick=""><c:out
 											value="${item.name}" /></a></td>
 								<td id="computerIntroduced"><c:out
 										value="${item.introduced}" /></td>
@@ -125,11 +125,11 @@
 			</div>
 		</div>
 	</footer>
-	<script src="js/jquery.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/dashboard.js"></script>
-	<script src="js/jquery.tablesorter.js"></script>
-	<script src="js/orderBy.js"></script>
+	<script src="resources/js/jquery.min.js"></script>
+	<script src="resources/js/bootstrap.min.js"></script>
+	<script src="resources/js/dashboard.js"></script>
+	<script src="resources/js/jquery.tablesorter.js"></script>
+	<script src="resources/js/orderBy.js"></script>
 
 </body>
 </html>

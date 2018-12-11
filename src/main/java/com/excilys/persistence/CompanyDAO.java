@@ -54,6 +54,7 @@ public class CompanyDAO {
 	 * @return the ResultSet
 	 */
 	public List<Company> getCompanies() {
+		LOG4J.info("Acquiring companies...");
 		List<Company> companies = new ArrayList<>();
 		try {
 			companies = jdbcTemplate.query(REQUEST_COMPANIES, new Object[] {}, rmCompany);
@@ -70,6 +71,7 @@ public class CompanyDAO {
 	 * @return
 	 */
 	public Optional<Company> getCompanyById(long idCompany) {
+		LOG4J.info("Acquiring company by id :" + idCompany);
 		Company company = null;
 		try {
 			company = jdbcTemplate.queryForObject(REQUEST_COMPANY_BY_ID, new Object[] { idCompany }, rmCompany);
