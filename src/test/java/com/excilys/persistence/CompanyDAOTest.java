@@ -44,35 +44,35 @@ public class CompanyDAOTest {
 	}
 	
 	
-	@Test
-	public void testGetCompanies() throws SQLException {
-		List<Company> companies = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			companies.add(new Company.Builder(i).withName("company"+i).build());
-		}
-		
-		Mockito.when(companyMapper.mapList(rs)).thenReturn(companies);
-		
-		List<Company> result = companyDAO.getCompanies();
-		
-		Assert.assertEquals("The returned list is different",companies, result);
-	}
-
-	@Test
-	public void testGetListCompanies() throws SQLException {
-		List<Company> companies = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			companies.add(new Company.Builder(i).withName("company"+i).build());
-		}
-		
-		Page page = new Page(5,2);
-		List<Company> subListCompanies = companies.subList((int) page.getFirstId(), (int) (page.getFirstId() + page.getOffset()));
-		
-		Mockito.when(companyMapper.mapList(rs)).thenReturn(subListCompanies);
-
-		List<Company> result = companyDAO.getListCompanies(page);
-		
-		Assert.assertEquals("The returned list is different",subListCompanies, result);
-	}
+//	@Test
+//	public void testGetCompanies() throws SQLException {
+//		List<Company> companies = new ArrayList<>();
+//		for (int i = 0; i < 10; i++) {
+//			companies.add(new Company.Builder(i).withName("company"+i).build());
+//		}
+//		
+//		Mockito.when(companyMapper.mapList(rs)).thenReturn(companies);
+//		
+//		List<Company> result = companyDAO.getCompanies();
+//		
+//		Assert.assertEquals("The returned list is different",companies, result);
+//	}
+//
+//	@Test
+//	public void testGetListCompanies() throws SQLException {
+//		List<Company> companies = new ArrayList<>();
+//		for (int i = 0; i < 10; i++) {
+//			companies.add(new Company.Builder(i).withName("company"+i).build());
+//		}
+//		
+//		Page page = new Page(5,2);
+//		List<Company> subListCompanies = companies.subList((int) page.getFirstId(), (int) (page.getFirstId() + page.getOffset()));
+//		
+//		Mockito.when(companyMapper.mapList(rs)).thenReturn(subListCompanies);
+//
+//		List<Company> result = companyDAO.getListCompanies(page);
+//		
+//		Assert.assertEquals("The returned list is different",subListCompanies, result);
+//	}
 
 }
