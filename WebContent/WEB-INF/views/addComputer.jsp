@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
 <title>Computer Database</title>
@@ -26,22 +27,26 @@
 						action="/computer-database/addComputer" method="POST">
 						<fieldset>
 							<div class="form-group">
-								<label for="computerName">Computer name</label> <input
+								<label for="computerName"><spring:message
+									code="label.column.name" /></label> <input
 									type="text" class="form-control" id="computerName"
 									name="computerName" placeholder="Computer name" />
 							</div>
 							<div class="form-group">
-								<label for="introduced">Introduced date</label> <input
+								<label for="introduced"><spring:message
+									code="label.column.introduced" /></label> <input
 									type="date" class="form-control" id="introduced"
 									name="introduced" placeholder="Introduced date" />
 							</div>
 							<div class="form-group">
-								<label for="discontinued">Discontinued date</label> <input
+								<label for="discontinued"><spring:message
+									code="label.column.discontinued" /></label> <input
 									type="date" class="form-control" id="discontinued"
 									name="discontinued" placeholder="Discontinued date" />
 							</div>
 							<div class="form-group">
-								<label for="companyId">Company</label> <select
+								<label for="companyId"><spring:message
+									code="label.column.company.number" /></label> <select
 									class="form-control" id="companyId" name="companyId">
 									<option value="">--</option>
 									<c:forEach items="${companiesIds}" var="id">

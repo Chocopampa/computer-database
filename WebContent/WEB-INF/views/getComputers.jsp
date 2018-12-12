@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
 <title>Computer Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
-<link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="resources/css/font-awesome.css" rel="stylesheet" media="screen">
+<link href="resources/css/bootstrap.min.css" rel="stylesheet"
+	media="screen">
+<link href="resources/css/font-awesome.css" rel="stylesheet"
+	media="screen">
 <link href="resources/css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
@@ -59,12 +62,16 @@
 										class="fa fa-trash-o fa-lg"></i>
 								</a>
 							</span></th>
-							<th id="tableHeadComputerName">Computer name</th>
-							<th id="tableHeadComputerIntroduced">Introduced date</th>
+							<th id="tableHeadComputerName"><spring:message
+									code="label.column.name" /></th>
+							<th id="tableHeadComputerIntroduced"><spring:message
+									code="label.column.introduced" /></th>
 							<!-- Table header for Discontinued Date -->
-							<th id="tableHeadComputerDiscontinued">Discontinued date</th>
+							<th id="tableHeadComputerDiscontinued"><spring:message
+									code="label.column.discontinued" /></th>
 							<!-- Table header for Company -->
-							<th id="tableHeadComputerCompany">Company</th>
+							<th id="tableHeadComputerCompany"><spring:message
+									code="label.column.company.name" /></th>
 
 						</tr>
 					</thead>
@@ -123,6 +130,14 @@
 				<button type="button" onclick="location.href='?nbItem=100';"
 					class="btn btn-default">100</button>
 			</div>
+				
+			<div class="btn-group btn-group-sm pull-right" role="group">
+				<button type="button" onclick="location.href='?lang=en';"
+					class="btn btn-default">en</button>
+				<button type="button" onclick="location.href='?lang=fr';"
+					class="btn btn-default">fr</button>
+			</div>
+
 		</div>
 	</footer>
 	<script src="resources/js/jquery.min.js"></script>
@@ -130,6 +145,5 @@
 	<script src="resources/js/dashboard.js"></script>
 	<script src="resources/js/jquery.tablesorter.js"></script>
 	<script src="resources/js/orderBy.js"></script>
-
 </body>
 </html>
