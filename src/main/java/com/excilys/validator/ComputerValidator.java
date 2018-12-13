@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.excilys.exception.CompanyException;
 import com.excilys.exception.DatesException;
 import com.excilys.model.Computer;
 import com.excilys.service.CompanyService;
 
+@Component
 public class ComputerValidator {
 
 	private static final Logger LOG4J = LogManager.getLogger(ComputerValidator.class.getName());
@@ -22,9 +24,19 @@ public class ComputerValidator {
 		this.companyService = companyService;
 	}
 
-	public boolean correctComputer(Computer computer) throws DatesException, CompanyException {
+	public boolean correctComputer(Computer computer) {
 		LOG4J.info("Checking dates and associated company...");
-		return (correctDates(computer.getIntroduced(),computer.getDiscontinued()) && companyExists(computer.getCompany().getId()));
+		boolean isCorrect = true;
+		try {
+			isCorrect = correctDates(computer.getIntroduced(),computer.getDiscontinued()) && companyExists(computer.getCompany().getId());
+		} catch (DatesException e) {
+			LOG4J.error("The entered dates are not correct.");
+			isCorrect = false;
+		} catch (CompanyException e) {
+			LOG4J.error("The entered company does not exists.");
+			isCorrect = false;
+		}
+		return isCorrect;
 	}
 	
 	private boolean correctDates(LocalDateTime introduced, LocalDateTime discontinued) throws DatesException{

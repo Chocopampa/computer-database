@@ -24,6 +24,7 @@ import com.excilys.model.Computer;
 import com.excilys.model.Page;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
+import com.excilys.validator.ComputerValidator;
 
 @Controller
 @RequestMapping("/")
@@ -35,6 +36,8 @@ public class ComputerController {
 	private CompanyService companyService;
 	@Autowired
 	private ComputerMapper computerMapper;
+	@Autowired
+	private ComputerValidator computerValidator;
 
 	private static String orderDirection = "DESC";
 
@@ -119,6 +122,7 @@ public class ComputerController {
 			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
 		Computer computer = computerMapper.mapUnique(name, introduced, discontinued, companyNumber);
 		computer.setId(id);
+		computerValidator.correctComputer(computer);
 		computerService.updateComputer(computer);
 		return "redirect:/editComputer/" + id;
 

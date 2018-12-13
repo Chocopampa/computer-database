@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(value = {"com.excilys.persistence",
 		"com.excilys.service",
-		"com.excilys.mapper"})
+		"com.excilys.mapper",
+		"com.excilys.validator"})
 public class SpringConfiguration {
 }
