@@ -103,21 +103,21 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=${(param["numPage"]-1) < 0 ? 0 : param["numPage"]-1}'
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=${(param["numPage"]-1) < 0 ? 0 : param["numPage"]-1}'
 					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=0'>1</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=0'>1</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=1'>2</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=1'>2</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=2'>3</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=2'>3</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=3'>4</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=3'>4</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=4'>5</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=4'>5</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=${result_size != param["nbItem"] ? param["numPage"] : param["numPage"]+1}'
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=${result_size != param["nbItem"] ? param["numPage"] : param["numPage"]+1}'
 					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>

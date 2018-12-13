@@ -13,6 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.mapper.CompanyMapper;
 import com.excilys.model.Company;
@@ -87,6 +88,7 @@ public class CompanyDAO {
 	 * @param idCompany
 	 * @return
 	 */
+	@Transactional(rollbackFor=DataAccessException.class)
 	public int deleteCompany(long idCompany) {
 		int nbRowAffected = 0;
 		try {

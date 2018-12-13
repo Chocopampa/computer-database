@@ -18,11 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.dto.ComputerDTO;
-import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
-import com.excilys.persistence.CompanyDAO;
-import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 
 @Controller
@@ -30,15 +27,15 @@ import com.excilys.service.ComputerService;
 public class ListComputersServlet {
 
 	@Autowired
-	private CompanyService companyService;
-	@Autowired
 	private ComputerService computerService;
 
-	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
+	private static String orderDirection = "DESC";
+	
+	private static final Logger LOG4J = LogManager.getLogger(ListComputersServlet.class.getName());
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String doGet(@RequestParam(required = false) String nbItem, @RequestParam(required = false) String numPage,
-			@RequestParam(required = false) String search, @RequestParam(required = false) String order, ModelMap model)
+			@RequestParam(required = false) String search, @RequestParam(required = false) String order, @RequestParam(required = false) String change, ModelMap model)
 			throws ServletException, IOException {
 		long firstId = 0;
 		if (order == null) {
@@ -52,21 +49,22 @@ public class ListComputersServlet {
 				firstId = (offset - 1) * Long.parseLong(numPage);
 			}
 			page = new Page(firstId, offset);
-			computers = computerService.getPagedComputersOrdered(page, order);
+			if ("DESC".equals(orderDirection) && Boolean.parseBoolean(change)) {
+				orderDirection = "ASC";
+			} else if ("ASC".equals(orderDirection) && Boolean.parseBoolean(change)) {
+				orderDirection = "DESC";
+			}
+			computers = computerService.getPagedComputersOrdered(page, order, orderDirection);
 		} else if (search != null) {
 			LOG4J.info("Searching for '" + search + "' in computers and companies names...");
 			computers = computerService.getComputersWithSearch(search);
 		} else {
-			computers = computerService.getPagedComputersOrdered(page, order);
+			computers = computerService.getPagedComputersOrdered(page, order, orderDirection);
 		}
 
 		List<ComputerDTO> computersDTO = new ArrayList<>();
 
 		computers.stream().forEach(currentComputer -> {
-			Company company = currentComputer.getCompany();
-			if (company.getId() != 0) {
-				currentComputer.getCompany().setName(companyService.getCompanyById(company.getId()).get().getName());
-			}
 			computersDTO.add(new ComputerDTO(currentComputer));
 		});
 		model.addAttribute("result_size", computersDTO.size());

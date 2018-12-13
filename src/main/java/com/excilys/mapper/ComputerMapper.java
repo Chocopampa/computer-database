@@ -51,9 +51,9 @@ public class ComputerMapper {
 			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
 
-		Company company = new Company.Builder(computerDb.getLong("company_id")).build();
+		Company company = new Company.Builder(computerDb.getLong("company_id")).withName(computerDb.getString("companyName")).build();
 
-		return new Computer.Builder(computerDb.getString("name")).withId(computerDb.getInt("id"))
+		return new Computer.Builder(computerDb.getString("compuName")).withId(computerDb.getInt("compuId"))
 				.withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued).withCompany(company).build();
 	}
 

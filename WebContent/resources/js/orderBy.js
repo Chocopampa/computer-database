@@ -7,9 +7,9 @@ document.getElementById("tableHeadComputerName").onclick = function () {
 		nbItem = 10; 
 	}
 	if (numPage == null) {
-		numPage = 1; 
+		numPage = 0; 
 	}
-	location.href = '?nbItem=' + nbItem + '&numPage='+ numPage + '&order=' + order;
+	location.href = '?nbItem=' + nbItem + '&numPage='+ numPage + '&order=' + order + '&change=true';
 };
 
 document.getElementById("tableHeadComputerIntroduced").onclick = function () {
@@ -21,9 +21,9 @@ document.getElementById("tableHeadComputerIntroduced").onclick = function () {
 		nbItem = 10; 
 	}
 	if (numPage == null) {
-		numPage = 1; 
+		numPage = 0; 
 	}
-	location.href = '?nbItem=' + nbItem + '&numPage='+ numPage + '&order=' + order;
+	location.href = '?nbItem=' + nbItem + '&numPage='+ numPage + '&order=' + order + '&change=true';
 };
 
 document.getElementById("tableHeadComputerDiscontinued").onclick = function () {
@@ -35,9 +35,9 @@ document.getElementById("tableHeadComputerDiscontinued").onclick = function () {
 		nbItem = 10; 
 	}
 	if (numPage == null) {
-		numPage = 1; 
+		numPage = 0; 
 	}
-	location.href = '?nbItem=' + nbItem + '&numPage='+ numPage + '&order=' + order;
+	location.href = '?nbItem=' + nbItem + '&numPage='+ numPage + '&order=' + order + '&change=true';
 };
 
 document.getElementById("tableHeadComputerCompany").onclick = function () {
@@ -49,7 +49,7 @@ document.getElementById("tableHeadComputerCompany").onclick = function () {
 		nbItem = 10; 
 	}
 	if (numPage == null) {
-		numPage = 1; 
+		numPage = 0; 
 	}
-	location.href = '?nbItem=' + nbItem + '&numPage='+ numPage + '&order=' + order;
+	location.href = '?nbItem=' + nbItem + '&numPage='+ numPage + '&order=' + order + '&change=true';
 };
