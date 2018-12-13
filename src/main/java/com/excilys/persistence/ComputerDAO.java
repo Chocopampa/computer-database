@@ -40,7 +40,7 @@ public class ComputerDAO {
 	
 	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
 			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "WHERE name LIKE ? OR company_id IN (SELECT id FROM company " + "WHERE name LIKE ?);";
+			+ "WHERE c1.name LIKE ? OR c2.name LIKE ?;";
 	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
 			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
 			+ "LIMIT ?, ?;";

@@ -20,8 +20,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(value = { "com.excilys.persistence", "com.excilys.service", "com.excilys.servlet",
-		"com.excilys.mapper" })
+@ComponentScan(value = "com.excilys.controller")
 public class ViewConfiguration implements WebMvcConfigurer {
 	@Bean
 	public ViewResolver viewResolver() {
