@@ -4,14 +4,18 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.excilys.model.Computer;
 import com.excilys.service.CompanyService;
 import com.excilys.service.ComputerService;
 
 public class DisplayDelete {
 
-	private static ComputerService computerServices = ComputerService.getInstance();
-	private static CompanyService companyServices = CompanyService.getInstance();
+	@Autowired
+	private static ComputerService computerServices;
+	@Autowired
+	private static CompanyService companyServices;
 
 	protected static void deleteItem(Scanner sc) {
 		String str = "";

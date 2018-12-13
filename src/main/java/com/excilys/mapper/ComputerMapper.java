@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.model.Company;
@@ -15,13 +16,8 @@ import com.excilys.model.Computer;
 @Component
 public class ComputerMapper {
 
-	private ComputerMapper() {
-	}
-
-	private static final ComputerMapper INSTANCE = new ComputerMapper();
-
-	public static ComputerMapper getInstance() {
-		return INSTANCE;
+	@Autowired
+	public ComputerMapper() {
 	}
 
 	public List<Computer> mapList(ResultSet listComputerDb) throws SQLException {

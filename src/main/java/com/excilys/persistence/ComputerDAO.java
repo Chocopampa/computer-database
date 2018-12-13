@@ -24,8 +24,7 @@ import com.excilys.model.Page;
 @Repository
 public class ComputerDAO {
 
-	@Autowired
-	private ComputerMapper computerMapper;
+	private final ComputerMapper computerMapper;
 
 	private RowMapper<Computer> rowMapper = new RowMapper<Computer>() {
 		public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -36,8 +35,8 @@ public class ComputerDAO {
 	private JdbcTemplate jdbcTemplate = new JdbcTemplate(DatabaseConnection.getDs());
 
 	private static final String REQUEST_COMPUTERS = "SELECT id,name,introduced,discontinued,company_id FROM computer;";
-	
-	
+
+
 	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
 			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
 			+ "WHERE c1.name LIKE ? OR c2.name LIKE ?;";
@@ -51,7 +50,7 @@ public class ComputerDAO {
 			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
 			+ "WHERE c1.company_id = ?;";
 
-	
+
 	private static final String REQUEST_COMPUTERS_ORDER_BY_NAME = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
 			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
 			+ "ORDER BY compuName ";
@@ -73,15 +72,12 @@ public class ComputerDAO {
 
 	private static final Logger LOG4J = LogManager.getLogger(ComputerDAO.class.getName());
 
-	private ComputerDAO() {
-	};
-
-	private static final ComputerDAO INSTANCE = new ComputerDAO();
-
-	public static ComputerDAO getInstance() {
-		return INSTANCE;
+	@Autowired
+	public ComputerDAO(ComputerMapper computerMapper) {
+		this.computerMapper = computerMapper;
 	}
-
+	
+	
 	/**
 	 * Get all the database computers.
 	 * 

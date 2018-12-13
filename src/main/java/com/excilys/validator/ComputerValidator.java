@@ -14,16 +14,12 @@ import com.excilys.service.CompanyService;
 public class ComputerValidator {
 
 	private static final Logger LOG4J = LogManager.getLogger(ComputerValidator.class.getName());
+	
+	private final CompanyService companyService;
+
 	@Autowired
-	private static CompanyService companyServices;
-
-	private ComputerValidator() {
-	}
-
-	private static final ComputerValidator INSTANCE = new ComputerValidator();
-
-	public static ComputerValidator getInstance() {
-		return INSTANCE;
+	public ComputerValidator(CompanyService companyService) {
+		this.companyService = companyService;
 	}
 
 	public boolean correctComputer(Computer computer) throws DatesException, CompanyException {
@@ -44,7 +40,7 @@ public class ComputerValidator {
 	}
 	
 	private boolean companyExists(long idCompany) throws CompanyException{
-		boolean isPresent = companyServices.getCompanyById(idCompany).isPresent();
+		boolean isPresent = companyService.getCompanyById(idCompany).isPresent();
 		if (!isPresent) {
 			throw new CompanyException("Company does not exist.");
 		}

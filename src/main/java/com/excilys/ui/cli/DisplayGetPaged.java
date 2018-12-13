@@ -3,6 +3,8 @@ package com.excilys.ui.cli;
 import java.util.List;
 import java.util.Scanner;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
@@ -11,8 +13,10 @@ import com.excilys.service.ComputerService;
 
 public class DisplayGetPaged {
 
-	private static CompanyService companyServices = CompanyService.getInstance();
-	private static ComputerService computerServices = ComputerService.getInstance();
+	@Autowired
+	private static CompanyService companyServices;
+	@Autowired
+	private static ComputerService computerServices;
 
 	/**
 	 * Paginated computers function.

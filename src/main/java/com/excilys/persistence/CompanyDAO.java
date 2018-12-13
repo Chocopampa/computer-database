@@ -21,6 +21,8 @@ import com.excilys.model.Page;
 
 @Repository
 public class CompanyDAO {
+	
+	private final CompanyMapper companyMapper;
 
 	private JdbcTemplate jdbcTemplate = new JdbcTemplate(DatabaseConnection.getDs());
 
@@ -35,19 +37,13 @@ public class CompanyDAO {
 		}
 	};
 
-	@Autowired
-	private CompanyMapper companyMapper;
-
 	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
 
-	private CompanyDAO() {
-	};
-
-	private static final CompanyDAO INSTANCE = new CompanyDAO();
-
-	public static CompanyDAO getInstance() {
-		return INSTANCE;
+	@Autowired
+	public CompanyDAO(CompanyMapper companyMapper) {
+		this.companyMapper = companyMapper;
 	}
+	
 
 	/**
 	 * Get all the database companies.

@@ -5,18 +5,15 @@ import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ParseValidator {
 
-	private ParseValidator() {
+	@Autowired
+	public ParseValidator() {
 	}
 
-	private static final ParseValidator INSTANCE = new ParseValidator();
 	private static final Logger LOG4J = LogManager.getLogger(ParseValidator.class.getName());
-
-	public static ParseValidator getInstance() {
-		return INSTANCE;
-	}
 
 	/**
 	 * Check if the String is a long.

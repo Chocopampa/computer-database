@@ -13,18 +13,13 @@ import com.excilys.persistence.ComputerDAO;
 @Service
 public class ComputerService {
 
+	private final ComputerDAO computerDAO;
+
 	@Autowired
-	private ComputerDAO computerDAO;
-
-	private ComputerService() {
+	public ComputerService(ComputerDAO computerDAO) {
+		this.computerDAO = computerDAO;
 	}
-
-	private static final ComputerService INSTANCE = new ComputerService();
-
-	public static ComputerService getInstance() {
-		return INSTANCE;
-	}
-
+	
 	public List<Computer> getComputers() {
 		return computerDAO.getComputers();
 	}

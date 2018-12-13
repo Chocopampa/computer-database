@@ -2,23 +2,19 @@ package com.excilys.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.dto.ComputerDTO;
@@ -45,9 +41,13 @@ public class ComputerController {
 	private static final Logger LOG4J = LogManager.getLogger(ComputerController.class.getName());
 
 	@GetMapping
-	public String listComputers(@RequestParam(required = false) String nbItem, @RequestParam(required = false) String numPage,
-			@RequestParam(required = false) String search, @RequestParam(required = false) String order,
-			@RequestParam(required = false) String change, ModelMap model) throws ServletException, IOException {
+	public String listComputers(@RequestParam(required = false) String nbItem,
+			@RequestParam(required = false) String numPage, 
+			@RequestParam(required = false) String search,
+			@RequestParam(required = false) String order, 
+			@RequestParam(required = false) String change, 
+			ModelMap model)
+			throws ServletException, IOException {
 		long firstId = 0;
 		if (order == null) {
 			order = "";
@@ -84,21 +84,25 @@ public class ComputerController {
 	}
 
 	@PostMapping
-	public String deleteComputers(HttpServletRequest request) throws ServletException, IOException {
-		List<String> idComputersToDelete = Arrays.asList(request.getParameterValues("computerChecked"));
+	public String deleteComputers(@RequestParam("computerChecked") List<String> idComputersToDelete)
+			throws ServletException, IOException {
 		idComputersToDelete.stream().forEach(idComputer -> computerService.deleteComputer(Long.parseLong(idComputer)));
 		return "redirect:";
-	}	
-	
-	@GetMapping(value="/editComputer/{id}")
+	}
+
+	@GetMapping(value = "/editComputer/{id}")
 	public String editComputerView(@PathVariable("id") long id, ModelMap model) throws ServletException, IOException {
 		LOG4J.info("Entering get method");
 		List<Company> companies = companyService.getCompanies();
 		List<Long> companiesIds = new ArrayList<>();
 		companies.stream().forEach(company -> companiesIds.add(company.getId()));
 		Computer computer = computerService.getComputerById(id).get();
-		String introduced = (computer.getIntroduced() != null ? computer.getIntroduced().toString().subSequence(0, 10).toString() : null);
-		String discontinued = (computer.getDiscontinued() != null ? computer.getDiscontinued().toString().subSequence(0, 10).toString() : null);
+		String introduced = (computer.getIntroduced() != null
+				? computer.getIntroduced().toString().subSequence(0, 10).toString()
+				: null);
+		String discontinued = (computer.getDiscontinued() != null
+				? computer.getDiscontinued().toString().subSequence(0, 10).toString()
+				: null);
 		model.addAttribute("computer", computer);
 		model.addAttribute("introduced", introduced);
 		model.addAttribute("discontinued", discontinued);
@@ -106,14 +110,13 @@ public class ComputerController {
 		model.addAttribute("companiesIds", companiesIds);
 		return "editComputer";
 	}
-	
-	@PostMapping(value="/editComputer/{id}")
-	public String editComputer(@PathVariable("id") long id, HttpServletRequest request) throws ServletException, IOException {
-		String name = request.getParameter("computerName");
-		String introduced = request.getParameter("introduced");
-		String discontinued = request.getParameter("discontinued");
-		String companyNumber = request.getParameter("companyId");
-		
+
+	@PostMapping(value = "/editComputer/{id}")
+	public String editComputer(@PathVariable("id") long id, 
+			@RequestParam("computerName") String name,
+			@RequestParam("introduced") String introduced, 
+			@RequestParam("discontinued") String discontinued,
+			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
 		Computer computer = computerMapper.mapUnique(name, introduced, discontinued, companyNumber);
 		computer.setId(id);
 		computerService.updateComputer(computer);
@@ -121,21 +124,21 @@ public class ComputerController {
 
 	}
 
-	@GetMapping(value="/addComputer")
-	public String addComputerView(HttpServletRequest request) throws ServletException, IOException {
+	@GetMapping(value = "/addComputer")
+	public String addComputerView(ModelMap model) throws ServletException, IOException {
 		List<Company> companies = companyService.getCompanies();
 		List<Long> companiesIds = new ArrayList<>();
 		companies.stream().forEach(company -> companiesIds.add(company.getId()));
-		request.setAttribute("companiesIds", companiesIds);
+		model.addAttribute("companiesIds", companiesIds);
 		return "addComputer";
 	}
 
-	@PostMapping(value="/addComputer")
-	public String addComputer(HttpServletRequest request) throws ServletException, IOException {
-		String name = request.getParameter("computerName");
-		String introduced = request.getParameter("introduced");
-		String discontinued = request.getParameter("discontinued");
-		String companyNumber = request.getParameter("companyId");
+	@PostMapping(value = "/addComputer")
+	public String addComputer( 
+			@RequestParam("computerName") String name,
+			@RequestParam("introduced") String introduced, 
+			@RequestParam("discontinued") String discontinued,
+			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
 
 		Computer computer = computerMapper.mapUnique(name, introduced, discontinued, companyNumber);
 		computerService.createComputer(computer);
