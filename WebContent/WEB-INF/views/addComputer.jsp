@@ -6,9 +6,11 @@
 <title>Computer Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
-<link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="resources/css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="resources/css/main.css" rel="stylesheet" media="screen">
+<link href='<spring:url value="/resources/css/bootstrap.min.css"/>' rel="stylesheet"
+	media="screen">
+<link href='<spring:url value="/resources/css/font-awesome.css"/>' rel="stylesheet"
+	media="screen">
+<link href='<spring:url value="/resources/css/main.css"/>' rel="stylesheet" media="screen">
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
@@ -23,7 +25,7 @@
 			<div class="row">
 				<div class="col-xs-8 col-xs-offset-2 box">
 					<h1>Add Computer</h1>
-					<form id="addFormular" name="addFormular"
+					<form id="computerFormular" name="computerFormular"
 						action="/computer-database/addComputer" method="POST">
 						<fieldset>
 							<div class="form-group">
@@ -66,8 +68,8 @@
 		</div>
 	</section>
 
-	<script src="resources/js/jquery.min.js"></script>
-	<script src="resources/js/jquery.validate.min.js"></script>
-	<script src="resources/js/validation.js"></script>
+	<script src='<spring:url value="/resources/js/jquery.min.js"/>'></script>
+	<script src='<spring:url value="/resources/js/jquery.validate.min.js"/>'></script>
+	<script src='<spring:url value="/resources/js/validation.js"/>'></script>
 </body>
 </html>

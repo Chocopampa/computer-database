@@ -145,6 +145,7 @@ public class ComputerController {
 			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
 
 		Computer computer = computerMapper.mapUnique(name, introduced, discontinued, companyNumber);
+		computerValidator.correctComputer(computer);
 		computerService.createComputer(computer);
 		return "redirect:/addComputer/";
 	}

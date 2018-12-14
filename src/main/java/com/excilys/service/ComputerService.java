@@ -19,7 +19,7 @@ public class ComputerService {
 	public ComputerService(ComputerDAO computerDAO) {
 		this.computerDAO = computerDAO;
 	}
-	
+
 	public List<Computer> getComputers() {
 		return computerDAO.getComputers();
 	}
@@ -30,16 +30,16 @@ public class ComputerService {
 
 	public List<Computer> getPagedComputersOrdered(Page page, String orderType, String orderDirection) {
 		switch (orderType) {
-		case "name":
-			return computerDAO.getListComputersOrderByName(page, orderDirection);
-		case "introduced":
-			return computerDAO.getListComputersOrderByIntroduced(page, orderDirection);
-		case "discontinued":
-			return computerDAO.getListComputersOrderByDiscontinued(page, orderDirection);
-		case "company":
-			return computerDAO.getListComputersOrderByCompany(page, orderDirection);
-		default:
-			return computerDAO.getListComputers(page);
+			case "name":
+				return computerDAO.getListComputersOrderByName(page, orderDirection);
+			case "introduced":
+				return computerDAO.getListComputersOrderByIntroduced(page, orderDirection);
+			case "discontinued":
+				return computerDAO.getListComputersOrderByDiscontinued(page, orderDirection);
+			case "company":
+				return computerDAO.getListComputersOrderByCompany(page, orderDirection);
+			default:
+				return computerDAO.getListComputers(page);
 		}
 
 	}
