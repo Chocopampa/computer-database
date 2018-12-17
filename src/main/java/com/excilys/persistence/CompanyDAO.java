@@ -13,6 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.mapper.CompanyMapper;
 import com.excilys.model.Company;
@@ -20,6 +21,8 @@ import com.excilys.model.Page;
 
 @Repository
 public class CompanyDAO {
+	
+	private final CompanyMapper companyMapper;
 
 	private JdbcTemplate jdbcTemplate = new JdbcTemplate(DatabaseConnection.getDs());
 
@@ -34,19 +37,13 @@ public class CompanyDAO {
 		}
 	};
 
-	@Autowired
-	private CompanyMapper companyMapper;
-
 	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
 
-	private CompanyDAO() {
-	};
-
-	private static final CompanyDAO INSTANCE = new CompanyDAO();
-
-	public static CompanyDAO getInstance() {
-		return INSTANCE;
+	@Autowired
+	public CompanyDAO(CompanyMapper companyMapper) {
+		this.companyMapper = companyMapper;
 	}
+	
 
 	/**
 	 * Get all the database companies.
@@ -87,6 +84,7 @@ public class CompanyDAO {
 	 * @param idCompany
 	 * @return
 	 */
+	@Transactional(rollbackFor=DataAccessException.class)
 	public int deleteCompany(long idCompany) {
 		int nbRowAffected = 0;
 		try {

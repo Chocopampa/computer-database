@@ -7,21 +7,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.excilys.dto.ComputerDTO;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 
 @Component
 public class ComputerMapper {
 
-	private ComputerMapper() {
-	}
-
-	private static final ComputerMapper INSTANCE = new ComputerMapper();
-
-	public static ComputerMapper getInstance() {
-		return INSTANCE;
+	@Autowired
+	public ComputerMapper() {
 	}
 
 	public List<Computer> mapList(ResultSet listComputerDb) throws SQLException {
@@ -51,36 +48,17 @@ public class ComputerMapper {
 			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
 
-		Company company = new Company.Builder(computerDb.getLong("company_id")).build();
+		Company company = new Company.Builder(computerDb.getLong("company_id")).withName(computerDb.getString("companyName")).build();
 
-		return new Computer.Builder(computerDb.getString("name")).withId(computerDb.getInt("id"))
+		return new Computer.Builder(computerDb.getString("compuName")).withId(computerDb.getInt("compuId"))
 				.withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued).withCompany(company).build();
 	}
 
-	public Computer mapUnique(String name, String introduced, String discontinued, String companyNumber) {
-		Computer computer = null;
-		LocalDateTime timeIntroduced = null;
-		LocalDateTime timeDiscontinued = null;
+	public Computer mapUnique(ComputerDTO computerDTO) {
+		Company company = new Company.Builder(computerDTO.getCompanyId()).withName(computerDTO.getCompanyName()).build();
 
-		if (!introduced.isEmpty()) {
-			introduced = introduced + "T00:00:00";
-			timeIntroduced = LocalDateTime.parse(introduced, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-		}
-
-		if (!discontinued.isEmpty()) {
-			discontinued = discontinued + "T00:00:00";
-			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-		}
-
-		Company company = null;
-
-		if (!companyNumber.isEmpty()) {
-			company =  new Company.Builder(Long.parseLong(companyNumber)).build();
-		}
-
-		computer = new Computer.Builder(name).withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued)
+		return new Computer.Builder(computerDTO.getName()).withIntroduced(computerDTO.getIntroduced()).withDiscontinued(computerDTO.getDiscontinued())
 				.withCompany(company).build();
-		return computer;
 	}
 
 }

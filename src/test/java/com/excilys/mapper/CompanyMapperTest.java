@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.model.Company;
 
@@ -23,7 +24,8 @@ public class CompanyMapperTest {
 	private ResultSet rs;
 
 	@InjectMocks
-	private CompanyMapper companyMapper = CompanyMapper.getInstance();
+	@Autowired
+	private CompanyMapper companyMapper;
 
 	@Before
 	public void setUp() throws Exception {

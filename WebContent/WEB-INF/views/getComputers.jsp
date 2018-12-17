@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <html>
 <head>
 <title>Computer Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
-<link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="resources/css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="resources/css/main.css" rel="stylesheet" media="screen">
+<link href='<spring:url value="/resources/css/bootstrap.min.css"/>'
+	rel="stylesheet" media="screen">
+<link href='<spring:url value="/resources/css/font-awesome.css"/>'
+	rel="stylesheet" media="screen">
+<link href='<spring:url value="/resources/css/main.css"/>'
+	rel="stylesheet" media="screen">
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
@@ -22,23 +26,28 @@
 		<div class="container">
 			<h1 id="homeTitle">
 				<c:out value="${result_size}" />
-				Computers found
+				<spring:message code="label.count.computers" />
 			</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+							class="form-control"
+							placeholder="<spring:message
+									code="label.search.field" />" />
+						<input type="submit" id="searchsubmit"
+							value="<spring:message
+									code="label.search.button" />"
 							class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer"
-						href="/computer-database/addComputer">Add Computer</a> <a
-						class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+						href="/computer-database/addComputer"><spring:message
+							code="label.add.computer" /></a> <a class="btn btn-default"
+						id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message
+							code="label.delete.button" /></a>
 				</div>
 			</div>
 		</div>
@@ -59,12 +68,16 @@
 										class="fa fa-trash-o fa-lg"></i>
 								</a>
 							</span></th>
-							<th id="tableHeadComputerName">Computer name</th>
-							<th id="tableHeadComputerIntroduced">Introduced date</th>
+							<th id="tableHeadComputerName"><spring:message
+									code="label.column.name" /></th>
+							<th id="tableHeadComputerIntroduced"><spring:message
+									code="label.column.introduced" /></th>
 							<!-- Table header for Discontinued Date -->
-							<th id="tableHeadComputerDiscontinued">Discontinued date</th>
+							<th id="tableHeadComputerDiscontinued"><spring:message
+									code="label.column.discontinued" /></th>
 							<!-- Table header for Company -->
-							<th id="tableHeadComputerCompany">Company</th>
+							<th id="tableHeadComputerCompany"><spring:message
+									code="label.column.company.name" /></th>
 
 						</tr>
 					</thead>
@@ -96,21 +109,21 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=${(param["numPage"]-1) < 0 ? 0 : param["numPage"]-1}'
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=${(param["numPage"]-1) < 0 ? 0 : param["numPage"]-1}'
 					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=0'>1</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=0'>1</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=1'>2</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=1'>2</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=2'>3</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=2'>3</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=3'>4</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=3'>4</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=4'>5</a></li>
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=4'>5</a></li>
 				<li><a
-					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&numPage=${result_size != param["nbItem"] ? param["numPage"] : param["numPage"]+1}'
+					href='?nbItem=${param["nbItem"] != null ? param["nbItem"] : result_size}&order=${param["order"]}&change=false&numPage=${result_size != param["nbItem"] ? param["numPage"] : param["numPage"]+1}'
 					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
@@ -123,13 +136,21 @@
 				<button type="button" onclick="location.href='?nbItem=100';"
 					class="btn btn-default">100</button>
 			</div>
+
+			<div class="btn-group btn-group-sm pull-right" role="group">
+				<button type="button" onclick="location.href='?lang=en';"
+					class="btn btn-default">en</button>
+				<button type="button" onclick="location.href='?lang=fr';"
+					class="btn btn-default">fr</button>
+			</div>
+
 		</div>
 	</footer>
-	<script src="resources/js/jquery.min.js"></script>
-	<script src="resources/js/bootstrap.min.js"></script>
-	<script src="resources/js/dashboard.js"></script>
-	<script src="resources/js/jquery.tablesorter.js"></script>
-	<script src="resources/js/orderBy.js"></script>
 
+	<script src='<spring:url value="/resources/js/jquery.min.js"/>'></script>
+	<script src='<spring:url value="/resources/js/bootstrap.min.js"/>'></script>
+	<script src='<spring:url value="/resources/js/dashboard.js"/>'></script>
+	<script src='<spring:url value="/resources/js/jquery.tablesorter.js"/>'></script>
+	<script src='<spring:url value="/resources/js/orderBy.js"/>'></script>
 </body>
 </html>

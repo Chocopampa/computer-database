@@ -13,18 +13,13 @@ import com.excilys.persistence.CompanyDAO;
 @Service
 public class CompanyService {
 
+	private final CompanyDAO companyDAO;
+
 	@Autowired
-	private CompanyDAO companyDAO;
-
-	private CompanyService() {
+	public CompanyService(CompanyDAO companyDAO) {
+		this.companyDAO = companyDAO;
 	};
-
-	private static CompanyService INSTANCE = new CompanyService();
-
-	public static CompanyService getInstance() {
-		return INSTANCE;
-	}
-
+	
 	public List<Company> getCompanies() {
 		return companyDAO.getCompanies();
 	}

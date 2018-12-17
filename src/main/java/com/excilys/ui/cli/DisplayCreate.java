@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.excilys.exception.CompanyException;
-import com.excilys.exception.DatesException;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.service.ComputerService;
@@ -14,9 +14,12 @@ import com.excilys.validator.ParseValidator;
 
 public class DisplayCreate {
 
-	private static ComputerService computerServices = ComputerService.getInstance();
-	private static ComputerValidator computerValidator = ComputerValidator.getInstance();
-	private static ParseValidator parseValidator = ParseValidator.getInstance();
+	@Autowired
+	private static ComputerService computerServices;
+	@Autowired
+	private static ComputerValidator computerValidator;
+	@Autowired
+	private static ParseValidator parseValidator;
 
 	protected static void displayCreate(Scanner sc) {
 		System.out.println("Please enter the name of the computer you want to create :");
@@ -57,11 +60,7 @@ public class DisplayCreate {
 
 		Computer computer = new Computer.Builder(name).withIntroduced(introduced).withDiscontinued(discontinued)
 				.withCompany(company).build();
-		try {
-			computerValidator.correctComputer(computer);
-		} catch (DatesException | CompanyException e) {
-			System.out.println("Erreur dans les dates fournies ou l'id de compagnie");
-		}
+		computerValidator.correctComputer(computer);
 
 		int nbRowAffected = computerServices.createComputer(computer);
 		System.out.println("Number of row affected : " + nbRowAffected);
