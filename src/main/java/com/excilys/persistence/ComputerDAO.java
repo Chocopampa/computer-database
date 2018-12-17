@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.mapper.ComputerMapper;
 import com.excilys.model.Computer;
@@ -23,8 +24,7 @@ import com.excilys.model.Page;
 @Repository
 public class ComputerDAO {
 
-	@Autowired
-	private ComputerMapper computerMapper;
+	private final ComputerMapper computerMapper;
 
 	private RowMapper<Computer> rowMapper = new RowMapper<Computer>() {
 		public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -35,17 +35,36 @@ public class ComputerDAO {
 	private JdbcTemplate jdbcTemplate = new JdbcTemplate(DatabaseConnection.getDs());
 
 	private static final String REQUEST_COMPUTERS = "SELECT id,name,introduced,discontinued,company_id FROM computer;";
-	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT id,name,introduced,discontinued,company_id FROM computer "
-			+ "WHERE name LIKE ? OR company_id IN (SELECT id FROM company " + "WHERE name LIKE ?);";
-	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?, ?;";
-	private static final String REQUEST_DETAILED_COMPUTER = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE id = ?;";
-	private static final String REQUEST_COMPUTER_FROM_COMPANY_ID = "SELECT id,name,introduced,discontinued,company_id FROM computer WHERE company_id = ?;";
 
-	private static final String REQUEST_COMPUTERS_ORDER_BY_NAME = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY name ASC;";
-	private static final String REQUEST_COMPUTERS_ORDER_BY_INTRODUCED = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY introduced ASC;";
-	private static final String REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY discontinued ASC;";
-	private static final String REQUEST_COMPUTERS_ORDER_BY_COMPANY = "(SELECT id,name,introduced,discontinued,company_id FROM computer LIMIT ?,?) ORDER BY company_id ASC;";
 
+	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
+			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
+			+ "WHERE c1.name LIKE ? OR c2.name LIKE ?;";
+	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
+			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
+			+ "LIMIT ?, ?;";
+	private static final String REQUEST_DETAILED_COMPUTER = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
+			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
+			+ "WHERE c1.id = ?;";
+	private static final String REQUEST_COMPUTER_FROM_COMPANY_ID = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
+			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
+			+ "WHERE c1.company_id = ?;";
+
+
+	private static final String REQUEST_COMPUTERS_ORDER_BY_NAME = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
+			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
+			+ "ORDER BY compuName ";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_INTRODUCED = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
+			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
+			+ "ORDER BY introduced ";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
+			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
+			+ "ORDER BY discontinued ";
+	private static final String REQUEST_COMPUTERS_ORDER_BY_COMPANY = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
+			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
+			+ "ORDER BY company_id ";
+
+	
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
 	private static final String INSERT_COMPUTER_WITHOUT_COMPANY = "INSERT INTO computer(name,introduced,discontinued) VALUES (?,?,?);";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
@@ -53,15 +72,12 @@ public class ComputerDAO {
 
 	private static final Logger LOG4J = LogManager.getLogger(ComputerDAO.class.getName());
 
-	private ComputerDAO() {
-	};
-
-	private static final ComputerDAO INSTANCE = new ComputerDAO();
-
-	public static ComputerDAO getInstance() {
-		return INSTANCE;
+	@Autowired
+	public ComputerDAO(ComputerMapper computerMapper) {
+		this.computerMapper = computerMapper;
 	}
-
+	
+	
 	/**
 	 * Get all the database computers.
 	 * 
@@ -148,13 +164,13 @@ public class ComputerDAO {
 	 * @param idLastComputer
 	 * @return
 	 */
-	public List<Computer> getListComputersOrderByName(Page page) {
+	public List<Computer> getListComputersOrderByName(Page page, String orderDirection) {
 		List<Computer> computers = new ArrayList<>();
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_NAME,
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_NAME + orderDirection + ") LIMIT ?,?;",
 					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
 		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_NAME, e);
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_NAME + orderDirection + ";", e);
 		}
 		return computers;
 	}
@@ -166,13 +182,13 @@ public class ComputerDAO {
 	 * @param idLastComputer
 	 * @return
 	 */
-	public List<Computer> getListComputersOrderByIntroduced(Page page) {
+	public List<Computer> getListComputersOrderByIntroduced(Page page, String orderDirection) {
 		List<Computer> computers = new ArrayList<>();
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_INTRODUCED,
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_INTRODUCED + orderDirection + ") LIMIT ?,?;",
 					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
 		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_INTRODUCED, e);
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_INTRODUCED + orderDirection + ";", e);
 		}
 		return computers;
 	}
@@ -184,13 +200,13 @@ public class ComputerDAO {
 	 * @param idLastComputer
 	 * @return
 	 */
-	public List<Computer> getListComputersOrderByDiscontinued(Page page) {
+	public List<Computer> getListComputersOrderByDiscontinued(Page page, String orderDirection) {
 		List<Computer> computers = new ArrayList<>();
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED,
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED + orderDirection + ") LIMIT ?,?;",
 					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
 		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED, e);
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED + orderDirection + ";", e);
 		}
 		return computers;
 	}
@@ -202,13 +218,13 @@ public class ComputerDAO {
 	 * @param idLastComputer
 	 * @return
 	 */
-	public List<Computer> getListComputersOrderByCompany(Page page) {
+	public List<Computer> getListComputersOrderByCompany(Page page, String orderDirection) {
 		List<Computer> computers = new ArrayList<>();
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_COMPANY,
+			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_COMPANY + orderDirection + ") LIMIT ?,?;",
 					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
 		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_COMPANY, e);
+			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_COMPANY + orderDirection + ";", e);
 		}
 		return computers;
 	}
@@ -221,6 +237,7 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
+	@Transactional(rollbackFor=DataAccessException.class)
 	public int addComputer(Computer computer) {
 		List<Object> params = new ArrayList<>();
 
@@ -264,6 +281,7 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
+	@Transactional(rollbackFor=DataAccessException.class)
 	public int addComputerWithoutCompany(Computer computer) {
 		List<Object> params = new ArrayList<>();
 
@@ -298,6 +316,7 @@ public class ComputerDAO {
 	 * 
 	 * @param idComputer
 	 */
+	@Transactional(rollbackFor=DataAccessException.class)
 	public int deleteComputerFromId(long idComputer) {
 		int nbRowAffected = 0;
 		try {
@@ -317,6 +336,7 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
+	@Transactional(rollbackFor=DataAccessException.class)
 	public int updateComputer(Computer computer) {
 		List<Object> params = new ArrayList<>();
 

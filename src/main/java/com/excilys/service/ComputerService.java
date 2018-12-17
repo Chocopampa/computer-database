@@ -13,16 +13,11 @@ import com.excilys.persistence.ComputerDAO;
 @Service
 public class ComputerService {
 
+	private final ComputerDAO computerDAO;
+
 	@Autowired
-	private ComputerDAO computerDAO;
-
-	private ComputerService() {
-	}
-
-	private static final ComputerService INSTANCE = new ComputerService();
-
-	public static ComputerService getInstance() {
-		return INSTANCE;
+	public ComputerService(ComputerDAO computerDAO) {
+		this.computerDAO = computerDAO;
 	}
 
 	public List<Computer> getComputers() {
@@ -33,18 +28,18 @@ public class ComputerService {
 		return computerDAO.getListComputers(page);
 	}
 
-	public List<Computer> getPagedComputersOrdered(Page page, String orderType) {
+	public List<Computer> getPagedComputersOrdered(Page page, String orderType, String orderDirection) {
 		switch (orderType) {
-		case "name":
-			return computerDAO.getListComputersOrderByName(page);
-		case "introduced":
-			return computerDAO.getListComputersOrderByIntroduced(page);
-		case "discontinued":
-			return computerDAO.getListComputersOrderByDiscontinued(page);
-		case "company":
-			return computerDAO.getListComputersOrderByCompany(page);
-		default:
-			return computerDAO.getListComputers(page);
+			case "name":
+				return computerDAO.getListComputersOrderByName(page, orderDirection);
+			case "introduced":
+				return computerDAO.getListComputersOrderByIntroduced(page, orderDirection);
+			case "discontinued":
+				return computerDAO.getListComputersOrderByDiscontinued(page, orderDirection);
+			case "company":
+				return computerDAO.getListComputersOrderByCompany(page, orderDirection);
+			default:
+				return computerDAO.getListComputers(page);
 		}
 
 	}

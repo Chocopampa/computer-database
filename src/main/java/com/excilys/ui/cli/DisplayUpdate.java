@@ -5,8 +5,8 @@ import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Scanner;
 
-import com.excilys.exception.CompanyException;
-import com.excilys.exception.DatesException;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.service.ComputerService;
@@ -15,9 +15,12 @@ import com.excilys.validator.ParseValidator;
 
 public class DisplayUpdate {
 
-	private static ParseValidator parseValidator = ParseValidator.getInstance();
-	private static ComputerService computerServices = ComputerService.getInstance();
-	private static ComputerValidator computerValidator = ComputerValidator.getInstance();
+	@Autowired
+	private static ParseValidator parseValidator;
+	@Autowired
+	private static ComputerService computerServices;
+	@Autowired
+	private static ComputerValidator computerValidator;
 
 	protected static void displayUpdate(Scanner sc) {
 
@@ -71,11 +74,7 @@ public class DisplayUpdate {
 
 			computer = new Computer.Builder(name).withId(id).withIntroduced(introduced).withDiscontinued(discontinued)
 					.withCompany(company).build();
-			try {
-				computerValidator.correctComputer(computer);
-			} catch (DatesException | CompanyException e) {
-				System.out.println("Erreur dans les dates fournies ou l'id de compagnie");
-			}
+			computerValidator.correctComputer(computer);
 			int nbRowAffected = computerServices.updateComputer(computer);
 			System.out.print("Number of row affected : " + nbRowAffected);
 		}

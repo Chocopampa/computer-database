@@ -4,10 +4,12 @@ package com.excilys.validator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ParseValidatorTest {
 
-	private ParseValidator parseValidator = ParseValidator.getInstance();
+	@Autowired
+	private ParseValidator parseValidator;
 	
 	@Before
 	public void setUp() throws Exception {
