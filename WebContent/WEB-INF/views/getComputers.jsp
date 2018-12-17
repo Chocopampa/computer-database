@@ -7,11 +7,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
-<link href='<spring:url value="/resources/css/bootstrap.min.css"/>' rel="stylesheet"
-	media="screen">
-<link href='<spring:url value="/resources/css/font-awesome.css"/>' rel="stylesheet"
-	media="screen">
-<link href='<spring:url value="/resources/css/main.css"/>' rel="stylesheet" media="screen">
+<link href='<spring:url value="/resources/css/bootstrap.min.css"/>'
+	rel="stylesheet" media="screen">
+<link href='<spring:url value="/resources/css/font-awesome.css"/>'
+	rel="stylesheet" media="screen">
+<link href='<spring:url value="/resources/css/main.css"/>'
+	rel="stylesheet" media="screen">
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
@@ -25,17 +26,18 @@
 		<div class="container">
 			<h1 id="homeTitle">
 				<c:out value="${result_size}" />
-				<spring:message
-									code="label.count.computers" />
+				<spring:message code="label.count.computers" />
 			</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="<spring:message
-									code="label.search.field" />" /> <input
-							type="submit" id="searchsubmit" value="<spring:message
+							class="form-control"
+							placeholder="<spring:message
+									code="label.search.field" />" />
+						<input type="submit" id="searchsubmit"
+							value="<spring:message
 									code="label.search.button" />"
 							class="btn btn-primary" />
 					</form>
@@ -43,10 +45,9 @@
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer"
 						href="/computer-database/addComputer"><spring:message
-							code="label.add.computer" /></a> <a
-						class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();"><spring:message
-									code="label.delete.button" /></a>
+							code="label.add.computer" /></a> <a class="btn btn-default"
+						id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message
+							code="label.delete.button" /></a>
 				</div>
 			</div>
 		</div>
@@ -135,7 +136,7 @@
 				<button type="button" onclick="location.href='?nbItem=100';"
 					class="btn btn-default">100</button>
 			</div>
-				
+
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<button type="button" onclick="location.href='?lang=en';"
 					class="btn btn-default">en</button>
@@ -145,7 +146,7 @@
 
 		</div>
 	</footer>
-	
+
 	<script src='<spring:url value="/resources/js/jquery.min.js"/>'></script>
 	<script src='<spring:url value="/resources/js/bootstrap.min.js"/>'></script>
 	<script src='<spring:url value="/resources/js/dashboard.js"/>'></script>
