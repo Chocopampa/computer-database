@@ -25,23 +25,28 @@
 		<div class="container">
 			<h1 id="homeTitle">
 				<c:out value="${result_size}" />
-				Computers found
+				<spring:message
+									code="label.count.computers" />
 			</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+							class="form-control" placeholder="<spring:message
+									code="label.search.field" />" /> <input
+							type="submit" id="searchsubmit" value="<spring:message
+									code="label.search.button" />"
 							class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer"
-						href="/computer-database/addComputer">Add Computer</a> <a
+						href="/computer-database/addComputer"><spring:message
+							code="label.add.computer" /></a> <a
 						class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+						onclick="$.fn.toggleEditMode();"><spring:message
+									code="label.delete.button" /></a>
 				</div>
 			</div>
 		</div>

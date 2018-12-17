@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.dto.ComputerDTO;
+import com.excilys.mapper.ComputerDTOMapper;
 import com.excilys.mapper.ComputerMapper;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
@@ -36,6 +37,8 @@ public class ComputerController {
 	private CompanyService companyService;
 	@Autowired
 	private ComputerMapper computerMapper;
+	@Autowired
+	private ComputerDTOMapper computerDTOMapper;
 	@Autowired
 	private ComputerValidator computerValidator;
 
@@ -77,7 +80,6 @@ public class ComputerController {
 		}
 
 		List<ComputerDTO> computersDTO = new ArrayList<>();
-
 		computers.stream().forEach(currentComputer -> {
 			computersDTO.add(new ComputerDTO(currentComputer));
 		});
@@ -109,8 +111,8 @@ public class ComputerController {
 		model.addAttribute("computer", computer);
 		model.addAttribute("introduced", introduced);
 		model.addAttribute("discontinued", discontinued);
-		model.addAttribute("company", computer.getCompany());
-		model.addAttribute("companiesIds", companiesIds);
+		model.addAttribute("companyComputer", computer.getCompany());
+		model.addAttribute("companies", companies);
 		return "editComputer";
 	}
 
@@ -120,7 +122,8 @@ public class ComputerController {
 			@RequestParam("introduced") String introduced, 
 			@RequestParam("discontinued") String discontinued,
 			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
-		Computer computer = computerMapper.mapUnique(name, introduced, discontinued, companyNumber);
+		ComputerDTO computerDTO = computerDTOMapper.map(id, name, introduced, discontinued, companyNumber);
+		Computer computer = computerMapper.mapUnique(computerDTO);
 		computer.setId(id);
 		computerValidator.correctComputer(computer);
 		computerService.updateComputer(computer);
@@ -133,7 +136,7 @@ public class ComputerController {
 		List<Company> companies = companyService.getCompanies();
 		List<Long> companiesIds = new ArrayList<>();
 		companies.stream().forEach(company -> companiesIds.add(company.getId()));
-		model.addAttribute("companiesIds", companiesIds);
+		model.addAttribute("companies", companies);
 		return "addComputer";
 	}
 
@@ -143,8 +146,8 @@ public class ComputerController {
 			@RequestParam("introduced") String introduced, 
 			@RequestParam("discontinued") String discontinued,
 			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
-
-		Computer computer = computerMapper.mapUnique(name, introduced, discontinued, companyNumber);
+		ComputerDTO computerDTO = computerDTOMapper.map(0, name, introduced, discontinued, companyNumber);
+		Computer computer = computerMapper.mapUnique(computerDTO);
 		computerValidator.correctComputer(computer);
 		computerService.createComputer(computer);
 		return "redirect:/addComputer/";

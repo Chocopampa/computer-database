@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.excilys.dto.ComputerDTO;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 
@@ -53,30 +54,11 @@ public class ComputerMapper {
 				.withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued).withCompany(company).build();
 	}
 
-	public Computer mapUnique(String name, String introduced, String discontinued, String companyNumber) {
-		Computer computer = null;
-		LocalDateTime timeIntroduced = null;
-		LocalDateTime timeDiscontinued = null;
+	public Computer mapUnique(ComputerDTO computerDTO) {
+		Company company = new Company.Builder(computerDTO.getCompanyId()).withName(computerDTO.getCompanyName()).build();
 
-		if (!introduced.isEmpty()) {
-			introduced = introduced + "T00:00:00";
-			timeIntroduced = LocalDateTime.parse(introduced, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-		}
-
-		if (!discontinued.isEmpty()) {
-			discontinued = discontinued + "T00:00:00";
-			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-		}
-
-		Company company = null;
-
-		if (!companyNumber.isEmpty()) {
-			company =  new Company.Builder(Long.parseLong(companyNumber)).build();
-		}
-
-		computer = new Computer.Builder(name).withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued)
+		return new Computer.Builder(computerDTO.getName()).withIntroduced(computerDTO.getIntroduced()).withDiscontinued(computerDTO.getDiscontinued())
 				.withCompany(company).build();
-		return computer;
 	}
 
 }
