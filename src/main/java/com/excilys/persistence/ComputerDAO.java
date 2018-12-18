@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -32,7 +33,10 @@ public class ComputerDAO {
 		}
 	};
 
-	private JdbcTemplate jdbcTemplate = new JdbcTemplate(DatabaseConnection.getDs());
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+//	@Autowired
+//	private SessionFactory sessionFactory;
 
 	private static final String REQUEST_COMPUTERS = "SELECT id,name,introduced,discontinued,company_id FROM computer;";
 

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 public class Computer {
 
 	public static class Builder {
-
 		private long id;
 		private String name;
 		private LocalDateTime introduced;
@@ -48,8 +47,8 @@ public class Computer {
 		}
 	}
 
-	private long id;
 
+	private long id;
 	private String name;
 	private LocalDateTime introduced;
 	private LocalDateTime discontinued;

@@ -3,7 +3,7 @@ package com.excilys.dto;
 import java.time.LocalDateTime;
 
 import com.excilys.model.Computer;
-import com.sun.istack.internal.NotNull;
+import com.sun.istack.NotNull;
 
 public class ComputerDTO {
 

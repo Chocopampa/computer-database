@@ -24,7 +24,8 @@ public class CompanyDAO {
 	
 	private final CompanyMapper companyMapper;
 
-	private JdbcTemplate jdbcTemplate = new JdbcTemplate(DatabaseConnection.getDs());
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	private static final String REQUEST_COMPANIES = "SELECT id, name FROM company;";
 	private static final String REQUEST_COMPANY_BY_ID = "SELECT id, name FROM company WHERE id=?;";
