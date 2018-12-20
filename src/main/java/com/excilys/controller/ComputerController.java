@@ -28,7 +28,7 @@ import com.excilys.service.ComputerService;
 import com.excilys.validator.ComputerValidator;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping
 public class ComputerController {
 
 	@Autowired
@@ -48,11 +48,8 @@ public class ComputerController {
 
 	@GetMapping
 	public String listComputers(@RequestParam(required = false) String nbItem,
-			@RequestParam(required = false) String numPage, 
-			@RequestParam(required = false) String search,
-			@RequestParam(required = false) String order, 
-			@RequestParam(required = false) String change, 
-			ModelMap model)
+			@RequestParam(required = false) String numPage, @RequestParam(required = false) String search,
+			@RequestParam(required = false) String order, @RequestParam(required = false) String change, ModelMap model)
 			throws ServletException, IOException {
 		long firstId = 0;
 		if (order == null) {
@@ -117,10 +114,8 @@ public class ComputerController {
 	}
 
 	@PostMapping(value = "/editComputer/{id}")
-	public String editComputer(@PathVariable("id") long id, 
-			@RequestParam("computerName") String name,
-			@RequestParam("introduced") String introduced, 
-			@RequestParam("discontinued") String discontinued,
+	public String editComputer(@PathVariable("id") long id, @RequestParam("computerName") String name,
+			@RequestParam("introduced") String introduced, @RequestParam("discontinued") String discontinued,
 			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
 		ComputerDTO computerDTO = computerDTOMapper.map(id, name, introduced, discontinued, companyNumber);
 		Computer computer = computerMapper.mapUnique(computerDTO);
@@ -141,11 +136,9 @@ public class ComputerController {
 	}
 
 	@PostMapping(value = "/addComputer")
-	public String addComputer( 
-			@RequestParam("computerName") String name,
-			@RequestParam("introduced") String introduced, 
-			@RequestParam("discontinued") String discontinued,
-			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
+	public String addComputer(@RequestParam("computerName") String name, @RequestParam("introduced") String introduced,
+			@RequestParam("discontinued") String discontinued, @RequestParam("companyId") String companyNumber)
+			throws ServletException, IOException {
 		ComputerDTO computerDTO = computerDTOMapper.map(0, name, introduced, discontinued, companyNumber);
 		Computer computer = computerMapper.mapUnique(computerDTO);
 		computerValidator.correctComputer(computer);

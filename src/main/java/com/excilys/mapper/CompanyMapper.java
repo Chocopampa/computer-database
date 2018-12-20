@@ -29,7 +29,6 @@ public class CompanyMapper {
 	}
 	
 	public Company mapUnique(ResultSet companyDb) throws SQLException {
-		return new Company.Builder(companyDb.getLong("id"))
-				.withName(companyDb.getString("name")).build();
+		return new Company(companyDb.getLong("id"),companyDb.getString("name"));
 	}
 }

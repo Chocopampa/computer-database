@@ -3,12 +3,10 @@ package com.excilys.dto;
 import java.time.LocalDateTime;
 
 import com.excilys.model.Computer;
-import com.sun.istack.NotNull;
 
 public class ComputerDTO {
 
 	private long id;
-	@NotNull
 	private String name;
 	private LocalDateTime introduced;
 	private LocalDateTime discontinued;

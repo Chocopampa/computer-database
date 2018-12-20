@@ -1,7 +1,5 @@
 package com.excilys.persistence;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,66 +7,30 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.mapper.ComputerMapper;
 import com.excilys.model.Computer;
 import com.excilys.model.Page;
+import com.excilys.model.QComputer;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 @Repository
 public class ComputerDAO {
 
-	private final ComputerMapper computerMapper;
-
-	private RowMapper<Computer> rowMapper = new RowMapper<Computer>() {
-		public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return computerMapper.mapUnique(rs);
-		}
-	};
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-//	@Autowired
-//	private SessionFactory sessionFactory;
+	@Autowired
+	private SessionFactory sessionFactory;
 
-	private static final String REQUEST_COMPUTERS = "SELECT id,name,introduced,discontinued,company_id FROM computer;";
-
-
-	private static final String REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
-			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "WHERE c1.name LIKE ? OR c2.name LIKE ?;";
-	private static final String REQUEST_COMPUTERS_LIMIT = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
-			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "LIMIT ?, ?;";
-	private static final String REQUEST_DETAILED_COMPUTER = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
-			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "WHERE c1.id = ?;";
-	private static final String REQUEST_COMPUTER_FROM_COMPANY_ID = "SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
-			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "WHERE c1.company_id = ?;";
-
-
-	private static final String REQUEST_COMPUTERS_ORDER_BY_NAME = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
-			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "ORDER BY compuName ";
-	private static final String REQUEST_COMPUTERS_ORDER_BY_INTRODUCED = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
-			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "ORDER BY introduced ";
-	private static final String REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
-			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "ORDER BY discontinued ";
-	private static final String REQUEST_COMPUTERS_ORDER_BY_COMPANY = "(SELECT c1.id AS compuId,c1.name AS compuName,introduced,discontinued,company_id,c2.name AS companyName FROM computer c1 "
-			+ "LEFT JOIN company c2 ON c1.company_id=c2.id "
-			+ "ORDER BY company_id ";
-
-	
 	private static final String INSERT_COMPUTER = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);";
 	private static final String INSERT_COMPUTER_WITHOUT_COMPANY = "INSERT INTO computer(name,introduced,discontinued) VALUES (?,?,?);";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
@@ -77,11 +39,9 @@ public class ComputerDAO {
 	private static final Logger LOG4J = LogManager.getLogger(ComputerDAO.class.getName());
 
 	@Autowired
-	public ComputerDAO(ComputerMapper computerMapper) {
-		this.computerMapper = computerMapper;
+	public ComputerDAO() {
 	}
-	
-	
+
 	/**
 	 * Get all the database computers.
 	 * 
@@ -89,13 +49,15 @@ public class ComputerDAO {
 	 */
 	public List<Computer> getComputers() {
 		LOG4J.info("Acquiring computers...");
-		List<Computer> computers = new ArrayList<>();
+		QComputer qcomputer = QComputer.computer;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS, new Object[] {}, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS, e);
+			HibernateQuery<Computer> hComputers = query.selectFrom(qcomputer);
+			return hComputers.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 
 	/**
@@ -106,13 +68,15 @@ public class ComputerDAO {
 	 */
 	public Optional<Computer> getComputerById(long idComputer) {
 		LOG4J.info("Acquiring computer by id : " + idComputer);
-		Computer computer = null;
+		QComputer qcomputer = QComputer.computer;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computer = jdbcTemplate.queryForObject(REQUEST_DETAILED_COMPUTER, new Object[] { idComputer }, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_DETAILED_COMPUTER, e);
+			HibernateQuery<Computer> hComputer = query.selectFrom(qcomputer).where(qcomputer.id.eq(idComputer));
+			return Optional.ofNullable(hComputer.fetchOne());
+		} finally {
+			session.close();
 		}
-		return Optional.ofNullable(computer);
 	}
 
 	/**
@@ -123,24 +87,31 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> getComputersWithSearch(String search) {
-		List<Computer> computers = new ArrayList<>();
+		LOG4J.info("Acquiring computers...");
+		QComputer qcomputer = QComputer.computer;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY,
-					new Object[] { "%" + search + "%", "%" + search + "%" }, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_SEARCH_NAME_AND_COMPANY, e);
+			HibernateQuery<Computer> hComputers = query.selectFrom(qcomputer).where(
+					qcomputer.company().name.like("%" + search + "%").or(qcomputer.name.like("%" + search + "%")));
+			return hComputers.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 
 	public List<Computer> getComputersFromCompanyId(long idCompany) {
-		List<Computer> computers = new ArrayList<>();
+		LOG4J.info("Acquiring computers by id : " + idCompany);
+		QComputer qcomputer = QComputer.computer;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTER_FROM_COMPANY_ID, new Object[] { idCompany }, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTER_FROM_COMPANY_ID, e);
+			HibernateQuery<Computer> hComputers = query.selectFrom(qcomputer)
+					.where(qcomputer.company().id.eq(idCompany));
+			return hComputers.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 
 	/**
@@ -151,14 +122,16 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> getListComputers(Page page) {
-		List<Computer> computers = new ArrayList<>();
+		LOG4J.info("Acquiring computers...");
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_LIMIT,
-					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_LIMIT, e);
+			HibernateQuery<Computer> hComputers = query.selectFrom(QComputer.computer).offset(page.getFirstId())
+					.limit(page.getOffset());
+			return hComputers.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 
 	/**
@@ -169,14 +142,30 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> getListComputersOrderByName(Page page, String orderDirection) {
-		List<Computer> computers = new ArrayList<>();
+		LOG4J.info("Acquiring computers...");
+		QComputer qcomputer = QComputer.computer;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_NAME + orderDirection + ") LIMIT ?,?;",
-					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_NAME + orderDirection + ";", e);
+			HibernateQuery<Computer> hComputers = null;
+			switch (orderDirection) {
+			case "ASC":
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset())
+						.orderBy(qcomputer.name.asc());
+				break;
+			case "DESC":
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset())
+						.orderBy(qcomputer.name.desc());
+				break;
+			default:
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset());
+				break;
+			}
+
+			return hComputers.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 
 	/**
@@ -187,14 +176,30 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> getListComputersOrderByIntroduced(Page page, String orderDirection) {
-		List<Computer> computers = new ArrayList<>();
+		LOG4J.info("Acquiring computers...");
+		QComputer qcomputer = QComputer.computer;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_INTRODUCED + orderDirection + ") LIMIT ?,?;",
-					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_INTRODUCED + orderDirection + ";", e);
+			HibernateQuery<Computer> hComputers = null;
+			switch (orderDirection) {
+			case "ASC":
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset())
+						.orderBy(qcomputer.introduced.asc());
+				break;
+			case "DESC":
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset())
+						.orderBy(qcomputer.introduced.desc());
+				break;
+			default:
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset());
+				break;
+			}
+
+			return hComputers.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 
 	/**
@@ -205,14 +210,30 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> getListComputersOrderByDiscontinued(Page page, String orderDirection) {
-		List<Computer> computers = new ArrayList<>();
+		LOG4J.info("Acquiring computers...");
+		QComputer qcomputer = QComputer.computer;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED + orderDirection + ") LIMIT ?,?;",
-					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_DISCONTINUED + orderDirection + ";", e);
+			HibernateQuery<Computer> hComputers = null;
+			switch (orderDirection) {
+			case "ASC":
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset())
+						.orderBy(qcomputer.discontinued.asc());
+				break;
+			case "DESC":
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset())
+						.orderBy(qcomputer.discontinued.desc());
+				break;
+			default:
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset());
+				break;
+			}
+
+			return hComputers.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 
 	/**
@@ -223,14 +244,30 @@ public class ComputerDAO {
 	 * @return
 	 */
 	public List<Computer> getListComputersOrderByCompany(Page page, String orderDirection) {
-		List<Computer> computers = new ArrayList<>();
+		LOG4J.info("Acquiring computers...");
+		QComputer qcomputer = QComputer.computer;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPUTERS_ORDER_BY_COMPANY + orderDirection + ") LIMIT ?,?;",
-					new Object[] { page.getFirstId(), page.getOffset() }, rowMapper);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPUTERS_ORDER_BY_COMPANY + orderDirection + ";", e);
+			HibernateQuery<Computer> hComputers = null;
+			switch (orderDirection) {
+			case "ASC":
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset())
+						.orderBy(qcomputer.company().name.asc());
+				break;
+			case "DESC":
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset())
+						.orderBy(qcomputer.company().name.desc());
+				break;
+			default:
+				hComputers = query.selectFrom(qcomputer).offset(page.getFirstId()).limit(page.getOffset());
+				break;
+			}
+
+			return hComputers.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 
 	/**
@@ -241,7 +278,7 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	@Transactional(rollbackFor=DataAccessException.class)
+	@Transactional(rollbackFor = DataAccessException.class)
 	public int addComputer(Computer computer) {
 		List<Object> params = new ArrayList<>();
 
@@ -285,7 +322,7 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	@Transactional(rollbackFor=DataAccessException.class)
+	@Transactional(rollbackFor = DataAccessException.class)
 	public int addComputerWithoutCompany(Computer computer) {
 		List<Object> params = new ArrayList<>();
 
@@ -320,7 +357,7 @@ public class ComputerDAO {
 	 * 
 	 * @param idComputer
 	 */
-	@Transactional(rollbackFor=DataAccessException.class)
+	@Transactional(rollbackFor = DataAccessException.class)
 	public int deleteComputerFromId(long idComputer) {
 		int nbRowAffected = 0;
 		try {
@@ -340,7 +377,7 @@ public class ComputerDAO {
 	 * @param discontinued
 	 * @param company_id
 	 */
-	@Transactional(rollbackFor=DataAccessException.class)
+	@Transactional(rollbackFor = DataAccessException.class)
 	public int updateComputer(Computer computer) {
 		List<Object> params = new ArrayList<>();
 

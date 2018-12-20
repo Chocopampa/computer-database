@@ -19,7 +19,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @ComponentScan(value = { "com.excilys.persistence", "com.excilys.service", "com.excilys.mapper",
-		"com.excilys.validator" })
+		"com.excilys.validator", "com.excilys.converter" })
 public class SpringConfiguration {
 
 	@Bean
@@ -48,7 +48,7 @@ public class SpringConfiguration {
 
 		return ds;
 	}
-
+	
 	@Bean
 	public JdbcTemplate getJdbcTemplate(DataSource ds) {
 		return new JdbcTemplate(ds);
@@ -66,7 +66,7 @@ public class SpringConfiguration {
 		LocalSessionFactoryBean session = new LocalSessionFactoryBean();
 		session.setDataSource(ds);
 		session.setHibernateProperties(hibernateProperties());
-		session.setPackagesToScan(new String[] { "com.excilys.formation.model" });
+		session.setPackagesToScan(new String[] { "com.excilys.model" });
 		return session;
 	}
 }

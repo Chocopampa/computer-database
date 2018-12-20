@@ -38,7 +38,7 @@ public class CompanyMapperTest {
 		int numberOfCompanies = 2;
 
 		for (int i = 0; i < numberOfCompanies; i++) {
-			Company company = new Company.Builder(i).withName("company"+i).build();
+			Company company = new Company(i,"company"+i);
 			
 			companiesExpected.add(company);
 		}

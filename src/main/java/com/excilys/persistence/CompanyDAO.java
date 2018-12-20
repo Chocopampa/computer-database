@@ -1,50 +1,41 @@
 package com.excilys.persistence;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.mapper.CompanyMapper;
 import com.excilys.model.Company;
 import com.excilys.model.Page;
+import com.excilys.model.QCompany;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 @Repository
 public class CompanyDAO {
-	
-	private final CompanyMapper companyMapper;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final String REQUEST_COMPANIES = "SELECT id, name FROM company;";
-	private static final String REQUEST_COMPANY_BY_ID = "SELECT id, name FROM company WHERE id=?;";
-	private static final String REQUEST_COMPANIES_LIMIT = "SELECT id, name FROM company LIMIT ?, ?;";
-	private static final String DELETE_COMPANY = "DELETE FROM company WHERE id=?;";
+	@Autowired
+	private SessionFactory sessionFactory;
 
-	private final RowMapper<Company> rmCompany = new RowMapper<Company>() {
-		public Company mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return companyMapper.mapUnique(rs);
-		}
-	};
+	private static final String DELETE_COMPANY = "DELETE FROM company WHERE id=?;";
 
 	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
 
 	@Autowired
-	public CompanyDAO(CompanyMapper companyMapper) {
-		this.companyMapper = companyMapper;
+	public CompanyDAO() {
 	}
-	
 
 	/**
 	 * Get all the database companies.
@@ -53,13 +44,14 @@ public class CompanyDAO {
 	 */
 	public List<Company> getCompanies() {
 		LOG4J.info("Acquiring companies...");
-		List<Company> companies = new ArrayList<>();
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			companies = jdbcTemplate.query(REQUEST_COMPANIES, new Object[] {}, rmCompany);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPANIES, e);
+			HibernateQuery<Company> hCompanies = query.selectFrom(QCompany.company);
+			return hCompanies.fetch();
+		} finally {
+			session.close();
 		}
-		return companies;
 	}
 
 	/**
@@ -70,13 +62,15 @@ public class CompanyDAO {
 	 */
 	public Optional<Company> getCompanyById(long idCompany) {
 		LOG4J.info("Acquiring company by id :" + idCompany);
-		Company company = null;
+		QCompany qcompany = QCompany.company;
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			company = jdbcTemplate.queryForObject(REQUEST_COMPANY_BY_ID, new Object[] { idCompany }, rmCompany);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPANY_BY_ID, e);
+			HibernateQuery<Company> hCompany = query.selectFrom(qcompany).where(qcompany.id.eq(idCompany));
+			return Optional.ofNullable(hCompany.fetchOne());
+		} finally {
+			session.close();
 		}
-		return Optional.ofNullable(company);
 	}
 
 	/**
@@ -85,7 +79,7 @@ public class CompanyDAO {
 	 * @param idCompany
 	 * @return
 	 */
-	@Transactional(rollbackFor=DataAccessException.class)
+	@Transactional(rollbackFor = DataAccessException.class)
 	public int deleteCompany(long idCompany) {
 		int nbRowAffected = 0;
 		try {
@@ -104,13 +98,13 @@ public class CompanyDAO {
 	 * @return
 	 */
 	public List<Company> getListCompanies(Page page) {
-		List<Company> computers = new ArrayList<>();
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
 		try {
-			computers = jdbcTemplate.query(REQUEST_COMPANIES_LIMIT,
-					new Object[] { page.getFirstId(), page.getOffset() }, rmCompany);
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + REQUEST_COMPANIES_LIMIT, e);
+			HibernateQuery<Company> hCompanies = query.selectFrom(QCompany.company).limit(page.getFirstId()).offset(page.getOffset());
+			return hCompanies.fetch();
+		} finally {
+			session.close();
 		}
-		return computers;
 	}
 }

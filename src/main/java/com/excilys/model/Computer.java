@@ -2,56 +2,36 @@ package com.excilys.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.excilys.converter.LocalDateTimeConverter;
+
+@Entity
+@Table(name = "computer", schema = "computer-database-db")
 public class Computer {
 
-	public static class Builder {
-		private long id;
-		private String name;
-		private LocalDateTime introduced;
-		private LocalDateTime discontinued;
-		private Company company;
-
-		public Builder(String name) {
-			this.name = name;
-		}
-
-		public Builder withId(long id) {
-			this.id = id;
-			return this;
-		}
-
-		public Builder withIntroduced(LocalDateTime introduced) {
-			this.introduced = introduced;
-			return this;
-		}
-
-		public Builder withDiscontinued(LocalDateTime discontinued) {
-			this.discontinued = discontinued;
-			return this;
-		}
-
-		public Builder withCompany(Company company) {
-			this.company = company;
-			return this;
-		}
-
-		public Computer build() {
-			Computer computer = new Computer();
-			computer.id = this.id;
-			computer.name = this.name;
-			computer.introduced = this.introduced;
-			computer.discontinued = this.discontinued;
-			computer.company = this.company;
-
-			return computer;
-		}
-	}
-
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private long id;
+	@Column(name = "name")
 	private String name;
+	@Column(name = "introduced")
+	@Convert(converter = LocalDateTimeConverter.class)
 	private LocalDateTime introduced;
+	@Column(name = "discontinued")
+	@Convert(converter = LocalDateTimeConverter.class)
 	private LocalDateTime discontinued;
+	@ManyToOne
+	@JoinColumn(name = "company_id")
 	private Company company;
 
 	public long getId() {
@@ -94,7 +74,22 @@ public class Computer {
 		this.company = company;
 	}
 
-	private Computer() {
+	public Computer(long id, String name, LocalDateTime introduced, LocalDateTime discontinued, Company company) {
+		this.id = id;
+		this.name = name;
+		this.introduced = introduced;
+		this.discontinued = discontinued;
+		this.company = company;
+	}
+
+	public Computer(String name, LocalDateTime introduced, LocalDateTime discontinued, Company company) {
+		this.name = name;
+		this.introduced = introduced;
+		this.discontinued = discontinued;
+		this.company = company;
+	}
+
+	public Computer() {
 	}
 
 	@Override

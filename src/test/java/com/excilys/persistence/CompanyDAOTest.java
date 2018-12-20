@@ -23,8 +23,6 @@ import com.excilys.model.Page;
 public class CompanyDAOTest {
 
 	@Mock
-	private DatabaseConnection dbConnection;
-	@Mock
 	private Connection connection;
 	@Mock
 	private PreparedStatement statement;
@@ -40,7 +38,6 @@ public class CompanyDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		Mockito.when(dbConnection.connect()).thenReturn(connection);
 		Mockito.when(connection.prepareStatement(Mockito.anyString())).thenReturn(statement);
 		Mockito.when(statement.executeQuery()).thenReturn(rs);
 	}

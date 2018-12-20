@@ -52,14 +52,13 @@ public class DisplayCreate {
 			if (idCompany == -1) {
 				// Valid statement
 			} else {
-				company = new Company.Builder(idCompany).build();
+				company = new Company(idCompany,null);
 			}
 		} catch (InputMismatchException e) {
 			System.out.println("Please input a number.");
 		}
 
-		Computer computer = new Computer.Builder(name).withIntroduced(introduced).withDiscontinued(discontinued)
-				.withCompany(company).build();
+		Computer computer = new Computer(name,introduced,discontinued,company);
 		computerValidator.correctComputer(computer);
 
 		int nbRowAffected = computerServices.createComputer(computer);

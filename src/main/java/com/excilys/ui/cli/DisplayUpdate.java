@@ -62,18 +62,17 @@ public class DisplayUpdate {
 				sc.nextLine();
 				if (idCompany == -2) {
 					idCompany = computer.getCompany().getId();
-					company = new Company.Builder(idCompany).build();
+					company = new Company(idCompany,null);
 				} else if (idCompany == -1) {
 					// Valid statement
 				} else {
-					company = new Company.Builder(idCompany).build();
+					company = new Company(idCompany,null);
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("Please input a number.");
 			}
 
-			computer = new Computer.Builder(name).withId(id).withIntroduced(introduced).withDiscontinued(discontinued)
-					.withCompany(company).build();
+			computer = new Computer(id,name,introduced,discontinued,company);
 			computerValidator.correctComputer(computer);
 			int nbRowAffected = computerServices.updateComputer(computer);
 			System.out.print("Number of row affected : " + nbRowAffected);

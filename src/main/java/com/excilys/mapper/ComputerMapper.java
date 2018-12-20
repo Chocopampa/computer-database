@@ -48,17 +48,15 @@ public class ComputerMapper {
 			timeDiscontinued = LocalDateTime.parse(discontinued, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
 
-		Company company = new Company.Builder(computerDb.getLong("company_id")).withName(computerDb.getString("companyName")).build();
+		Company company = new Company(computerDb.getLong("company_id"),computerDb.getString("companyName"));
 
-		return new Computer.Builder(computerDb.getString("compuName")).withId(computerDb.getInt("compuId"))
-				.withIntroduced(timeIntroduced).withDiscontinued(timeDiscontinued).withCompany(company).build();
+		return new Computer(computerDb.getInt("compuId"),computerDb.getString("compuName"),timeIntroduced,timeDiscontinued,company);
 	}
 
 	public Computer mapUnique(ComputerDTO computerDTO) {
-		Company company = new Company.Builder(computerDTO.getCompanyId()).withName(computerDTO.getCompanyName()).build();
+		Company company = new Company(computerDTO.getCompanyId(),computerDTO.getCompanyName());
 
-		return new Computer.Builder(computerDTO.getName()).withIntroduced(computerDTO.getIntroduced()).withDiscontinued(computerDTO.getDiscontinued())
-				.withCompany(company).build();
+		return new Computer(computerDTO.getName(),computerDTO.getIntroduced(),computerDTO.getDiscontinued(),company);
 	}
 
 }
