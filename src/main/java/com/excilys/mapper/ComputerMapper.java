@@ -55,7 +55,9 @@ public class ComputerMapper {
 
 	public Computer mapUnique(ComputerDTO computerDTO) {
 		Company company = new Company(computerDTO.getCompanyId(),computerDTO.getCompanyName());
-
+		if (company.getId() == 0) {
+			company = null;
+		}
 		return new Computer(computerDTO.getName(),computerDTO.getIntroduced(),computerDTO.getDiscontinued(),company);
 	}
 

@@ -46,11 +46,11 @@ public class DisplayDelete {
 		try {
 			idParsed = sc.nextLong();
 			sc.nextLine();
-			List<Computer> computersLinked = computerServices.getComputersFromCompanyId(idParsed);
+//			List<Computer> computersLinked = computerServices.getComputersFromCompanyId(idParsed);
 			int nbRowDeleted = 0;
-			for (Computer computer : computersLinked) {
-				nbRowDeleted += computerServices.deleteComputer(computer.getId());
-			}
+//			for (Computer computer : computersLinked) {
+//				nbRowDeleted += computerServices.deleteComputer(computer.getId());
+//			}
 			companyServices.deleteCompany(idParsed);
 			System.out.println("Number of rows deleted : " + nbRowDeleted);
 			if (nbRowDeleted > 0) {

@@ -10,7 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +23,8 @@ import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 public class CompanyDAO {
 
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
-	@Autowired
 	private SessionFactory sessionFactory;
 
-	private static final String DELETE_COMPANY = "DELETE FROM company WHERE id=?;";
 
 	private static final Logger LOG4J = LogManager.getLogger(CompanyDAO.class.getName());
 
@@ -81,13 +76,21 @@ public class CompanyDAO {
 	 */
 	@Transactional(rollbackFor = DataAccessException.class)
 	public int deleteCompany(long idCompany) {
-		int nbRowAffected = 0;
-		try {
-			nbRowAffected = jdbcTemplate.update(DELETE_COMPANY, new Object[] { idCompany });
-		} catch (DataAccessException e) {
-			LOG4J.error("Error accessing the database for request : " + DELETE_COMPANY, e);
+		LOG4J.info("Deleting company...");
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
+		QCompany qcompany = QCompany.company;
+		long deleted = 0;
+		try { 
+			deleted = query.delete(qcompany).where(qcompany.id.eq(idCompany)).execute();
+		} finally {
+			session.close();
 		}
-		return nbRowAffected;
+		if (deleted == 0) {
+			return 0;
+		} else {
+			return 1;
+		}
 	}
 
 	/**

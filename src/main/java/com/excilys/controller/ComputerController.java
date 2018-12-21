@@ -141,8 +141,11 @@ public class ComputerController {
 			throws ServletException, IOException {
 		ComputerDTO computerDTO = computerDTOMapper.map(0, name, introduced, discontinued, companyNumber);
 		Computer computer = computerMapper.mapUnique(computerDTO);
-		computerValidator.correctComputer(computer);
-		computerService.createComputer(computer);
+		if (computerValidator.correctComputer(computer)) {
+			computerService.createComputer(computer);
+		} else {
+			LOG4J.error("Computer was not created.");
+		}
 		return "redirect:/addComputer/";
 	}
 }

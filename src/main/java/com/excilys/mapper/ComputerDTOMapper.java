@@ -34,11 +34,15 @@ public class ComputerDTOMapper {
 		if (parseValidator.isParsableLocalDateTime(discontinued + "T00:00:00")) {
 			discontinuedLocalDateTime = LocalDateTime.parse(discontinued + "T00:00:00");
 		}
-		long companyId = Long.parseLong(companyNumber);
+		
+		long companyId = 0;
+		if (!companyNumber.isEmpty()) {
+			companyId = Long.parseLong(companyNumber);
+		}
 
 		Optional<Company> company = companyService.getCompanyById(companyId);
 
-		if (company.get() != null) {
+		if (company.isPresent()) {
 			return new ComputerDTO(id, name, introducedLocalDateTime, discontinuedLocalDateTime, company.get().getId(),
 					company.get().getName());
 		} else {
