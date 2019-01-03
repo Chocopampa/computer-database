@@ -16,7 +16,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="/computer-database/"> Application -
+			<a class="navbar-brand" href="/computer-database-webapp/"> Application -
 				Computer Database </a>
 		</div>
 	</header>
@@ -29,7 +29,7 @@
 						<spring:message code="label.add.computer" />
 					</h1>
 					<form id="computerFormular" name="computerFormular"
-						action="/computer-database/addComputer" method="POST">
+						action="/computer-database-webapp/addComputer" method="POST">
 						<fieldset>
 							<div class="form-group">
 								<label for="computerName"><spring:message
@@ -64,7 +64,7 @@
 						<div class="actions pull-right">
 							<input type="submit" value="<spring:message
 										code="label.add" />" class="btn btn-primary">
-							or <a href="/computer-database/" class="btn btn-default"><spring:message
+							or <a href="/computer-database-webapp/" class="btn btn-default"><spring:message
 										code="label.cancel" /></a>
 						</div>
 					</form>

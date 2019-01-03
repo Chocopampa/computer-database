@@ -16,7 +16,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="/computer-database/"> Application -
+			<a class="navbar-brand" href="/computer-database-webapp/"> Application -
 				Computer Database </a>
 		</div>
 	</header>
@@ -31,7 +31,7 @@
 					</h1>
 
 					<form id="computerFormular" name="computerFormular"
-						action="/computer-database/editComputer/${computer.id}"
+						action="/computer-database-webapp/editComputer/${computer.id}"
 						method="POST">
 						<input type="hidden" value="${computer.id}" id="id" />
 						<fieldset>
@@ -76,7 +76,7 @@
 						<div class="actions pull-right">
 							<input type="submit" value="<spring:message
 										code="label.edit" />" class="btn btn-primary">
-							or <a href="/computer-database/" class="btn btn-default"><spring:message
+							or <a href="/computer-database-webapp/" class="btn btn-default"><spring:message
 										code="label.cancel" /></a>
 						</div>
 					</form>

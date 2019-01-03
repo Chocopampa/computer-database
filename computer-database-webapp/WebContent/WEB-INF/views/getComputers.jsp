@@ -17,7 +17,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="/computer-database/"> Application -
+			<a class="navbar-brand" href="/computer-database-webapp/"> Application -
 				Computer Database </a>
 		</div>
 	</header>
@@ -44,7 +44,7 @@
 				</div>
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer"
-						href="/computer-database/addComputer"><spring:message
+						href="/computer-database-webapp/addComputer"><spring:message
 							code="label.add.computer" /></a> <a class="btn btn-default"
 						id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message
 							code="label.delete.button" /></a>
@@ -52,7 +52,7 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="/computer-database/" method="POST">
+		<form id="deleteForm" action="/computer-database-webapp/" method="POST">
 			<input type="hidden" name="selection" value="">
 			<div class="container" style="margin-top: 10px;">
 				<table id="computerTable" class="table table-striped table-bordered">
@@ -88,7 +88,7 @@
 								<td class="editMode"><input type="checkbox"
 									name="computerChecked" class="cb" value="${item.id}"></td>
 								<td id="computerName"><a
-									href="/computer-database/editComputer/${item.id}" onclick=""><c:out
+									href="/computer-database-webapp/editComputer/${item.id}" onclick=""><c:out
 											value="${item.name}" /></a></td>
 								<td id="computerIntroduced"><c:out
 										value="${item.introduced}" /></td>
