@@ -1,2 +1,6 @@
 com/excilys/model/QCompany.class
+com/excilys/model/Computer.class
 com/excilys/model/QComputer.class
+com/excilys/model/Company.class
+com/excilys/dto/ComputerDTO.class
+com/excilys/model/Page.class

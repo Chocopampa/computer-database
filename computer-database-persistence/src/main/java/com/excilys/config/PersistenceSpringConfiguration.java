@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
@@ -18,8 +17,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 
 @Configuration
-@Import(value = {CoreSpringConfiguration.class})
-@ComponentScan(value = { "com.excilys.persistence" })
+@ComponentScan(value = { "com.excilys.persistence", "com.excilys.service", "com.excilys.mapper", "com.excilys.validator", "com.excilys.model", "com.excilys.dto", "com.excilys.converter"  })
 public class PersistenceSpringConfiguration {
 
 	@Bean
