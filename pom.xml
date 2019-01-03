@@ -1,18 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.excilys</groupId>
-	<artifactId>computer-database</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
-
+  <groupId>com.excilys</groupId>
+  <artifactId>computer-database-multi-module</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
 	<name>excilys</name>
 	<url>http://maven.apache.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
 		<maven.war.version>3.2.1</maven.war.version>
 		<maven.checkstyle.version>3.0.0</maven.checkstyle.version>
@@ -28,49 +29,9 @@
 		<querydsl.version>4.2.1</querydsl.version>
 		<hibernate.version>5.1.8.Final</hibernate.version>
 		<maven-apt-plugin.version>1.1.3</maven-apt-plugin.version>
-	</properties>
+  </properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>${maven.war.version}</version>
-				<configuration>
-					<warSourceDirectory>WebContent</warSourceDirectory>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.mysema.maven</groupId>
-				<artifactId>apt-maven-plugin</artifactId>
-				<version>${maven-apt-plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>process</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target/generated-sources/java</outputDirectory>
-							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-							<options>
-								<querydsl.entityAccessors>true</querydsl.entityAccessors>
-								<querydsl.useFields>false</querydsl.useFields>
-							</options>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
-	<dependencies>
+  <dependencies>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -144,18 +105,53 @@
 			<artifactId>querydsl-jpa</artifactId>
 			<version>${querydsl.version}</version>
 		</dependency>
-	</dependencies>
+  </dependencies>
 
-	<reporting>
+  <build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${maven.checkstyle.version}</version>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
 				<configuration>
-					<configLocation>src/main/resources/checkstyle/checkstyle.xml</configLocation>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${maven.war.version}</version>
+				<configuration>
+					<warSourceDirectory>WebContent</warSourceDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mysema.maven</groupId>
+				<artifactId>apt-maven-plugin</artifactId>
+				<version>${maven-apt-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/generated-sources/java</outputDirectory>
+							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+							<options>
+								<querydsl.entityAccessors>true</querydsl.entityAccessors>
+								<querydsl.useFields>false</querydsl.useFields>
+							</options>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
-	</reporting>
+  </build>
+  <modules>
+    <module>computer-database-core</module>
+    <module>computer-database-service</module>
+    <module>computer-database-webapp</module>
+    <module>computer-database-persistence</module>
+    <module>computer-database-utils</module>
+    <module>computer-database-converter</module>
+  </modules>
 </project>
