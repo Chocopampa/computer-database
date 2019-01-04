@@ -98,19 +98,23 @@ public class ComputerController {
 		List<Company> companies = companyService.getCompanies();
 		List<Long> companiesIds = new ArrayList<>();
 		companies.stream().forEach(company -> companiesIds.add(company.getId()));
-		Computer computer = computerService.getComputerById(id).get();
-		String introduced = (computer.getIntroduced() != null
-				? computer.getIntroduced().toString().subSequence(0, 10).toString()
-				: null);
-		String discontinued = (computer.getDiscontinued() != null
-				? computer.getDiscontinued().toString().subSequence(0, 10).toString()
-				: null);
-		model.addAttribute("computer", computer);
-		model.addAttribute("introduced", introduced);
-		model.addAttribute("discontinued", discontinued);
-		model.addAttribute("companyComputer", computer.getCompany());
-		model.addAttribute("companies", companies);
-		return "editComputer";
+		if (computerService.getComputerById(id).isPresent()) {
+			Computer computer = computerService.getComputerById(id).get();
+			String introduced = (computer.getIntroduced() != null
+					? computer.getIntroduced().toString().subSequence(0, 10).toString()
+					: null);
+			String discontinued = (computer.getDiscontinued() != null
+					? computer.getDiscontinued().toString().subSequence(0, 10).toString()
+					: null);
+			model.addAttribute("computer", computer);
+			model.addAttribute("introduced", introduced);
+			model.addAttribute("discontinued", discontinued);
+			model.addAttribute("companyComputer", computer.getCompany());
+			model.addAttribute("companies", companies);
+			return "editComputer";
+		} else {
+			return "redirect:/";
+		}
 	}
 
 	@PostMapping(value = "/editComputer/{id}")
@@ -123,7 +127,6 @@ public class ComputerController {
 		computerValidator.correctComputer(computer);
 		computerService.updateComputer(computer);
 		return "redirect:/editComputer/" + id;
-
 	}
 
 	@GetMapping(value = "/addComputer")
