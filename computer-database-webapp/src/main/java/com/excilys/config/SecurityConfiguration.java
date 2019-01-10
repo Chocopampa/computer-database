@@ -30,21 +30,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/login").permitAll();
-		http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().logout()
-				.permitAll();
+		http.authorizeRequests().antMatchers("/").permitAll().antMatchers("/addComputer", "/editComputer")
+				.hasRole("ADMIN").anyRequest().authenticated().and().formLogin().and().logout().permitAll().and().csrf()
+				.disable();
 	}
-	
+
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
-	    DaoAuthenticationProvider authProvider
-	      = new DaoAuthenticationProvider();
-	    authProvider.setUserDetailsService(userDetailsService);
-	    authProvider.setPasswordEncoder(passwordEncoder());
-	    return authProvider;
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(userDetailsService);
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
 	}
-	
-	protected void configure(AuthenticationManagerBuilder auth)
-			  throws Exception {
-			    auth.authenticationProvider(authenticationProvider());
-			}
+
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(authenticationProvider());
+	}
 }
