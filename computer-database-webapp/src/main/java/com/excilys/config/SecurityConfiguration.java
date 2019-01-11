@@ -31,8 +31,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/login").permitAll();
 		http.authorizeRequests().antMatchers("/").permitAll().antMatchers("/addComputer", "/editComputer")
-				.hasRole("ADMIN").anyRequest().authenticated().and().formLogin().and().logout().permitAll().and().csrf()
-				.disable();
+				.hasRole("ADMIN").anyRequest().authenticated().and().formLogin().and().httpBasic().and().logout()
+				.permitAll().and().csrf().disable();
 	}
 
 	@Bean

@@ -46,7 +46,7 @@ public class ComputerController {
 
 	private static final Logger LOG4J = LogManager.getLogger(ComputerController.class.getName());
 
-	@GetMapping
+//	@GetMapping
 	public String listComputers(@RequestParam(required = false) String nbItem,
 			@RequestParam(required = false) String numPage, @RequestParam(required = false) String search,
 			@RequestParam(required = false) String order, @RequestParam(required = false) String change, ModelMap model)
@@ -94,7 +94,7 @@ public class ComputerController {
 		return "redirect:";
 	}
 
-	@GetMapping(value = "/editComputer/{id}")
+//	@GetMapping(value = "/editComputer/{id}")
 	public String editComputerView(@PathVariable("id") long id, ModelMap model) throws ServletException, IOException {
 		LOG4J.info("Entering get method");
 		List<Company> companies = companyService.getCompanies();
@@ -140,7 +140,7 @@ public class ComputerController {
 		return "addComputer";
 	}
 
-	@PostMapping(value = "/addComputer")
+//	@PostMapping(value = "/addComputer")
 	public String addComputer(@RequestParam("computerName") String name, @RequestParam("introduced") String introduced,
 			@RequestParam("discontinued") String discontinued, @RequestParam("companyId") String companyNumber)
 			throws ServletException, IOException {

@@ -28,6 +28,8 @@
 		<hibernate.version>5.1.8.Final</hibernate.version>
 		<maven.apt.plugin.version>1.1.3</maven.apt.plugin.version>
 		<spring.security.version>5.1.2.RELEASE</spring.security.version>
+		<jackson.version>2.9.8</jackson.version>
+		<javax.version>2.3.1</javax.version>
 	</properties>
 
 	<dependencyManagement>
@@ -114,6 +116,21 @@
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-config</artifactId>
 				<version>${spring.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>${javax.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.datatype</groupId>
+				<artifactId>jackson-datatype-jsr310</artifactId>
+				<version>${jackson.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
