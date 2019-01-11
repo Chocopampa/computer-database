@@ -142,5 +142,6 @@
 		<module>computer-database-persistence</module>
 		<module>computer-database-utils</module>
 		<module>computer-database-converter</module>
+		<module>computer-database-cli</module>
 	</modules>
 </project>

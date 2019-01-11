@@ -85,7 +85,7 @@ public class ComputerController {
 		return "getComputers";
 	}
 
-	@PostMapping
+//	@PostMapping
 	public String deleteComputers(@RequestParam("computerChecked") List<String> idComputersToDelete)
 			throws ServletException, IOException {
 		LOG4J.info("Deleting company...");
@@ -119,7 +119,7 @@ public class ComputerController {
 		}
 	}
 
-	@PostMapping(value = "/editComputer/{id}")
+//	@PostMapping(value = "/editComputer/{id}")
 	public String editComputer(@PathVariable("id") long id, @RequestParam("computerName") String name,
 			@RequestParam("introduced") String introduced, @RequestParam("discontinued") String discontinued,
 			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
@@ -131,7 +131,7 @@ public class ComputerController {
 		return "redirect:/editComputer/" + id;
 	}
 
-	@GetMapping(value = "/addComputer")
+//	@GetMapping(value = "/addComputer")
 	public String addComputerView(ModelMap model) throws ServletException, IOException {
 		List<Company> companies = companyService.getCompanies();
 		List<Long> companiesIds = new ArrayList<>();
