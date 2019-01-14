@@ -1,21 +1,23 @@
 package com.excilys.ui.cli;
 
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.excilys.model.Computer;
+import com.excilys.config.PersistenceSpringConfiguration;
 import com.excilys.service.CompanyService;
-import com.excilys.service.ComputerService;
+import com.excilys.ui.config.JaxRsService;
 
 public class DisplayDelete {
 
-	@Autowired
-	private static ComputerService computerServices;
-	@Autowired
-	private static CompanyService companyServices;
+
+	static ApplicationContext context = new AnnotationConfigApplicationContext(PersistenceSpringConfiguration.class);
+	
+	private static JaxRsService jaxService = (JaxRsService) context.getBean(JaxRsService.class);
+	
+	private static CompanyService companyServices = (CompanyService) context.getBean(CompanyService.class);
 
 	protected static void deleteItem(Scanner sc) {
 		String str = "";
@@ -46,11 +48,7 @@ public class DisplayDelete {
 		try {
 			idParsed = sc.nextLong();
 			sc.nextLine();
-//			List<Computer> computersLinked = computerServices.getComputersFromCompanyId(idParsed);
 			int nbRowDeleted = 0;
-//			for (Computer computer : computersLinked) {
-//				nbRowDeleted += computerServices.deleteComputer(computer.getId());
-//			}
 			companyServices.deleteCompany(idParsed);
 			System.out.println("Number of rows deleted : " + nbRowDeleted);
 			if (nbRowDeleted > 0) {
@@ -71,13 +69,7 @@ public class DisplayDelete {
 		try {
 			idParsed = sc.nextLong();
 			sc.nextLine();
-			int nbRowDeleted = computerServices.deleteComputer(idParsed);
-			if (nbRowDeleted > 0) {
-				System.out.println("The computer with id " + idParsed
-						+ " has been deleted. (Number of computers deleted : " + nbRowDeleted + ")");
-			} else {
-				System.out.println("The computer with id " + idParsed + " has not been deleted.");
-			}
+			System.out.println(jaxService.deleteComputer(idParsed));
 		} catch (InputMismatchException e) {
 			System.out.println("Please input a number.");
 		}

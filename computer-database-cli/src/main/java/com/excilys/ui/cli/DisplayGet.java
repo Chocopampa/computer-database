@@ -2,7 +2,6 @@ package com.excilys.ui.cli;
 
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
 import org.springframework.context.ApplicationContext;
@@ -12,7 +11,7 @@ import com.excilys.config.PersistenceSpringConfiguration;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.service.CompanyService;
-import com.excilys.service.ComputerService;
+import com.excilys.ui.config.JaxRsService;
 
 public class DisplayGet {
 
@@ -20,7 +19,7 @@ public class DisplayGet {
 	static ApplicationContext context = new AnnotationConfigApplicationContext(PersistenceSpringConfiguration.class);
 	
 	private static CompanyService companyService = (CompanyService) context.getBean(CompanyService.class);
-	private static ComputerService computerServices = (ComputerService) context.getBean(ComputerService.class);
+	private static JaxRsService jaxService = (JaxRsService) context.getBean(JaxRsService.class);
 
 	protected static void getResults(Scanner sc) {
 		String str = "";
@@ -55,10 +54,7 @@ public class DisplayGet {
 	 * Display all the computers in database.
 	 */
 	private static void displayComputers() {
-		List<Computer> computersList = computerServices.getComputers();
-		for (Computer computer : computersList) {
-			System.out.println(computer);
-		}
+		System.out.println(jaxService.getJsonComputers());
 	}
 
 	/**
@@ -82,9 +78,9 @@ public class DisplayGet {
 		try {
 			idParsed = sc.nextLong();
 			sc.nextLine();
-			Optional<Computer> computer = computerServices.getComputerById(idParsed);
-			if (computer.isPresent()) {
-				System.out.println(computer.get());
+			Computer computer = jaxService.getJsonComputer(idParsed);
+			if (computer != null) {
+				System.out.println(computer);
 			} else {
 				System.out.println("This computer does not exist.");
 			}

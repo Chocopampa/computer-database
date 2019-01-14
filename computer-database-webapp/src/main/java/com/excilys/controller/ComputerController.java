@@ -46,7 +46,7 @@ public class ComputerController {
 
 	private static final Logger LOG4J = LogManager.getLogger(ComputerController.class.getName());
 
-//	@GetMapping
+	@GetMapping
 	public String listComputers(@RequestParam(required = false) String nbItem,
 			@RequestParam(required = false) String numPage, @RequestParam(required = false) String search,
 			@RequestParam(required = false) String order, @RequestParam(required = false) String change, ModelMap model)
@@ -85,7 +85,7 @@ public class ComputerController {
 		return "getComputers";
 	}
 
-//	@PostMapping
+	@PostMapping
 	public String deleteComputers(@RequestParam("computerChecked") List<String> idComputersToDelete)
 			throws ServletException, IOException {
 		LOG4J.info("Deleting company...");
@@ -94,7 +94,7 @@ public class ComputerController {
 		return "redirect:";
 	}
 
-//	@GetMapping(value = "/editComputer/{id}")
+	@GetMapping(value = "/editComputer/{id}")
 	public String editComputerView(@PathVariable("id") long id, ModelMap model) throws ServletException, IOException {
 		LOG4J.info("Entering get method");
 		List<Company> companies = companyService.getCompanies();
@@ -119,7 +119,7 @@ public class ComputerController {
 		}
 	}
 
-//	@PostMapping(value = "/editComputer/{id}")
+	@PostMapping(value = "/editComputer/{id}")
 	public String editComputer(@PathVariable("id") long id, @RequestParam("computerName") String name,
 			@RequestParam("introduced") String introduced, @RequestParam("discontinued") String discontinued,
 			@RequestParam("companyId") String companyNumber) throws ServletException, IOException {
@@ -131,7 +131,7 @@ public class ComputerController {
 		return "redirect:/editComputer/" + id;
 	}
 
-//	@GetMapping(value = "/addComputer")
+	@GetMapping(value = "/addComputer")
 	public String addComputerView(ModelMap model) throws ServletException, IOException {
 		List<Company> companies = companyService.getCompanies();
 		List<Long> companiesIds = new ArrayList<>();
@@ -140,7 +140,7 @@ public class ComputerController {
 		return "addComputer";
 	}
 
-//	@PostMapping(value = "/addComputer")
+	@PostMapping(value = "/addComputer")
 	public String addComputer(@RequestParam("computerName") String name, @RequestParam("introduced") String introduced,
 			@RequestParam("discontinued") String discontinued, @RequestParam("companyId") String companyNumber)
 			throws ServletException, IOException {

@@ -4,22 +4,26 @@ import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.excilys.config.PersistenceSpringConfiguration;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.service.ComputerService;
+import com.excilys.ui.config.JaxRsService;
 import com.excilys.validator.ComputerValidator;
 import com.excilys.validator.ParseValidator;
 
 public class DisplayCreate {
 
-	@Autowired
-	private static ComputerService computerServices;
-	@Autowired
-	private static ComputerValidator computerValidator;
-	@Autowired
-	private static ParseValidator parseValidator;
+
+	static ApplicationContext context = new AnnotationConfigApplicationContext(PersistenceSpringConfiguration.class);
+	
+	private static JaxRsService jaxService = (JaxRsService) context.getBean(JaxRsService.class);
+	
+	private static ComputerValidator computerValidator = (ComputerValidator) context.getBean(ComputerValidator.class);
+	
+	private static ParseValidator parseValidator = (ParseValidator) context.getBean(ParseValidator.class);
 
 	protected static void displayCreate(Scanner sc) {
 		System.out.println("Please enter the name of the computer you want to create :");
@@ -61,8 +65,7 @@ public class DisplayCreate {
 		Computer computer = new Computer(name,introduced,discontinued,company);
 		computerValidator.correctComputer(computer);
 
-		int nbRowAffected = computerServices.createComputer(computer);
-		System.out.println("Number of row affected : " + nbRowAffected);
+		System.out.println(jaxService.createComputer(computer));
 	}
 
 	/**

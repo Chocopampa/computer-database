@@ -17,7 +17,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 
 @Configuration
-@ComponentScan(value = { "com.excilys.persistence", "com.excilys.service", "com.excilys.mapper", "com.excilys.validator", "com.excilys.model", "com.excilys.dto", "com.excilys.converter"  })
+@ComponentScan(value = { "com.excilys.persistence", "com.excilys.service", "com.excilys.mapper", "com.excilys.validator", "com.excilys.model", "com.excilys.dto", "com.excilys.converter", "com.excilys.ui.config"  })
 public class PersistenceSpringConfiguration {
 
 	@Bean

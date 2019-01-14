@@ -2,36 +2,37 @@ package com.excilys.ui.cli;
 
 import java.time.LocalDateTime;
 import java.util.InputMismatchException;
-import java.util.Optional;
 import java.util.Scanner;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.excilys.config.PersistenceSpringConfiguration;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
-import com.excilys.service.ComputerService;
+import com.excilys.ui.config.JaxRsService;
 import com.excilys.validator.ComputerValidator;
 import com.excilys.validator.ParseValidator;
 
 public class DisplayUpdate {
+	
+	static ApplicationContext context = new AnnotationConfigApplicationContext(PersistenceSpringConfiguration.class);
 
-	@Autowired
-	private static ParseValidator parseValidator;
-	@Autowired
-	private static ComputerService computerServices;
-	@Autowired
-	private static ComputerValidator computerValidator;
+	private static ParseValidator parseValidator = (ParseValidator) context.getBean(ParseValidator.class);
+	private static ComputerValidator computerValidator = (ComputerValidator) context.getBean(ComputerValidator.class);
+	private static JaxRsService jaxService = (JaxRsService) context.getBean(JaxRsService.class);
+
+
 
 	protected static void displayUpdate(Scanner sc) {
 
 		System.out.println("Please enter the id of the computer you want to update :");
 		long id = sc.nextLong();
 		sc.nextLine();
-		Optional<Computer> opComputer = computerServices.getComputerById(id);
-		if (!opComputer.isPresent()) {
+		Computer computer = jaxService.getJsonComputer(id);
+		if (computer == null) {
 			System.out.println("The computer does not exist");
 		} else {
-			Computer computer = opComputer.get();
 			System.out.println("Please enter the new name (nothing if no update wanted) :");
 			String name = sc.nextLine();
 			if (name.isEmpty()) {
@@ -74,8 +75,7 @@ public class DisplayUpdate {
 
 			computer = new Computer(id,name,introduced,discontinued,company);
 			computerValidator.correctComputer(computer);
-			int nbRowAffected = computerServices.updateComputer(computer);
-			System.out.print("Number of row affected : " + nbRowAffected);
+			System.out.print(jaxService.updateComputer(computer));
 		}
 	}
 

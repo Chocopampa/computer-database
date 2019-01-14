@@ -21,20 +21,20 @@ import com.excilys.service.ComputerService;
 import com.excilys.validator.ComputerValidator;
 
 @RestController
-public class MyRestController {
+public class JsonRestController {
 
 	@Autowired
 	private ComputerService computerService;
 	@Autowired
 	private ComputerValidator computerValidator;
 	
-	@GetMapping
+	@GetMapping("/allComputers-rest")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Computer> getComputers() {
 		return computerService.getComputers();
 	}
 
-	@GetMapping("/editComputer/{id}")
+	@GetMapping("/getComputer-rest/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Computer getComputerById(@PathVariable("id") long id) throws ComputerIdException {
 		Optional<Computer> computer = computerService.getComputerById(id);
@@ -44,7 +44,7 @@ public class MyRestController {
 		throw new ComputerIdException();
 	}
 	
-	@PostMapping("/addComputer")
+	@PostMapping("/addComputer-rest")
 	@ResponseStatus(HttpStatus.CREATED)
 	public int addComputer(@RequestBody Computer computer) throws ComputerCreationException {
 		if (computerValidator.correctComputer(computer)) {
@@ -53,7 +53,7 @@ public class MyRestController {
 		throw new ComputerCreationException();
 	}
 	
-	@PutMapping("/editComputer/{id}")
+	@PutMapping("/editComputer-rest/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public int updateComputer(@PathVariable("id") long id, @RequestBody Computer computer) throws ComputerIdException {
 		computer.setId(id);
@@ -63,7 +63,7 @@ public class MyRestController {
 		throw new ComputerIdException();
 	}
 	
-	@DeleteMapping("/deleteComputer/{id}")
+	@DeleteMapping("/deleteComputer-rest/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public int deleteComputer(@PathVariable long id) {
 		return computerService.deleteComputer(id);
