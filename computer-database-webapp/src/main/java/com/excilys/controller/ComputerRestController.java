@@ -21,7 +21,7 @@ import com.excilys.service.ComputerService;
 import com.excilys.validator.ComputerValidator;
 
 @RestController
-public class JsonRestController {
+public class ComputerRestController {
 
 	@Autowired
 	private ComputerService computerService;

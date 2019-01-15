@@ -17,8 +17,11 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="/computer-database-webapp/"> Application -
-				Computer Database </a>
+			<a class="navbar-brand" href="/computer-database-webapp/">
+				Application - Computer Database </a>
+				|
+			<a class="navbar-brand" href="/computer-database-webapp/logout">
+				Log out </a>
 		</div>
 	</header>
 
@@ -52,7 +55,8 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="/computer-database-webapp/" method="POST">
+		<form id="deleteForm" action="/computer-database-webapp/"
+			method="POST">
 			<input type="hidden" name="selection" value="">
 			<div class="container" style="margin-top: 10px;">
 				<table id="computerTable" class="table table-striped table-bordered">
@@ -88,8 +92,8 @@
 								<td class="editMode"><input type="checkbox"
 									name="computerChecked" class="cb" value="${item.id}"></td>
 								<td id="computerName"><a
-									href="/computer-database-webapp/editComputer/${item.id}" onclick=""><c:out
-											value="${item.name}" /></a></td>
+									href="/computer-database-webapp/editComputer/${item.id}"
+									onclick=""><c:out value="${item.name}" /></a></td>
 								<td id="computerIntroduced"><c:out
 										value="${item.introduced}" /></td>
 								<td id="computerDiscontinued"><c:out
@@ -101,7 +105,8 @@
 					</tbody>
 				</table>
 			</div>
-
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" />
 		</form>
 	</section>
 

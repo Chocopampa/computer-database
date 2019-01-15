@@ -1,5 +1,6 @@
 package com.excilys.persistence;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +26,18 @@ public class UserDAO {
 	@Autowired
 	public UserDAO() {
 	}
+	
+	public List<User> getUsers() {
+		LOG4J.info("Acquiring users...");
+		Session session = sessionFactory.openSession();
+		HibernateQueryFactory query = new HibernateQueryFactory(session);
+		try {
+			HibernateQuery<User> hUsers = query.selectFrom(QUser.user);
+			return hUsers.fetch();
+		} finally {
+			session.close();
+		}
+	}
 
 	public Optional<User> getUserByName(String name) {
 		QUser quser = QUser.user;
@@ -36,5 +49,19 @@ public class UserDAO {
 		} finally {
 			session.close();
 		}
+	}
+	
+	public int addUser(User user) {
+		LOG4J.info("Adding a user...");
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		try {
+			session.save(user);
+			session.getTransaction().commit();
+		} finally {
+			session.close();
+		}
+
+		return 1;
 	}
 }

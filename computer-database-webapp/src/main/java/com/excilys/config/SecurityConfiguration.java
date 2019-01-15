@@ -3,6 +3,7 @@ package com.excilys.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.excilys.service.UserService;
 
@@ -31,9 +33,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/login").permitAll();
-		http.authorizeRequests().antMatchers("/").permitAll().antMatchers("/addComputer", "/editComputer")
-				.hasRole("ADMIN").anyRequest().authenticated().and().formLogin().and().httpBasic().and().logout()
-				.permitAll().and().csrf().disable();
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/", "/editComputer/**", "/allComputers-rest", "/getComputer-rest/**", "/getUsers").authenticated()
+								.antMatchers(HttpMethod.GET, "/addComputer").hasRole("ADMIN")
+								.antMatchers(HttpMethod.POST, "/", "/addComputer", "/editComputer/**", "/addComputer-rest", "/addUser-rest").hasRole("ADMIN")
+								.antMatchers(HttpMethod.DELETE, "/deleteComputer-rest/**").hasRole("ADMIN")
+								.antMatchers(HttpMethod.PUT, "/editComputer-rest/**").hasRole("ADMIN")
+								.anyRequest().authenticated().and().formLogin().and().httpBasic().and().logout()
+								.permitAll().and().csrf()
+				                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());;
 	}
 
 	@Bean
