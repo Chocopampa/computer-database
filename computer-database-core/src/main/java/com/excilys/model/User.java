@@ -50,6 +50,8 @@ public class User{
 		this.role = role;
 	}
 	
+	public User() {}
+	
 	public User(long id, String name, String password, Role role) {
 		super();
 		this.id = id;

@@ -88,7 +88,9 @@ public class ComputerController {
 	@PostMapping
 	public String deleteComputers(@RequestParam("computerChecked") List<String> idComputersToDelete)
 			throws ServletException, IOException {
+		LOG4J.info("Deleting company...");
 		idComputersToDelete.stream().forEach(idComputer -> computerService.deleteComputer(Long.parseLong(idComputer)));
+		
 		return "redirect:";
 	}
 

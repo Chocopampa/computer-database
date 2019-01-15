@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -19,6 +20,10 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 @Configuration
 @EnableWebMvc
 @ComponentScan(value = "com.excilys.controller")
@@ -69,5 +74,17 @@ public class ViewConfiguration implements WebMvcConfigurer {
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/").setViewName("getComputers");
 		registry.addViewController("/login").setViewName("login");
+	}
+	
+	/**
+	 * Bean for computer creation issue with localdate serialization.
+	 * @return
+	 */
+	@Bean(name = "OBJECT_MAPPER_BEAN")
+	public ObjectMapper jsonObjectMapper() {
+	    return Jackson2ObjectMapperBuilder.json()
+	            .serializationInclusion(Include.NON_NULL)
+	            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+	            .build();
 	}
 }

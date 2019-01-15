@@ -82,13 +82,17 @@ public class CompanyDAO {
 		QCompany qcompany = QCompany.company;
 		long deleted = 0;
 		try { 
+			LOG4J.info("In try...");
 			deleted = query.delete(qcompany).where(qcompany.id.eq(idCompany)).execute();
 		} finally {
+			LOG4J.info("In finally...");
 			session.close();
 		}
 		if (deleted == 0) {
+			LOG4J.info("Not deleted.");
 			return 0;
 		} else {
+			LOG4J.info("Deleted.");
 			return 1;
 		}
 	}
